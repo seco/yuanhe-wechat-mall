@@ -4,10 +4,16 @@ var express = require('express');
 var http = require('http');
 var path = require('path');
 var async = require('async');
-var hbs = require('express-hbs');
+// var hbs = require('express-hbs');
+var hbs = require('hbs');
 var baucis = require('baucis');
 var socketIO = require('socket.io');
 var mongoose = require('mongoose');
+
+var favicon = require('serve-favicon');
+var logger = require('morgan');
+var cookieParser = require('cookie-parser');
+var bodyParser = require('body-parser');
 
 
 // start mongoose
@@ -34,8 +40,9 @@ db.once('open', function callback () {
 	app.configure(function(){
 	    app.set('port', 9000);
 
-	    app.set('view engine', 'handlebars');
-	    app.set('views', __dirname + '../app/scripts/views');
+	    app.set('view engine', 'hbs');
+        // app.set('views', __dirname + '../app/scripts/views');
+        app.set('views', __dirname + '/views');
 	});
 
     app.use('/api/v1', baucis());
@@ -56,10 +63,17 @@ db.once('open', function callback () {
 	  res.sendfile( path.join( __dirname, '../app/index.html' ) );
 	});
 
+    //handle 404 error
+    app.use(function(req, res, next){
+      res.render('404', {status: 404, url: req.url});
+    });
+
+    app.use(function(err, req, res, next){
+      res.render('500', {status: err.status || 500, error: err});
+    });
+
 	// start server
 	http.createServer(app).listen(app.get('port'), function(){
 	    console.log('Express App started!');
 	});
 });
-
-
