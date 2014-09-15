@@ -4,9 +4,7 @@ var express = require('express');
 var http = require('http');
 var path = require('path');
 var async = require('async');
-// var hbs = require('express-hbs');
 var hbs = require('hbs');
-var baucis = require('baucis');
 var socketIO = require('socket.io');
 var mongoose = require('mongoose');
 
@@ -30,22 +28,12 @@ db.once('open', function callback() {
 
   var Test = mongoose.model('test', testSchema);
 
-  /* set Baucis */
-  baucis.rest({
-    singular: 'test'
-  });
-
   var app = express();
 
-  app.configure(function() {
-    app.set('port', 9000);
-
-    app.set('view engine', 'hbs');
-    // app.set('views', __dirname + '../app/scripts/views');
-    app.set('views', __dirname + '/views');
-  });
-
-  app.use('/api/v1', baucis());
+  app.set('port', 9000);
+  app.set('view engine', 'hbs');
+  // app.set('views', __dirname + '../app/scripts/views');
+  app.set('views', __dirname + '/views');
 
   // simple log
   app.use(function(req, res, next) {
@@ -55,7 +43,6 @@ db.once('open', function callback() {
 
   // mount static
   app.use(express.static(path.join(__dirname, '../app')));
-  app.use(express.static(path.join(__dirname, '../.tmp')));
 
 
   // route index.html
@@ -64,12 +51,18 @@ db.once('open', function callback() {
   });
 
   //handle 404 error
-  app.use(function(req, res, next){
-    res.render('404', {status: 404, url: req.url});
+  app.use(function(req, res, next) {
+    res.render('404', {
+      status: 404,
+      url: req.url
+    });
   });
 
-  app.use(function(err, req, res, next){
-    res.render('500', {status: err.status || 500, error: err});
+  app.use(function(err, req, res, next) {
+    res.render('500', {
+      status: err.status || 500,
+      error: err
+    });
   });
 
   // start server
