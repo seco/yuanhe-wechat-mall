@@ -27,8 +27,9 @@ $(function() {
     ;
 
     //bootstrap WYSIHTML5 - text editor
-    $(".textarea").wysihtml5();
+    //$(".textarea").wysihtml5(); 
 
+    /*
     $('.daterange').daterangepicker(
             {
                 ranges: {
@@ -45,11 +46,12 @@ $(function() {
     function(start, end) {
         alert("You chose: " + start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'));
     });
-
+     */
     /* jQueryKnob */
-    $(".knob").knob();
+    //$(".knob").knob();
 
     //jvectormap data
+    /*
     var visitorsData = {
         "US": 398, //USA
         "SA": 400, //Saudi Arabia
@@ -88,8 +90,9 @@ $(function() {
                 el.html(el.html() + ': ' + visitorsData[code] + ' new visitors');
         }
     });
-
+     */
     //Sparkline charts
+    /*
     var myvalues = [1000, 1200, 920, 927, 931, 1027, 819, 930, 1021];
     $('#sparkline-1').sparkline(myvalues, {
         type: 'line',
@@ -114,17 +117,20 @@ $(function() {
         height: '50',
         width: '80'
     });    
-
+     */
     //The Calender
-    $("#calendar").datepicker();
+    //$("#calendar").datepicker();
 
     //SLIMSCROLL FOR CHAT WIDGET
+    /*
     $('#chat-box').slimScroll({
         height: '250px'
     });
+     */
 
     /* Morris.js Charts */
     // Sales chart
+    /*
     var area = new Morris.Area({
         element: 'revenue-chart',
         resize: true,
@@ -188,6 +194,7 @@ $(function() {
         ],
         hideHover: 'auto'
     });
+    */
     /*Bar chart
     var bar = new Morris.Bar({
         element: 'bar-chart',

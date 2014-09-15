@@ -1,10 +1,5 @@
-require([
-    'backbone',
-    'application',
-    'regionManager'
-  ],
-  function(Backbone, App) {
-    'use strict';
+define(function(require) {
+  var MainRouter = require('./routes/MainRouter');
 
-    App.start();
-  });
+  MainRouter.initialize();
+});
