@@ -53,6 +53,9 @@ MongoClient.connect(mongodburl, function(err, db) {
 
     // baidu cloud nodejs port
     app.set('port', 18080);
+    // mount static
+    app.use(express.static(path.join(__dirname, '../app')));
+    // view engine
     app.set('view engine', 'hbs');
     // app.set('views', __dirname + '../app/scripts/views');
     app.set('views', __dirname + '/views');
@@ -63,13 +66,10 @@ MongoClient.connect(mongodburl, function(err, db) {
       next();
     });
 
-    // mount static
-    app.use(express.static(path.join(__dirname, '../app')));
-
 
     // route index.html
     app.get('/', function(req, res) {
-      res.sendfile(path.join(__dirname, '../app/index.html'));
+      res.render('index');
     });
 
     //handle 404 error
