@@ -14,7 +14,7 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 
 
-var env = process.env.NODE_ENV || 'development';
+var env = process.env.NODE_ENV || 'production';
 var username = ''; // 用户名（API KEY）
 var password = ''; // 密码(Secret KEY)
 var mongodburl = '';
