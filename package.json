@@ -51,6 +51,6 @@
   },
 
   "scripts": {
-    "start": "node server/app.js"
+    "start": "NODE_ENV=production node server/app.js"
   }
 }
