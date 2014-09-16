@@ -40,14 +40,19 @@ MongoClient.connect(mongodburl, function(err, db) {
 
     var collection = db.collection('test_tb');
 
-    collection.insert([{'tsc':'bobby'}], {w:1}, function(docs) {
+    collection.insert([{
+      'tsc': 'bobby'
+    }], {
+      w: 1
+    }, function(docs) {
       console.log('finish...');
     });
 
     // express config start
     var app = express();
 
-    app.set('port', 9000);
+    // baidu cloud nodejs port
+    app.set('port', 18080);
     app.set('view engine', 'hbs');
     // app.set('views', __dirname + '../app/scripts/views');
     app.set('views', __dirname + '/views');
