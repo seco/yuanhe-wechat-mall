@@ -1,0 +1,5 @@
+{
+  "mongodburl": "mongodb://localhost:27017/test?w=1",
+  "username": "siteUserAdmin",
+  "password": "password"
+}
