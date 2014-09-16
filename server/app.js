@@ -20,22 +20,9 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 
-
-var env = process.env.NODE_ENV || 'production';
-var username = ''; // 用户名（API KEY）
-var password = ''; // 密码(Secret KEY)
-var mongodburl = '';
-if (env === 'development') {
-  mongodburl = 'mongodb://localhost:27017/test?w=1';
-  username = 'siteUserAdmin';
-  password = 'password';
-} else if (env === 'production') {
-  mongodburl = 'mongodb://mongo.duapp.com:8908/XurPKKOJMvCxWYWPcqPs?w=1';
-  username = 'vLT8N37pp3ojuQyKG2ciFiKq';
-  password = '4pCRiG7nrH2V6zPihKh72Dvk087WcTUO';
-}
-
-console.log('mongodburl: ' + mongodburl);
+// load settings to local variables
+var settings = require('./settings');
+for (var key in settings) { eval("var " + key + " = '" + settings[key] + "'"); }
 
 MongoClient.connect(mongodburl, function(err, db) {
   db.authenticate(username, password, function(err, result) {
