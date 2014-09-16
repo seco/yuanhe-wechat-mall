@@ -12,7 +12,6 @@ var path = require('path');
 var async = require('async');
 var hbs = require('hbs');
 var socketIO = require('socket.io');
-var MongoClient = require('mongodb').MongoClient;
 
 // add from express@4.8.0 scaffold
 var favicon = require('serve-favicon');
@@ -23,6 +22,13 @@ var bodyParser = require('body-parser');
 // load settings to local variables
 var settings = require('./settings');
 for (var key in settings) { eval("var " + key + " = '" + settings[key] + "'"); }
+
+/*
+ * use bae's mongodb code sample
+ *
+ * @see http://developer.baidu.com/wiki/index.php?title=docs/cplat/bae/mongodb
+ */
+var MongoClient = require('mongodb').MongoClient;
 
 MongoClient.connect(mongodburl, function(err, db) {
   db.authenticate(username, password, function(err, result) {
