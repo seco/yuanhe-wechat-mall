@@ -1,5 +1,4 @@
-define(function(require) {
-  var MainRouter = require('./routes/MainRouter');
-
-  MainRouter.initialize();
-});
+define(['./routes/MainRouter'],
+  function(MainRouter) {
+    MainRouter.initialize();
+  });

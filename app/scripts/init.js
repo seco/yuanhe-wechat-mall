@@ -1,5 +1,7 @@
 require.config({
 
+  baseUrl: "/scripts",
+
   shim: {
     underscore: {
       exports: '_'
@@ -8,23 +10,20 @@ require.config({
       deps: ['underscore', 'jquery'],
       exports: 'Backbone'
     },
-    jqueryui: {
-      deps: ['jquery'],
-      exports: '$'
-    },
-    bootstrap: {
-      deps: ['jquery'],
-      exports: '$'
-    },
-    adminLTE: {
-      deps: ['jquery', 'jqueryui', 'bootstrap'],
-      exports: 'adminLTE'
-    }
+    jqueryui: ['jquery'],
+    jqueryslimscroll: ['jquery'],
+    jquerycusttreemenu: ['jquery'],
+    jqueryicheck: ['jquery'],
+    bootstrap: ['jquery'],
+    adminLTE: ['jquery', 'jqueryslimscroll', 'jquerycusttreemenu', 'jqueryicheck', 'jqueryui', 'bootstrap']
   },
 
   paths: {
     jquery: '../bower_components/jquery/dist/jquery.min',
     jqueryui: '../bower_components/jquery-ui/ui/minified/jquery-ui.min',
+    jqueryslimscroll: '../bower_components/jquery-slimscroll/jquery.slimscroll.min',
+    jquerycusttreemenu: 'vendor/jquery_cust_treemenu',
+    jqueryicheck: '../bower_components/jquery-icheck/icheck.min',
     backbone: '../bower_components/backbone/backbone-min',
     underscore: '../bower_components/underscore/underscore-min',
 
