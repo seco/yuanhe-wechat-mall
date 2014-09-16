@@ -30,7 +30,7 @@ db.once('open', function callback() {
 
   var app = express();
 
-  app.set('port', 9000);
+  app.set('port', 18080);
   app.set('view engine', 'hbs');
   // app.set('views', __dirname + '../app/scripts/views');
   app.set('views', __dirname + '/views');
