@@ -97,10 +97,17 @@ MongoClient.connect(mongodburl, function(err, db) {
 });
 */
 
+var oauthUtil = require('./util/oauthUtil');
+
 var app = express();
+app.set('yuanhe_config', require('./settings'));
 
 app.get('/oauth_response.php', function(req, res) {
-  console.log(req.query.code, req.query.state);
+  var code = req.query.code;
+
+  oauthUtil.getAccessToken(app, code, function(err, resp, body) {
+    console.log(body);
+  });
 });
 
 http.createServer(app).listen(18080, function() {
