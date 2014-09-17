@@ -99,7 +99,7 @@ MongoClient.connect(mongodburl, function(err, db) {
 
 var app = express();
 
-app.get('/oauth_response', function(req, res) {
+app.get('/oauth_response.php', function(req, res) {
   console.log(req.query.code, req.query.state);
 });
 
