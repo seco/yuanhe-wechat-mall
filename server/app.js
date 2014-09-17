@@ -96,3 +96,13 @@ MongoClient.connect(mongodburl, function(err, db) {
   });
 });
 */
+
+var app = express();
+
+app.get('/oauth_response', function(req, res) {
+  console.log(req.query.code, req.query.state);
+});
+
+http.createServer(app).listen(18080, function() {
+  console.log('Express App started!');
+});
