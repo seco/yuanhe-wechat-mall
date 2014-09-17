@@ -28,6 +28,8 @@ for (var key in settings) { eval("var " + key + " = '" + settings[key] + "'"); }
  *
  * @see http://developer.baidu.com/wiki/index.php?title=docs/cplat/bae/mongodb
  */
+
+/*
 var MongoClient = require('mongodb').MongoClient;
 
 MongoClient.connect(mongodburl, function(err, db) {
@@ -93,3 +95,4 @@ MongoClient.connect(mongodburl, function(err, db) {
     });
   });
 });
+*/
