@@ -13,6 +13,10 @@
   <link href="/css/ionicons.min.css" rel="stylesheet" type="text/css" />
   <!-- Theme style -->
   <link href="/css/AdminLTE.css" rel="stylesheet" type="text/css" />
+  <link href="/bower_components/backgrid/lib/backgrid.min.css" rel="stylesheet" type="text/css" />
+  <link href="/styles/backgrid-paginator.min.css" rel="stylesheet" type="text/css" />
+  <link href="/bower_components/backgrid-text-cell/backgrid-text-cell.min.css" rel="stylesheet" type="text/css" />
+
 
   <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
   <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -299,29 +303,29 @@
         <!-- sidebar menu: : style can be found in sidebar.less -->
         <ul class="sidebar-menu">
           <li class="active">
-            <a href="index.html">
+            <a href="/#dashboard">
               <i class="fa fa-dashboard"></i>  <span>后台面板</span>
             </a>
           </li>
           <li class="treeview">
-            <a href="#">
+            <a href="/#store">
               <i class="fa fa-bar-chart-o"></i>
               <span>店铺管理</span>
               <i class="fa fa-angle-left pull-right"></i>
             </a>
             <ul class="treeview-menu">
-              <li><a href="#"><i class="fa fa-angle-double-right"></i> Morris</a>
+              <li><a href="/#store"><i class="fa fa-angle-double-right"></i> 查看店铺</a>
               </li>
             </ul>
           </li>
           <li class="treeview">
-            <a href="#">
+            <a href="/#order">
               <i class="fa fa-bar-chart-o"></i>
               <span>订单管理</span>
               <i class="fa fa-angle-left pull-right"></i>
             </a>
             <ul class="treeview-menu">
-              <li><a href="pages/charts/morris.html"><i class="fa fa-angle-double-right"></i> Morris</a>
+              <li><a href="/#order"><i class="fa fa-angle-double-right"></i> 查看订单</a>
               </li>
               <li><a href="pages/charts/flot.html"><i class="fa fa-angle-double-right"></i> Flot</a>
               </li>
@@ -330,7 +334,7 @@
             </ul>
           </li>
           <li class="treeview">
-            <a href="#">
+            <a href="/#brandDynmaicView">
               <i class="fa fa-bar-chart-o"></i>
               <span>品牌动态界面</span>
               <i class="fa fa-angle-left pull-right"></i>
@@ -353,15 +357,6 @@
     <aside class="right-side">
       <!-- Content Header (Page header) -->
       <section class="content-header">
-        <h1>
-                        后台面板
-                        <small>快速入口</small>
-                    </h1>
-        <ol class="breadcrumb">
-          <li><a href="#"><i class="fa fa-dashboard"></i> 主页</a>
-          </li>
-          <li class="active">后台面板</li>
-        </ol>
       </section>
 
       <!-- Main content -->

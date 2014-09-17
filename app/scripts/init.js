@@ -2,6 +2,7 @@ require.config({
 
   baseUrl: "/scripts",
 
+  wrapShim: true,
   shim: {
     underscore: {
       exports: '_'
@@ -10,12 +11,19 @@ require.config({
       deps: ['underscore', 'jquery'],
       exports: 'Backbone'
     },
+    'backbone.paginator': ['backbone'],
     jqueryui: ['jquery'],
     jqueryslimscroll: ['jquery'],
     jquerycusttreemenu: ['jquery'],
     jqueryicheck: ['jquery'],
     bootstrap: ['jquery'],
-    adminLTE: ['jquery', 'jqueryslimscroll', 'jquerycusttreemenu', 'jqueryicheck', 'jqueryui', 'bootstrap']
+    adminLTE: ['jquery', 'jqueryslimscroll', 'jquerycusttreemenu', 'jqueryicheck', 'jqueryui', 'bootstrap'],
+    backgrid: {
+      deps: ['jquery', 'underscore', 'backbone', 'backbone.paginator'],
+      exports: 'Backgrid'
+    },
+    backgridpaginator: ['backgrid'],
+    backgridtextcell: ['backgrid']
   },
 
   paths: {
@@ -25,6 +33,10 @@ require.config({
     jquerycusttreemenu: 'vendor/jquery_cust_treemenu',
     jqueryicheck: '../bower_components/jquery-icheck/icheck.min',
     backbone: '../bower_components/backbone/backbone-min',
+    'backbone.paginator': '../bower_components/backbone.paginator/lib/backbone.paginator.min',
+    backgrid: '../bower_components/backgrid/lib/backgrid.min',
+    backgridpaginator: 'vendor/backgrid-paginator.min',
+    backgridtextcell: '../bower_components/backgrid-text-cell/backgrid-text-cell.min',
     underscore: '../bower_components/underscore/underscore-min',
 
     /* alias the bootstrap js lib */

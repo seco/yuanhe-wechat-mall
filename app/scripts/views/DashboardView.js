@@ -1,7 +1,7 @@
 define(['jquery',
     'underscore',
     'backbone',
-    'hbs!../../templates/dashboard'
+    'hbs!../../templates/dashboardTmpl'
   ],
   function($, _, Backbone, dashboardTmpl) {
 
