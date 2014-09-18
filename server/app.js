@@ -19,9 +19,54 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 
-// load settings to local variables
-var settings = require('./settings');
-for (var key in settings) { eval("var " + key + " = '" + settings[key] + "'"); }
+// Create and export an express application
+module.exports = app = express();
+
+// load config
+var config = require('./config');
+app.set('yuanhe_config', config);
+
+// generate local variables dynamically
+for (var key in config) {
+  eval("var " + key + " = '" + config[key] + "'");
+}
+
+// Set the view engine
+app.set('view engine', 'hbs');
+// Where to find the view files
+app.set('views', __dirname + '/views');
+
+// Mark the app dir as a static dir
+app.use(express.static(path.join(__dirname, '../app')));
+
+// simple log
+app.use(function(req, res, next) {
+  console.log('%s %s', req.method, req.url);
+  next();
+});
+
+// Pass the Express instance to the routes module
+var routes = require('./routes')(app);
+
+// 404 error handler
+app.use(function(req, res, next) {
+  res.status(404);
+  res.render('404', {
+    url: req.url
+  });
+});
+
+// 500 error handler
+app.use(function(error, req, res, next) {
+  res.status(500);
+  res.render('500', {
+    err: error
+  });
+});
+
+http.createServer(app).listen(port, function() {
+  console.log('app has started, listening on port ' + port);
+});
 
 /*
  * use bae's mongodb code sample
@@ -29,87 +74,26 @@ for (var key in settings) { eval("var " + key + " = '" + settings[key] + "'"); }
  * @see http://developer.baidu.com/wiki/index.php?title=docs/cplat/bae/mongodb
  */
 
-/*
-var MongoClient = require('mongodb').MongoClient;
+var mongoClient = require('mongodb').MongoClient;
 
-MongoClient.connect(mongodburl, function(err, db) {
+mongoClient.connect(mongodburl, function(err, db) {
+  if (err) {
+    console.log(err);
+    return;
+  }
   db.authenticate(username, password, function(err, result) {
     if (err) {
+      console.log(err);
       db.close();
-      throw err;
       return;
     };
-
-    var collection = db.collection('test_tb');
-
-    collection.insert([{
-      'tsc': 'bobby'
-    }], {
-      w: 1
-    }, function(docs) {
-      console.log('finish...');
-    });
-
-    // express config start
-    var app = express();
-
-    // baidu cloud nodejs port
-    app.set('port', 18080);
-    // mount static
-    app.use(express.static(path.join(__dirname, '../app')));
-    // view engine
-    app.set('view engine', 'hbs');
-    // app.set('views', __dirname + '../app/scripts/views');
-    app.set('views', __dirname + '/views');
-
-    // simple log
-    app.use(function(req, res, next) {
-      console.log('%s %s', req.method, req.url);
-      next();
-    });
-
-
-    // route index.html
-    app.get('/', function(req, res) {
-      res.render('index');
-    });
-
-    //handle 404 error
-    app.use(function(req, res, next) {
-      res.render('404', {
-        status: 404,
-        url: req.url
-      });
-    });
-
-    app.use(function(err, req, res, next) {
-      res.render('500', {
-        status: err.status || 500,
-        error: err
-      });
-    });
-
-    // start server
-    http.createServer(app).listen(app.get('port'), function() {
-      console.log('Express App started!');
+    db.collection('test_tb').insert([ {'tsc': 'bobby'} ], { w: 1 }, function(err, docs) {
+      if (err) {
+        console.log(err);
+        db.close();
+        return;
+      }
+      console.log(docs);
     });
   });
-});
-*/
-
-var oauthUtil = require('./util/oauthUtil');
-
-var app = express();
-app.set('yuanhe_config', require('./settings'));
-
-app.get('/oauth_response.php', function(req, res) {
-  var code = req.query.code;
-
-  oauthUtil.getAccessToken(app, code, function(err, resp, body) {
-    console.log(body);
-  });
-});
-
-http.createServer(app).listen(18080, function() {
-  console.log('Express App started!');
 });

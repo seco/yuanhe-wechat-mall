@@ -1,4 +1,6 @@
 {
+  "port": 3000,
+
   "appid": "wx51e688b02487dfc4",
   "secret": "073d77dfeee8c1fef0df4ec9a83a4de5",
 

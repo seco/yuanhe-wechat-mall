@@ -5,6 +5,7 @@
  */
 
 var request = require('request');
+var app = require('../app');
 var utils = require('./utils');
 
 var oauthUtil = module.exports = {};
@@ -12,14 +13,13 @@ var oauthUtil = module.exports = {};
 /**
  * Get access token by code
  *
- * @param {Object} app
  * @param {String} code
  * @param {Function} cb
  */
-oauthUtil.getAccessToken = function(app, code, cb) {
-  var settings = app.get('yuanhe_config');
-  var appid = settings.appid;
-  var secret = settings.secret;
+oauthUtil.getAccessToken = function(code, cb) {
+  var config = app.get('yuanhe_config');
+  var appid = config.appid;
+  var secret = config.secret;
 
   request({
     url: composeGetAccessTokenUrl(appid, secret, code),
@@ -32,11 +32,10 @@ oauthUtil.getAccessToken = function(app, code, cb) {
 /**
  * Pull user info by access_token and openid
  *
- * @param {Object} app
  * @param {String} access_token
  * @param {String} openid
  */
-oauthUtil.pullUserInfo = function(app, access_token, openid) {
+oauthUtil.pullUserInfo = function(access_token, openid) {
 
 }
 
