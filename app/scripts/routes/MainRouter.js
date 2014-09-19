@@ -3,7 +3,8 @@ define(['jquery',
     'backbone',
     '../views/PageHeaderView',
     '../views/DashboardView',
-    '../views/StoreView',
+    '../views/StoreListView',
+    '../views/StoreEditView',
     'adminLTE' // adminLTE doesnot need to be exported, must add the end of define
   ],
   function($,
@@ -11,24 +12,19 @@ define(['jquery',
     Backbone,
     PageHeaderView,
     DashboardView,
-    StoreView
+    StoreListView,
+    StoreEditView
   ) {
 
     var MainRouter = Backbone.Router.extend({
       routes: {
         'dashboard': 'showDashboard',
-        'store': 'showStore'
+        'stores': 'showStoreList',
+        'stores/new': 'showStoreEdit',
+        'stores/:id/edit': 'showStoreEdit',
+        '*action': 'showDashboard'
       }
     });
-
-    var renderBasicView = function(env) {
-      var pageHeaderModel = new Backbone.Model();
-      pageHeaderModel.set(env);
-      var pageHeaderView = new PageHeaderView({
-        model: pageHeaderModel
-      });
-      pageHeaderView.render();
-    };
 
     var initialize = function() {
       //var vent = _.extend({}, Backbone.Events);
@@ -36,37 +32,55 @@ define(['jquery',
 
       console.log("MainRouter / initialize");
 
+      // this is a workaround, enable view to call router
+      // in order to prevent circular dependency in requrejs
+      Backbone.View.prototype.goTo = function(fragment) {
+        router.navigate(fragment, {
+          trigger: true
+        });
+      };
+
+      var pageHeaderView = new PageHeaderView();
+      var dashboardView = new DashboardView();
+      var storeListView = new StoreListView();
+      var storeEditView = new StoreEditView();
+
       router.on('route:showDashboard', function() {
         var env = {
           'title': '后台面板',
           'titlesmall': '快速入口'
         };
-        renderBasicView(env);
 
-        var dashboardView = new DashboardView();
-        console.log('Trying to render dashboard view');
+        pageHeaderView.render(env);
         dashboardView.render();
 
       });
 
-      router.on('route:showStore', function() {
+      router.on('route:showStoreList', function() {
         var env = {
           'title': '查看店铺',
           'titlesmall': '店铺列表'
         };
-        renderBasicView(env);
 
-        var storeView = new StoreView();
-        console.log('Try to render store view');
-        storeView.render();
+        pageHeaderView.render(env);
+        storeListView.render();
+
+      });
+
+      router.on('route:showStoreEdit', function(id) {
+        var env = {
+          'title': '编辑店铺',
+          'titlesmall': '店铺信息'
+        };
+
+        pageHeaderView.render(env);
+        storeEditView.render({
+          id: id
+        });
 
       });
 
       Backbone.history.start();
-
-      router.navigate('dashboard', {
-        trigger: true
-      });
 
     };
 

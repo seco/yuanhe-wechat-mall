@@ -1,0 +1,5 @@
+.backgrid th.renderable,
+.backgrid td.renderable {
+  display: table-cell;
+  border: 1px solid #ddd;
+}

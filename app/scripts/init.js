@@ -2,7 +2,6 @@ require.config({
 
   baseUrl: "/scripts",
 
-  wrapShim: true,
   shim: {
     underscore: {
       exports: '_'
@@ -23,7 +22,8 @@ require.config({
       exports: 'Backgrid'
     },
     backgridpaginator: ['backgrid'],
-    backgridtextcell: ['backgrid']
+    backgridtextcell: ['backgrid'],
+    backgridselectall: ['backgrid']
   },
 
   paths: {
@@ -32,11 +32,13 @@ require.config({
     jqueryslimscroll: '../bower_components/jquery-slimscroll/jquery.slimscroll.min',
     jquerycusttreemenu: 'vendor/jquery_cust_treemenu',
     jqueryicheck: '../bower_components/jquery-icheck/icheck.min',
-    backbone: '../bower_components/backbone/backbone-min',
+    backbone: '../bower_components/backbone/backbone',
     'backbone.paginator': '../bower_components/backbone.paginator/lib/backbone.paginator.min',
     backgrid: '../bower_components/backgrid/lib/backgrid.min',
+    /* bower has issue that it downloads a stale version, therfore we download manually  */
     backgridpaginator: 'vendor/backgrid-paginator.min',
     backgridtextcell: '../bower_components/backgrid-text-cell/backgrid-text-cell.min',
+    backgridselectall: '../bower_components/backgrid-select-all/backgrid-select-all.min',
     underscore: '../bower_components/underscore/underscore-min',
 
     /* alias the bootstrap js lib */

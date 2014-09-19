@@ -8,8 +8,8 @@ define(['jquery',
     var PageHeaderView = Backbone.View.extend({
       el: '.content-header',
 
-      render: function() {
-        $(this.el).html(pageheaderTmpl(this.model.toJSON()));
+      render: function(env) {
+        $(this.el).html(pageheaderTmpl(env));
       }
     });
 
