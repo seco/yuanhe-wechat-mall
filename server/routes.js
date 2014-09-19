@@ -6,12 +6,16 @@
 var routes = require('./handlers');
 var oauth = require('./handlers/oauth');
 var store = require('./handlers/store');
+var sign = require('./handlers/sign');
 
 module.exports = function(app) {
 
   // Define the routes
   app.get('/', routes.index);
   app.get('/oauth_response.php', oauth.response);
+
+  app.get('/login', sign.login);
+  app.get('/register', sign.register);
 
   /*
    *GET     /forums              ->  index
