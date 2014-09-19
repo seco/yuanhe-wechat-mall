@@ -12,6 +12,7 @@ module.exports = function(app) {
 
   // Define the routes
   app.get('/', routes.index);
+
   app.get('/oauth_response.php', oauth.response);
 
   app.get('/login', sign.login);
