@@ -16,52 +16,26 @@ var exp = module.exports;
  * Generate QRCode with given scene id
  *
  * @param {Number|String} scene_id
- * @param {Function} cb
- *
- * @public
- */
-exp.genQRCodeWithSceneId = function(scene_id, cb) {
-  if (isNaN(scene_id) || scene_id < 1 || scene_id > 100000) {
-    utils.invokeCallback(cb, new Error('invalid scene id'));
-    return;
-  }
-
-  createTicket(scene_id, function(err, ticket) {
-    if (err) {
-      utils.invokeCallback(cb, err);
-      return;
-    }
-
-    getQRCodeWithTicket(ticket, function(err, data) {
-      if (err) {
-        utils.invokeCallback(cb, err);
-        return;
-      }
-      utils.invokeCallback(cb, null, data);
-    });
-  });
-};
-
-/**
- * Generate QRCode with given scene id
- *
- * @param {Number|String} scene_id
  * @param {Object} resp
+ * @param {Function} err_handler
  *
  * @public
  */
-exp.genQRCodeWithSceneId = function(scene_id, resp) {
+exp.genQRCodeWithSceneId = function(scene_id, resp, err_handler) {
   if (isNaN(scene_id) || scene_id < 1 || scene_id > 100000) {
-    utils.invokeCallback(cb, new Error('invalid scene id'));
+    utils.invokeCallback(err_handler, new Error('invalid scene id'));
     return;
   }
 
   createTicket(scene_id, function(err, ticket) {
     if (err) {
-      utils.invokeCallback(cb, err);
+      utils.invokeCallback(err_handler, err);
       return;
     }
-    getQRCodeWithTicket(ticket, resp);
+
+    getQRCodeWithTicket(ticket, resp, function(err) {
+      utils.invokeCallback(err_handler, err);
+    });
   });
 };
 
@@ -122,35 +96,17 @@ var createTicket = function(scene_id, cb) {
  * Get QRCode with ticket
  *
  * @param {String} ticket
+ * @param {Object} resp
  * @param {Function} cb
  *
  * @private
  */
-var getQRCodeWithTicket = function(ticket, cb) {
-  request({
-    url: composeGetQRCodeUrl(ticket),
-    method: 'GET'
-  }, function(err, resp, body) {
-    if (err) {
-      utils.invokeCallback(err);
-      return;
-    }
-    utils.invokeCallback(cb, null, body);
-  });
-};
-
-/**
- * Get QRCode with ticket
- *
- * @param {String} ticket
- * @param {Object} resp
- *
- * @private
- */
-var getQRCodeWithTicket = function(ticket, resp) {
+var getQRCodeWithTicket = function(ticket, resp, cb) {
   try {
     request.get(composeGetQRCodeUrl(ticket)).pipe(resp);
-  } catch(e) {}
+  } catch(e) {
+    utils.invokeCallback(cb, e);
+  }
 };
 
 /**
