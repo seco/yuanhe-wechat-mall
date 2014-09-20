@@ -1,4 +1,4 @@
-/*
+/**
  * shut down the strict mode to access full
  * function of meta programming
  */
@@ -68,7 +68,7 @@ http.createServer(app).listen(port, function() {
   console.log('app has started, listening on port ' + port);
 });
 
-/*
+/**
  * use bae's mongodb code sample
  *
  * @see http://developer.baidu.com/wiki/index.php?title=docs/cplat/bae/mongodb

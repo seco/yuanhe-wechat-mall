@@ -1,6 +1,7 @@
 /**
- * qrcodeUtil
+ * weixin qrcode util
  *
+ * @author Minix Li
  * @see http://mp.weixin.qq.com/wiki/index.php?title=生成带参数的二维码
  */
 
@@ -8,21 +9,46 @@ var request = require('request');
 var app = require('../app');
 var utils = require('./utils');
 
-var qrcodeUtil = modules.exports = {};
+var exp = modules.exports;
 
 /**
  * Generate QRCode with given scene id
  *
- * @param {Number} scene_id
+ * @param {Number|String} scene_id
+ * @param {Function} cb
  *
  * @public
  */
-qrcodeUtil.genQRCodeWithSceneId = function(scene_id) {
-  createTicket(scene_id, function(err, resp, body) {
-    body = JSON.parse(body);
+exp.genQRCodeWithSceneId = function(scene_id, cb) {
+  if (isNaN(scene_id) || scene_id < 1 || scene_id > 100000) {
+    utils.invokeCallback(cb, new Error('invalid scene id'));
+    return;
+  }
 
-    getQRCodeWithTicket(body.ticket, function(err, resp, body) {
-      utils.invokeCallback(cb, err, resp, body);
+  createTicket(scene_id, function(err, data) {
+    if (err) {
+      utils.invokeCallback(cb, err);
+      return;
+    }
+
+    try {
+      data = JSON.parse(data);
+    } catch(e) {
+      utils.invokeCallback(cb, err);
+      return;
+    }
+
+    if (data.errcode) {
+      utils.invokeCallback(cb, new Error(data.errmsg));
+      return;
+    }
+
+    getQRCodeWithTicket(data.ticket, function(err, data) {
+      if (err) {
+        utils.invokeCallback(cb, err);
+        return;
+      }
+      utils.invokeCallback(cb, null, data);
     });
   });
 };
@@ -34,28 +60,34 @@ qrcodeUtil.genQRCodeWithSceneId = function(scene_id) {
  *
  * @public
  */
-qrcodeUtil.genQRCodeWithUrl = function(url) {
+exp.genQRCodeWithUrl = function(url) {
 
 };
 
 /**
  * Create ticket for exchanging QRCode
  *
- * @param {Number} scene_id
+ * @param {Number|String} scene_id
  * @param {Function} cb
  *
  * @private
  */
 var createTicket = function(scene_id, cb) {
   var access_token = app.get('access_token');
-  var body = {"action_name": "QR_LIMIT_SCENE", "action_info": {"scene": {"scene_id": scene_id}}};
 
   request({
     url: composeCreateTicketUrl(access_token),
     method: 'POST',
-    body: JSON.stringify(body)
+    body: JSON.stringify({
+      "action_name": "QR_LIMIT_SCENE",
+      "action_info": { "scene": { "scene_id": scene_id } }
+    })
   }, function(err, resp, body) {
-    utils.invokeCallback(cb, err, resp, body);
+    if (err) {
+      utils.invokeCallback(cb, err);
+      return;
+    }
+    utils.invokeCallback(cb, body);
   });
 };
 
@@ -72,7 +104,7 @@ var getQRCodeWithTicket = function(ticket, cb) {
     url: composeGetQRCodeUrl(ticket),
     method: 'GET'
   }, function(err, resp, body) {
-    utils.invokeCallback(cb, err, resp, body);
+    utils.invokeCallback(cb, body);
   });
 };
 
@@ -90,7 +122,7 @@ var composeCreateTicketUrl = function(access_token) {
 };
 
 /**
- * Compose request url to get QRCode
+ * Compose request url to get QRCode with ticket
  *
  * @param {String} ticket
  *

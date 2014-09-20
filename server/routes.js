@@ -5,6 +5,7 @@
 // Load the route handlers
 var routes = require('./handlers');
 var oauth = require('./handlers/oauth');
+var qrcode = require('./handlers/qrcode');
 var store = require('./handlers/store');
 var sign = require('./handlers/sign');
 
@@ -14,6 +15,7 @@ module.exports = function(app) {
   app.get('/', routes.index);
 
   app.get('/oauth_response.php', oauth.response);
+  app.get('/showqrcode/:scene_id', qrcode.show);
 
   app.get('/login', sign.login);
   app.get('/register', sign.register);
