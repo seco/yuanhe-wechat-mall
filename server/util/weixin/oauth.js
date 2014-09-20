@@ -6,8 +6,8 @@
  */
 
 var request = require('request');
-var app = require('../app');
-var utils = require('./utils');
+var app = require('../../app');
+var utils = require('../utils');
 
 var exp = module.exports;
 
@@ -31,14 +31,12 @@ exp.getUserInfo = function(req, cb) {
       utils.invokeCallback(cb, err);
       return;
     }
-
     try {
       data = JSON.parse(data);
     } catch(e) {
       utils.invokeCallback(cb, err);
       return;
     }
-
     if (data.errcode) {
       utils.invokeCallback(cb, new Error(data.errmsg));
       return;
@@ -52,19 +50,16 @@ exp.getUserInfo = function(req, cb) {
         utils.invokeCallback(cb, err);
         return;
       }
-
       try {
         data = JSON.parse(data);
       } catch(e) {
         utils.invokeCallback(cb, err);
         return;
       }
-
       if (data.errcode) {
         utils.invokeCallback(cb, new Error(data.errmsg));
         return;
       }
-
       utils.invokeCallback(cb, null, data);
     });
   });

@@ -6,10 +6,11 @@
  */
 
 var request = require('request');
-var app = require('../app');
-var utils = require('./utils');
+var app = require('../../app');
+var commonUtil = require('./common');
+var utils = require('../utils');
 
-var exp = modules.exports;
+var exp = module.exports;
 
 /**
  * Generate QRCode with given scene id
@@ -25,25 +26,13 @@ exp.genQRCodeWithSceneId = function(scene_id, cb) {
     return;
   }
 
-  createTicket(scene_id, function(err, data) {
+  createTicket(scene_id, function(err, ticket) {
     if (err) {
       utils.invokeCallback(cb, err);
       return;
     }
 
-    try {
-      data = JSON.parse(data);
-    } catch(e) {
-      utils.invokeCallback(cb, err);
-      return;
-    }
-
-    if (data.errcode) {
-      utils.invokeCallback(cb, new Error(data.errmsg));
-      return;
-    }
-
-    getQRCodeWithTicket(data.ticket, function(err, data) {
+    getQRCodeWithTicket(ticket, function(err, data) {
       if (err) {
         utils.invokeCallback(cb, err);
         return;
@@ -73,21 +62,36 @@ exp.genQRCodeWithUrl = function(url) {
  * @private
  */
 var createTicket = function(scene_id, cb) {
-  var access_token = app.get('access_token');
-
-  request({
-    url: composeCreateTicketUrl(access_token),
-    method: 'POST',
-    body: JSON.stringify({
-      "action_name": "QR_LIMIT_SCENE",
-      "action_info": { "scene": { "scene_id": scene_id } }
-    })
-  }, function(err, resp, body) {
+  commonUtil.getAccessToken(function(err, access_token) {
     if (err) {
       utils.invokeCallback(cb, err);
       return;
     }
-    utils.invokeCallback(cb, body);
+
+    request({
+      url: composeCreateTicketUrl(access_token),
+      method: 'POST',
+      body: JSON.stringify({
+        "action_name": "QR_LIMIT_SCENE",
+        "action_info": { "scene": { "scene_id": scene_id } }
+      })
+    }, function(err, resp, body) {
+      if (err) {
+        utils.invokeCallback(cb, err);
+        return;
+      }
+      try {
+        data = JSON.parse(body);
+      } catch(e) {
+        utils.invokeCallback(cb, err);
+        return;
+      }
+      if (data.errcode) {
+        utils.invokeCallback(cb, new Error(data.errmsg));
+        return;
+      }
+      utils.invokeCallback(cb, null, data.ticket);
+    });
   });
 };
 
@@ -104,7 +108,11 @@ var getQRCodeWithTicket = function(ticket, cb) {
     url: composeGetQRCodeUrl(ticket),
     method: 'GET'
   }, function(err, resp, body) {
-    utils.invokeCallback(cb, body);
+    if (err) {
+      utils.invokeCallback(err);
+      return;
+    }
+    utils.invokeCallback(cb, null, body);
   });
 };
 
@@ -131,5 +139,5 @@ var composeCreateTicketUrl = function(access_token) {
  * @return {String}
  */
 var composeGetQRCodeUrl = function(ticket) {
-  return 'https://mp.weixin.qq.com/cgi-bin/showqrcode?ticket=' + ticket;
+  return 'https://mp.weixin.qq.com/cgi-bin/showqrcode?ticket=' + encodeURIComponent(ticket);
 };
