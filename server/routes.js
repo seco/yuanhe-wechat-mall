@@ -14,8 +14,12 @@ module.exports = function(app) {
   // Define the routes
   app.get('/', routes.index);
 
+  // OAuth
   app.get('/oauth_response.php', oauth.response);
-  app.get('/showqrcode/:scene_id', qrcode.show);
+
+  // QRCode
+  app.get('/showqrcode/scene_id/:scene_id', qrcode.showWithSceneId);
+  app.get('/showqrcode/url/:url', qrcode.showWithUrl);
 
   app.get('/login', sign.login);
   app.get('/register', sign.register);

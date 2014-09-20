@@ -13,10 +13,18 @@ var utils = require('../util/utils');
  * @param {Object} req
  * @param {Object} res
  */
-exports.show = function(req, res) {
+exports.showWithSceneId = function(req, res) {
   var scene_id = req.params.scene_id;
 
   qrcodeUtil.genQRCodeWithSceneId(scene_id, res, function(err) {
+    console.log(err);
+  });
+};
+
+exports.showWithUrl = function(req, res) {
+  var url = req.params.url;
+
+  qrcodeUtil.genQRCodeWithUrl(url, res, function(err) {
     console.log(err);
   });
 };

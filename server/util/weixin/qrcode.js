@@ -43,11 +43,17 @@ exp.genQRCodeWithSceneId = function(scene_id, resp, err_handler) {
  * Generate QRCode with given url
  *
  * @param {String} url
+ * @param {Object} resp
+ * @param {Function} err_handler
  *
  * @public
  */
-exp.genQRCodeWithUrl = function(url) {
-
+exp.genQRCodeWithUrl = function(url, resp, err_handler) {
+  try {
+    request.get(composeGetQRWithUrlUrl(url)).pipe(resp);
+  } catch(e) {
+    utils.invokeCallback(err_handler, e);
+  }
 };
 
 /**
@@ -103,7 +109,7 @@ var createTicket = function(scene_id, cb) {
  */
 var getQRCodeWithTicket = function(ticket, resp, cb) {
   try {
-    request.get(composeGetQRCodeUrl(ticket)).pipe(resp);
+    request.get(composeGetQRWithTicketUrl(ticket)).pipe(resp);
   } catch(e) {
     utils.invokeCallback(cb, e);
   }
@@ -131,6 +137,19 @@ var composeCreateTicketUrl = function(access_token) {
  *
  * @return {String}
  */
-var composeGetQRCodeUrl = function(ticket) {
+var composeGetQRWithTicketUrl = function(ticket) {
   return 'https://mp.weixin.qq.com/cgi-bin/showqrcode?ticket=' + encodeURIComponent(ticket);
 };
+
+/**
+ * Compose request url to get QRCode with url
+ *
+ * @param {String} url
+ *
+ * @private
+ *
+ * @return {String}
+ */
+var composeGetQRWithUrlUrl = function(url) {
+  return 'http://chart.apis.google.com/chart?cht=qr&chs=500x500&choe=UTF-8&chld=H&chl=' + url
+}
