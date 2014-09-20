@@ -1,5 +1,7 @@
 /**
  * oauth handlers
+ *
+ * @author Minix Li
  */
 
 var oauthUtil = require('../util/weixin/oauth');

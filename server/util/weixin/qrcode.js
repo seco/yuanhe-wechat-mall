@@ -43,6 +43,29 @@ exp.genQRCodeWithSceneId = function(scene_id, cb) {
 };
 
 /**
+ * Generate QRCode with given scene id
+ *
+ * @param {Number|String} scene_id
+ * @param {Object} resp
+ *
+ * @public
+ */
+exp.genQRCodeWithSceneId = function(scene_id, resp) {
+  if (isNaN(scene_id) || scene_id < 1 || scene_id > 100000) {
+    utils.invokeCallback(cb, new Error('invalid scene id'));
+    return;
+  }
+
+  createTicket(scene_id, function(err, ticket) {
+    if (err) {
+      utils.invokeCallback(cb, err);
+      return;
+    }
+    getQRCodeWithTicket(ticket, resp);
+  });
+};
+
+/**
  * Generate QRCode with given url
  *
  * @param {String} url
@@ -114,6 +137,20 @@ var getQRCodeWithTicket = function(ticket, cb) {
     }
     utils.invokeCallback(cb, null, body);
   });
+};
+
+/**
+ * Get QRCode with ticket
+ *
+ * @param {String} ticket
+ * @param {Object} resp
+ *
+ * @private
+ */
+var getQRCodeWithTicket = function(ticket, resp) {
+  try {
+    request.get(composeGetQRCodeUrl(ticket)).pipe(resp);
+  } catch(e) {}
 };
 
 /**
