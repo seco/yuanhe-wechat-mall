@@ -26,41 +26,17 @@ exp.getUserInfo = function(req, cb) {
   }
   var code = req.query.code;
 
-  getAccessToken(code, function(err, data) {
+  getAccessToken(code, function(err, access_token, openid) {
     if (err) {
       utils.invokeCallback(cb, err);
       return;
     }
-    try {
-      data = JSON.parse(data);
-    } catch(e) {
-      utils.invokeCallback(cb, err);
-      return;
-    }
-    if (data.errcode) {
-      utils.invokeCallback(cb, new Error(data.errmsg));
-      return;
-    }
-
-    var access_token = data.access_token;
-    var openid = data.openid;
-
-    pullUserInfo(access_token, openid, function(err, data) {
+    pullUserInfo(access_token, openid, function(err, userInfo) {
       if (err) {
         utils.invokeCallback(cb, err);
         return;
       }
-      try {
-        data = JSON.parse(data);
-      } catch(e) {
-        utils.invokeCallback(cb, err);
-        return;
-      }
-      if (data.errcode) {
-        utils.invokeCallback(cb, new Error(data.errmsg));
-        return;
-      }
-      utils.invokeCallback(cb, null, data);
+      utils.invokeCallback(cb, null, userInfo);
     });
   });
 };
@@ -87,7 +63,17 @@ var getAccessToken = function(code, cb) {
       utils.invokeCallback(cb, err);
       return;
     }
-    utils.invokeCallback(cb, body);
+    try {
+      data = JSON.parse(body);
+    } catch(e) {
+      utils.invokeCallback(cb, err);
+      return;
+    }
+    if (data.errcode) {
+      utils.invokeCallback(cb, new Error(data.errmsg));
+      return;
+    }
+    utils.invokeCallback(cb, data.access_token, data.openid);
   });
 };
 
@@ -109,7 +95,17 @@ var pullUserInfo = function(access_token, openid, cb) {
       utils.invokeCallback(cb, err);
       return;
     }
-    utils.invokeCallback(cb, body);
+    try {
+      data = JSON.parse(body);
+    } catch(e) {
+      utils.invokeCallback(cb, err);
+      return;
+    }
+    if (data.errcode) {
+      utils.invokeCallback(cb, new Error(data.errmsg));
+      return;
+    }
+    utils.invokeCallback(cb, null, data);
   });
 };
 
