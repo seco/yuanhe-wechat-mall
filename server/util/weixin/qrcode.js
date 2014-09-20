@@ -151,5 +151,5 @@ var composeGetQRWithTicketUrl = function(ticket) {
  * @return {String}
  */
 var composeGetQRWithUrlUrl = function(url) {
-  return 'http://chart.apis.google.com/chart?cht=qr&chs=500x500&choe=UTF-8&chld=H&chl=' + url
+  return 'http://www.inspawn.com/showqrcode/url/' + encodeURIComponent(url);
 }
