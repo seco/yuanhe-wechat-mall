@@ -1,5 +1,5 @@
 /**
- * qrcode handlers
+ * weixin QR Code handler
  *
  * @author Minix Li
  */
@@ -8,7 +8,7 @@ var qrcodeUtil = require('../util/weixin/qrcode');
 var utils = require('../util/utils');
 
 /**
- * show handler
+ * Show QR Code with scene id
  *
  * @param {Object} req
  * @param {Object} res
@@ -21,6 +21,12 @@ exports.showWithSceneId = function(req, res) {
   });
 };
 
+/**
+ * Show QR Code with url
+ *
+ * @param {Object} req
+ * @param {Object} res
+ */
 exports.showWithUrl = function(req, res) {
   var url = req.params.url;
 

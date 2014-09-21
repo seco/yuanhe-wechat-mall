@@ -1,5 +1,5 @@
 /**
- * oauth handlers
+ * weixin oauth handler
  *
  * @author Minix Li
  */
@@ -8,7 +8,7 @@ var oauthUtil = require('../util/weixin/oauth');
 var utils = require('../util/utils');
 
 /**
- * response handler
+ * OAuth response handler
  *
  * @param {Object} req
  * @param {Object} res
