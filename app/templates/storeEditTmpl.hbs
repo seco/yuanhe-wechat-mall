@@ -11,27 +11,33 @@
           <!-- text input -->
           <div class="form-group">
             <label>店铺名称</label>
-            <input type="text" class="form-control" placeholder="请输入" />
+            <input type="text" class="form-control" placeholder="请输入" value="{{storeName}}" />
           </div>
           <!-- select -->
           <div class="form-group">
             <label>店铺性质</label>
             <select class="form-control">
-              <option>实体店</option>
-              <option>虚拟店</option>
+              {{#select storeType}}
+              <option value="PhysicalStore">实体店</option>
+              <option value="VirtualStore">虚拟店</option>
+              {{/select}}
             </select>
           </div>
           <div class="form-group">
             <label>地址</label>
-            <input type="text" class="form-control" placeholder="请输入" />
+            <input type="text" class="form-control" placeholder="请输入" value="{{storeAddress}}" />
           </div>
           <div class="form-group">
             <label>电话</label>
-            <input type="text" class="form-control" placeholder="请输入" />
+            <input type="text" class="form-control" placeholder="请输入" value="{{telNum}}" />
           </div>
           <div class="form-group">
             <label>联系人姓名</label>
-            <input type="text" class="form-control" placeholder="请输入" />
+            <input type="text" class="form-control" placeholder="请输入" value="{{contactName}}" />
+          </div>
+          <div class="box-footer clearfix no-border">
+            <button class="btn btn-default btn-sm cancel pull-right">取消</button>
+            <button class="btn btn-primary btn-sm confirm pull-right">确定</button>
           </div>
 
         </form>
