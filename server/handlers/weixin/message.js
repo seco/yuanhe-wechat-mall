@@ -4,7 +4,7 @@
  * @author Minix Li
  */
 
-var utils = require('../util/utils');
+var utils = require('../../util/utils');
 
 /**
  * Message receive handler
@@ -13,5 +13,5 @@ var utils = require('../util/utils');
  * @param {Object} res
  */
 exports.receive = function(req, res) {
-
+  console.log(req.body);
 };

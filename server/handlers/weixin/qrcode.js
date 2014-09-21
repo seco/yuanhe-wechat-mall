@@ -4,8 +4,8 @@
  * @author Minix Li
  */
 
-var qrcodeUtil = require('../util/weixin/qrcode');
-var utils = require('../util/utils');
+var qrcodeUtil = require('../../util/weixin/qrcode');
+var utils = require('../../util/utils');
 
 /**
  * Show QR Code with scene id

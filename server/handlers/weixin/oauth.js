@@ -4,8 +4,8 @@
  * @author Minix Li
  */
 
-var oauthUtil = require('../util/weixin/oauth');
-var utils = require('../util/utils');
+var oauthUtil = require('../../util/weixin/oauth');
+var utils = require('../../util/utils');
 
 /**
  * OAuth response handler
