@@ -4,22 +4,28 @@
 
 // Load the route handlers
 var routes = require('./handlers');
-var oauth = require('./handlers/oauth');
-var qrcode = require('./handlers/qrcode');
+
+var message = require('./handlers/weixin/message');
+var oauth = require('./handlers/weixin/oauth');
+var qrcode = require('./handlers/weixin/qrcode');
+
 var store = require('./handlers/store');
 var sign = require('./handlers/sign');
 
 module.exports = function(app) {
 
-  // Define the routes
+  // manager
   app.get('/', routes.index);
 
-  // OAuth
+  // weixin message
+  app.post('/', message.receive);
+
+  // weixin OAuth
   app.get('/oauth_response.php', oauth.response);
 
-  // QR code
-  app.get('/showqrcode/scene_id/:scene_id', qrcode.showWithSceneId);
-  app.get('/showqrcode/url/:url', qrcode.showWithUrl);
+  // weixin QR code
+  app.get('/qrcode/scene_id/:scene_id', qrcode.showWithSceneId);
+  app.get('/qrcode/url/:url', qrcode.showWithUrl);
 
   app.get('/login', sign.login);
   app.get('/register', sign.register);
