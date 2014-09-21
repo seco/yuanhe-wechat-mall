@@ -72,7 +72,7 @@ var checkTokenExpired = function() {
     return false;
   }
   return true;
-}
+};
 
 /**
  * Compose request url to get access token

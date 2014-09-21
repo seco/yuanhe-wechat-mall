@@ -73,7 +73,7 @@ var getAccessToken = function(code, cb) {
       utils.invokeCallback(cb, new Error(data.errmsg));
       return;
     }
-    utils.invokeCallback(cb, data.access_token, data.openid);
+    utils.invokeCallback(cb, null, data.access_token, data.openid);
   });
 };
 

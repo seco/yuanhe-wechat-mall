@@ -152,4 +152,4 @@ var composeGetQRWithTicketUrl = function(ticket) {
  */
 var composeGetQRWithUrlUrl = function(url) {
   return 'http://www.inspawn.com/showqrcode/url/' + encodeURIComponent(url);
-}
+};
