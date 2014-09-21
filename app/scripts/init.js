@@ -54,7 +54,10 @@ require.config({
     helpers: true, // default: true
     i18n: false, // default: false
     templateExtension: 'hbs', // default: 'hbs'
-    partialsUrl: '' // default: ''
+    partialsUrl: '', // default: ''
+    helperPathCallback: function(name) {
+      return '../templates/helpers/' + name;
+    }
   }
 
 });

@@ -1,3 +1,8 @@
+/**
+ * store action handler
+ *
+ * @author Bobby Tang
+ */
 exports.index = function(req, res, next) {
   var mock = {
     total_count: 1,
@@ -16,7 +21,11 @@ exports.index = function(req, res, next) {
   res.json(mock);
 };
 exports.show = function(req, res, next) {
-  res.json({id: 10});
+  res.json({
+    id: 10,
+    storeName: 'this is a storeName',
+    storeType: 'VirtualStore'
+  });
 };
 exports.edit = function(req, res, next) {
 
