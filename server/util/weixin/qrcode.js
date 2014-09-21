@@ -13,7 +13,7 @@ var utils = require('../utils');
 var exp = module.exports;
 
 /**
- * Generate QRCode with given scene id
+ * Generate QR Code with given scene id
  *
  * @param {Number|String} scene_id
  * @param {Object} resp
@@ -40,7 +40,7 @@ exp.genQRCodeWithSceneId = function(scene_id, resp, err_handler) {
 };
 
 /**
- * Generate QRCode with given url
+ * Generate QR Code with given url
  *
  * @param {String} url
  * @param {Object} resp
@@ -57,7 +57,7 @@ exp.genQRCodeWithUrl = function(url, resp, err_handler) {
 };
 
 /**
- * Create ticket for exchanging QRCode
+ * Create ticket for exchanging QR Code
  *
  * @param {Number|String} scene_id
  * @param {Function} cb
@@ -99,7 +99,7 @@ var createTicket = function(scene_id, cb) {
 };
 
 /**
- * Get QRCode with ticket
+ * Get QR Code with ticket
  *
  * @param {String} ticket
  * @param {Object} resp
@@ -116,7 +116,7 @@ var getQRCodeWithTicket = function(ticket, resp, cb) {
 };
 
 /**
- * Compose request url to create ticket for exchanging QRCode
+ * Compose request url to create ticket for exchanging QR Code
  *
  * @param {String} access_token
  *
@@ -129,7 +129,7 @@ var composeCreateTicketUrl = function(access_token) {
 };
 
 /**
- * Compose request url to get QRCode with ticket
+ * Compose request url to get QR Code with ticket
  *
  * @param {String} ticket
  *
@@ -142,7 +142,7 @@ var composeGetQRWithTicketUrl = function(ticket) {
 };
 
 /**
- * Compose request url to get QRCode with url
+ * Compose request url to get QR Code with url
  *
  * @param {String} url
  *

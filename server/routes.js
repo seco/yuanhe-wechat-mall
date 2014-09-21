@@ -17,7 +17,7 @@ module.exports = function(app) {
   // OAuth
   app.get('/oauth_response.php', oauth.response);
 
-  // QRCode
+  // QR code
   app.get('/showqrcode/scene_id/:scene_id', qrcode.showWithSceneId);
   app.get('/showqrcode/url/:url', qrcode.showWithUrl);
 
