@@ -18,7 +18,8 @@ module.exports = function(app) {
   app.get('/', routes.index);
 
   // weixin message
-  app.post('/', message.receive);
+  app.get('/weixin/message/receive', message.access);
+  app.post('/weixin/message/receive', message.receive);
 
   // weixin OAuth
   app.get('/oauth_response.php', oauth.response);
