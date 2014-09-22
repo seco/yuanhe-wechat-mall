@@ -1,14 +1,14 @@
 /**
- * oauth handlers
+ * weixin OAuth handler
  *
  * @author Minix Li
  */
 
-var oauthUtil = require('../util/weixin/oauth');
-var utils = require('../util/utils');
+var oauth = require('../../lib/weixin/oauth');
+var utils = require('../../lib/util/utils');
 
 /**
- * response handler
+ * OAuth response handler
  *
  * @param {Object} req
  * @param {Object} res
@@ -16,7 +16,7 @@ var utils = require('../util/utils');
 exports.response = function(req, res) {
   var code = req.query.code;
 
-  oauthUtil.getUserInfo(req, function(err, userInfo) {
+  oauth.getUserInfo(req, function(err, userInfo) {
     console.log(userInfo);
   });
 };

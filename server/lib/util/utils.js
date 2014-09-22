@@ -1,5 +1,7 @@
 /**
  * utils
+ *
+ * @author Minix Li
  */
 
 var utils = module.exports;
