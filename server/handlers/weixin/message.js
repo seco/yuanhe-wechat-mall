@@ -4,8 +4,10 @@
  * @author Minix Li
  */
 
-var gateway = require('../../lib/weixin/message/gateway');
+var Gateway = require('../../lib/weixin/message/gateway');
 var utils = require('../../lib/util/utils');
+
+var gateway = Gateway.create();
 
 /**
  * Access weixin interface
@@ -24,5 +26,7 @@ exports.access = function(req, res) {
  * @param {Object} res
  */
 exports.receive = function(req, res) {
+  gateway.dispatch(req, res, function(err) {
 
+  });
 };
