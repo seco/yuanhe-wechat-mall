@@ -7,8 +7,8 @@
 
 var request = require('request');
 var app = require('../../app');
-var commonUtil = require('./common');
-var utils = require('../utils');
+var common = require('./common');
+var utils = require('../util/utils');
 
 var exp = module.exports;
 
@@ -65,7 +65,7 @@ exp.genQRCodeWithUrl = function(url, resp, err_handler) {
  * @private
  */
 var createTicket = function(scene_id, cb) {
-  commonUtil.getAccessToken(function(err, access_token) {
+  common.getAccessToken(function(err, access_token) {
     if (err) {
       utils.invokeCallback(cb, err);
       return;

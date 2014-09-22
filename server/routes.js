@@ -7,7 +7,8 @@ var routes = require('./handlers');
 
 var message = require('./handlers/weixin/message');
 var oauth = require('./handlers/weixin/oauth');
-var qrcode = require('./handlers/weixin/qrcode');
+
+var qrcode = require('./handlers/qrcode');
 
 var store = require('./handlers/store');
 var sign = require('./handlers/sign');
@@ -24,7 +25,7 @@ module.exports = function(app) {
   // weixin OAuth
   app.get('/oauth_response.php', oauth.response);
 
-  // weixin QR code
+  // QR code
   app.get('/qrcode/scene_id/:scene_id', qrcode.showWithSceneId);
   app.get('/qrcode/url/:url', qrcode.showWithUrl);
 

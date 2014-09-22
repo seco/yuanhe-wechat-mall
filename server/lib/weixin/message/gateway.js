@@ -5,7 +5,7 @@
  */
 
 var xml2js = require('xml2js');
-var utils = require('../../utils');
+var utils = require('../../util/utils');
 
 var exp = module.exports;
 

@@ -4,8 +4,8 @@
  * @author Minix Li
  */
 
-var gateway = require('../../util/weixin/message/gateway');
-var utils = require('../../util/utils');
+var gateway = require('../../lib/weixin/message/gateway');
+var utils = require('../../lib/util/utils');
 
 /**
  * Access weixin interface

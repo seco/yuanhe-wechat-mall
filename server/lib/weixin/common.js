@@ -7,7 +7,7 @@
 
 var request = require('request');
 var app = require('../../app');
-var utils = require('../utils');
+var utils = require('../util/utils');
 
 var accessToken = '';
 
