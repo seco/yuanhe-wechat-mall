@@ -19,7 +19,7 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 
-// Create and export an express application
+// create and export an express application
 module.exports = app = express();
 
 // load config
@@ -31,24 +31,16 @@ for (var key in config) {
   eval("var " + key + " = '" + config[key] + "'");
 }
 
-// Set the view engine
+// set the view engine
 app.set('view engine', 'hbs');
-// Where to find the view files
+// where to find the view files
 app.set('views', __dirname + '/views');
 
 // uncomment after placing your favicon in /public
-//app.use(favicon(__dirname + '/public/favicon.ico'));
+// app.use(favicon(__dirname + '/public/favicon.ico'));
+
+// using dev logger as the very first middleware
 app.use(logger('dev'));
-// enable to parse http(like PUT method) body
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({
-  extended: false
-}));
-app.use(cookieParser());
-
-
-// Mark the app dir as a static dir
-app.use(express.static(path.join(__dirname, '../app')));
 
 // simple log
 app.use(function(req, res, next) {
@@ -56,7 +48,24 @@ app.use(function(req, res, next) {
   next();
 });
 
-// Pass the Express instance to the routes module
+// parse application/x-www-form-urlencoded
+app.use(bodyParser.urlencoded({
+  extended: false,
+  verify: function(req, res, buf, encoding) {
+    req.rawBody = buf.toString();
+  }
+}));
+
+// parse application/json
+app.use(bodyParser.json());
+
+// parse cookie header
+app.use(cookieParser());
+
+// mark the app dir as a static dir
+app.use(express.static(path.join(__dirname, '../app')));
+
+// pass the express instance to the routes module
 var routes = require('./routes')(app);
 
 // 404 error handler
@@ -75,6 +84,7 @@ app.use(function(error, req, res, next) {
   });
 });
 
+// start server
 http.createServer(app).listen(port, function() {
   console.log('app has started, listening on port ' + port);
 });
