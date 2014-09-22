@@ -4,6 +4,7 @@
  * @author Minix Li
  */
 
+var gateway = require('../../util/weixin/message/gateway');
 var utils = require('../../util/utils');
 
 /**
@@ -23,5 +24,5 @@ exports.access = function(req, res) {
  * @param {Object} res
  */
 exports.receive = function(req, res) {
-  console.log(req.body);
+
 };
