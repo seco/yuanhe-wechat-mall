@@ -36,6 +36,17 @@ app.set('view engine', 'hbs');
 // Where to find the view files
 app.set('views', __dirname + '/views');
 
+// uncomment after placing your favicon in /public
+//app.use(favicon(__dirname + '/public/favicon.ico'));
+app.use(logger('dev'));
+// enable to parse http(like PUT method) body
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({
+  extended: false
+}));
+app.use(cookieParser());
+
+
 // Mark the app dir as a static dir
 app.use(express.static(path.join(__dirname, '../app')));
 
@@ -87,7 +98,11 @@ mongoClient.connect(mongodburl, function(err, db) {
       db.close();
       return;
     };
-    db.collection('test_tb').insert([ {'tsc': 'bobby'} ], { w: 1 }, function(err, docs) {
+    db.collection('test_tb').insert([{
+      'tsc': 'bobby'
+    }], {
+      w: 1
+    }, function(err, docs) {
       if (err) {
         console.log(err);
         db.close();
