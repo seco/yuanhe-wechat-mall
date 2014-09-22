@@ -35,11 +35,11 @@ module.exports = function(app) {
    */
 
   // stores api
-  app.get('/stores', store.index); //Backbone.Collection.fetch()
+  app.get('/stores', store.index); // Backbone.Collection.fetch()
   app.get('/stores/:id', store.show); // Backbone.Model.fetch()
   app.get('/stores/:id/edit', store.edit); // looks useless
   app.get('/stores/new', store.new); // looks useless
   app.post('/stores', store.create);
-  app.put('/stores/:id', store.update);
+  app.put('/stores/:id', store.update); // Backbone.Model.save()
   app.delete('/stores/:id', store.destroy);
 };

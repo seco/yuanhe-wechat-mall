@@ -37,8 +37,11 @@ exports.create = function(req, res, next) {
 
 };
 exports.update = function(req, res, next) {
-
+  console.dir(req.body);
+  //res.send(req.body);
+  res.json(req.body);
 };
 exports.destroy = function(req, res, next) {
-
+  console.dir(req.params);
+  res.send('');
 };

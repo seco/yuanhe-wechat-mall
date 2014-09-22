@@ -5,7 +5,15 @@ define([
 ], function($, _, Backbone) {
 
   var StoreModel = Backbone.Model.extend({
-    urlRoot: '/stores'
+    urlRoot: '/stores',
+
+    defaults: {
+      storeName: '',
+      storeType: '',
+      storeAddress: '',
+      telNum: '',
+      contactName: ''
+    }
   });
 
   return StoreModel;

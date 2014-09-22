@@ -83,14 +83,21 @@ define(['jquery',
 
       edit: function() {
         var selModels = this.grid.getSelectedModels();
-        if(selModels && selModels.length === 1) {
+        if (selModels && selModels.length === 1) {
           this.goTo('stores/' + selModels[0].id + '/edit');
         }
       },
 
       delete: function() {
         _.each(this.grid.getSelectedModels(), function(model) {
-          model.destroy();
+          model.destroy({
+            success: function(model, res) {
+              console.log('suc');
+            },
+            error: function(model, res) {
+              console.log('fail');
+            }
+          });
         });
       }
 

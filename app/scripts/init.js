@@ -12,6 +12,7 @@ require.config({
     },
     'backbone.paginator': ['backbone'],
     jqueryui: ['jquery'],
+    jqueryext: ['jquery'],
     jqueryslimscroll: ['jquery'],
     jquerycusttreemenu: ['jquery'],
     jqueryicheck: ['jquery'],
@@ -28,6 +29,7 @@ require.config({
 
   paths: {
     jquery: '../bower_components/jquery/dist/jquery.min',
+    jqueryext: 'vendor/jquery_ext',
     jqueryui: '../bower_components/jquery-ui/ui/minified/jquery-ui.min',
     jqueryslimscroll: '../bower_components/jquery-slimscroll/jquery.slimscroll.min',
     jquerycusttreemenu: 'vendor/jquery_cust_treemenu',

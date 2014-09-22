@@ -3,20 +3,25 @@
     <!-- general form elements disabled -->
     <div class="box box-warning">
       <div class="box-header">
+        {{#if id}}
         <h3 class="box-title">店铺编辑界面</h3>
+        {{else}}
+        <h3 class="box-title">店铺新增界面</h3>
+        {{/if}}
       </div>
       <!-- /.box-header -->
       <div class="box-body">
         <form role="form">
+          <input type="hidden" name="id" value="{{id}}">
           <!-- text input -->
           <div class="form-group">
             <label>店铺名称</label>
-            <input type="text" class="form-control" placeholder="请输入" value="{{storeName}}" />
+            <input type="text" name="storeName" class="form-control" placeholder="请输入" value="{{storeName}}" />
           </div>
           <!-- select -->
           <div class="form-group">
             <label>店铺性质</label>
-            <select class="form-control">
+            <select name="storeType" class="form-control">
               {{#select storeType}}
               <option value="PhysicalStore">实体店</option>
               <option value="VirtualStore">虚拟店</option>
@@ -25,19 +30,19 @@
           </div>
           <div class="form-group">
             <label>地址</label>
-            <input type="text" class="form-control" placeholder="请输入" value="{{storeAddress}}" />
+            <input type="text" name="storeAddress" class="form-control" placeholder="请输入" value="{{storeAddress}}" />
           </div>
           <div class="form-group">
             <label>电话</label>
-            <input type="text" class="form-control" placeholder="请输入" value="{{telNum}}" />
+            <input type="text" name="telNum" class="form-control" placeholder="请输入" value="{{telNum}}" />
           </div>
           <div class="form-group">
             <label>联系人姓名</label>
-            <input type="text" class="form-control" placeholder="请输入" value="{{contactName}}" />
+            <input type="text" name="contactName" class="form-control" placeholder="请输入" value="{{contactName}}" />
           </div>
           <div class="box-footer clearfix no-border">
             <button class="btn btn-default btn-sm cancel pull-right">取消</button>
-            <button class="btn btn-primary btn-sm confirm pull-right">确定</button>
+            <button class="btn btn-primary btn-sm confirm pull-right" type="submit">确定</button>
           </div>
 
         </form>
