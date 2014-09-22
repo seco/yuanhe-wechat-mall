@@ -15,9 +15,13 @@ var socketIO = require('socket.io');
 
 // add from express@4.8.0 scaffold
 var favicon = require('serve-favicon');
-var logger = require('morgan');
+//var logger = require('morgan');
+var log = require('./lib/util/log');
+var logger = log.getLogger(__filename);
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
+
+var DB = require('./lib/util/mongodbutils');
 
 // create and export an express application
 module.exports = app = express();
@@ -40,13 +44,7 @@ app.set('views', __dirname + '/views');
 // app.use(favicon(__dirname + '/public/favicon.ico'));
 
 // using dev logger as the very first middleware
-app.use(logger('dev'));
-
-// simple log
-app.use(function(req, res, next) {
-  console.log('%s %s', req.method, req.url);
-  next();
-});
+//app.use(logger('dev'));
 
 // parse application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({
@@ -64,6 +62,12 @@ app.use(cookieParser());
 
 // mark the app dir as a static dir
 app.use(express.static(path.join(__dirname, '../app')));
+
+
+app.use(log.getLib().connectLogger(logger, {
+  level: 'auto',
+  format: ':method :url'
+}));
 
 // pass the express instance to the routes module
 var routes = require('./routes')(app);
@@ -86,39 +90,5 @@ app.use(function(error, req, res, next) {
 
 // start server
 http.createServer(app).listen(port, function() {
-  console.log('app has started, listening on port ' + port);
-});
-
-/**
- * use bae's mongodb code sample
- *
- * @see http://developer.baidu.com/wiki/index.php?title=docs/cplat/bae/mongodb
- */
-
-var mongoClient = require('mongodb').MongoClient;
-
-mongoClient.connect(mongodburl, function(err, db) {
-  if (err) {
-    console.log(err);
-    return;
-  }
-  db.authenticate(username, password, function(err, result) {
-    if (err) {
-      console.log(err);
-      db.close();
-      return;
-    };
-    db.collection('test_tb').insert([{
-      'tsc': 'bobby'
-    }], {
-      w: 1
-    }, function(err, docs) {
-      if (err) {
-        console.log(err);
-        db.close();
-        return;
-      }
-      console.log(docs);
-    });
-  });
+  logger.info('app has started, listening on port ' + port);
 });
