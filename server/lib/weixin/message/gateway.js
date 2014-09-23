@@ -4,38 +4,24 @@
  * @author Minix Li
  */
 
-var xml2js = require('xml2js');
+var parseString = require('xml2js').parseString;
 var dispatcher = require('./dispatcher');
+var loader = require('../../util/loader');
 var utils = require('../../util/utils');
 
 /**
  * Gateway initializer
  */
 var Gateway = function() {
-  /**
-   * Load all types of message handlers
-   */
-  this.msgHandlers = {
-    "common": {
-      "text": require('./common/text'),
-      "image": require('./common/image'),
-      "voice": require('./common/voice'),
-      "video": require('./common/video'),
-      "location": require('./common/location'),
-      "link": require('./common/link')
-    },
-    "events": {
-      "subscribe": require('./events/subscribe'),
-      "unsubscribe": require('./events/unsubscribe'),
-      "scan": require('./events/scan'),
-      "location": require('./events/location'),
-      "click": require('./events/click'),
-      "view": require('./events/view')
-    }
-  };
+  this.msgHandlers = loadMsgHandlers([
+    { "namespace": "common", "path": __dirname + '/common' },
+    { "namespace": "events", "path": __dirname + '/events' }
+  ]);
+  console.log(this.msgHandlers);
 };
 
 /**
+ * Dispatch message to corresponding handler
  *
  * @param {Object} req
  * @param {Object} res
@@ -44,7 +30,87 @@ var Gateway = function() {
  * @public
  */
 Gateway.prototype.dispatch = function(req, res, cb) {
-  console.log(req.rawBody);
+  parseString(req.rawBody, { explicitArray: false }, function(err, msgParsed) {
+    if (err) {
+      utils.invokeCallback(cb, err);
+      return;
+    }
+
+    route(msgParsed, function(err) {
+      if (err) {
+        utils.invokeCallback(cb, err);
+        return;
+      }
+    });
+  });
+};
+
+/**
+ * Load message handlers of all types
+ *
+ * @param {Array} items
+ *
+ * @private
+ */
+var loadMsgHandlers = function(items) {
+  var result = {}, modules;
+
+  for (var i = 0, l = items.length; i < l; i++) {
+    item = items[i];
+
+    if (module = loader.load(item.path)) {
+      createNamespace(item.namespace, result);
+
+      for (var name in modules) {
+        result[item.namespace][name] = modules[name];
+      }
+    }
+  }
+
+  return result;
+};
+
+/**
+ * Create namespace
+ *
+ * @param {String} namespace
+ * @param {Object} result
+ *
+ * @private
+ */
+var createNamespace = function(namespace, result) {
+  result[namespace] = result[namespace] || {};
+};
+
+/**
+ * Route the message to appropriate handler
+ *
+ * @param {Object} msg
+ * @param {Function} cb
+ *
+ * @private
+ */
+var route = function(msg, cb) {
+  var xml, msgType, event;
+
+  if (!(xml = msg['xml']) || !(msgType = xml['MsgType'])) {
+    utils.invokeCallback(cb, new Error('invalid message'));
+    return;
+  }
+  if ((msgType == 'event') && !(event == xml['event'])) {
+    utils.invokeCallback(cb, new Error('invalid message'));
+    return;
+  }
+
+  var namespace = (msgType == 'event' ? 'event' : 'common');
+  var handler = (msgType == 'event' ? event : msgType);
+
+  this.msgHandlers[namespace][handler].handler.call(null, msg, function(err) {
+    if (err) {
+      utils.invokeCallback(cb, err);
+      return;
+    }
+  });
 };
 
 /**
@@ -52,4 +118,4 @@ Gateway.prototype.dispatch = function(req, res, cb) {
  */
 module.exports.create = function() {
   return new Gateway();
-}
+};
