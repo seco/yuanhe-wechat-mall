@@ -21,8 +21,6 @@ var logger = log.getLogger(__filename);
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 
-var DB = require('./lib/util/mongodbutils');
-
 // create and export an express application
 module.exports = app = express();
 
