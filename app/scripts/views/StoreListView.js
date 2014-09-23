@@ -40,14 +40,32 @@ define(['jquery',
             sortable: false,
             editable: false
           }, {
-            name: 'storeName',
+            name: 'store_name',
             label: '店铺名称',
             cell: 'string', // See the TextCell extension
             sortable: false,
             editable: false
           }, {
-            name: 'storeAddress',
+            name: 'store_type',
+            label: '商店类型',
+            cell: 'string', // See the TextCell extension
+            sortable: false,
+            editable: false
+          }, {
+            name: 'store_address',
             label: '地址',
+            cell: 'string',
+            sortable: false,
+            editable: false
+          }, {
+            name: 'contact_name',
+            label: '联系人',
+            cell: 'string',
+            sortable: false,
+            editable: false
+          }, {
+            name: 'created_at',
+            label: '关注时间',
             cell: 'string',
             sortable: false,
             editable: false

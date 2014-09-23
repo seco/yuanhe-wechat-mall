@@ -6,14 +6,7 @@ define([
 
   var StoreModel = Backbone.Model.extend({
     urlRoot: '/stores',
-
-    defaults: {
-      storeName: '',
-      storeType: '',
-      storeAddress: '',
-      telNum: '',
-      contactName: ''
-    }
+    idAttribute: "_id"
   });
 
   return StoreModel;

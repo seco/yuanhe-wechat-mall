@@ -2,6 +2,7 @@
  * This module is a log4js wrapper.
  *
  * @author Bobby Tang
+ * @see https://github.com/nomiddlename/log4js-node
  */
 
 var log4js = require('log4js');

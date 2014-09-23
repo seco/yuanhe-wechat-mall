@@ -1,28 +1,31 @@
 /**
- * store action handler
+ * This is store action handler class.
  *
  * @author Bobby Tang
  */
+var db = require('../lib/util/mongodbutils').dbProxy;
+var logger = require('../lib/util/log').getLogger(__filename);
+
 exports.index = function(req, res, next) {
-  var mock = {
-    total_count: 1,
-    items: [{
-      id: 1,
-      alias: 'nicheng',
-      storeName: 'mingcheng',
-      storeAddress: 'dizhi'
-    }, {
-      id: 2,
-      alias: 'nicheng2',
-      storeName: 'mingcheng2',
-      storeAddress: 'dizhi2'
-    }]
-  };
-  res.json(mock);
+  var content = {};
+  var stores = db.collection('stores');
+
+  stores.count(function(err, count) {
+    content.total_count = count;
+    stores.find({}, function(err, result) {
+      content.items = result;
+
+      logger.info(content);
+
+    });
+  });
+
+
+  res.json(content);
 };
 exports.show = function(req, res, next) {
   res.json({
-    id: 10,
+    _id: 10,
     storeName: 'this is a storeName',
     storeType: 'VirtualStore'
   });
