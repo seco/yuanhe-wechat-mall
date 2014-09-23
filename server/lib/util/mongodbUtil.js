@@ -66,23 +66,50 @@ var getDBProxy = function(db) {
   return mm(null, function(method, args) {
     args = Array.prototype.slice.call(args, 0);
 
-    var cb = args[args.length - 1];
-    var cbProxy = function(err) {
+    var cb = args.pop();
+    args.push(function(err) {
+      if (null == err) {
+        cb.apply(null, Array.prototype.slice.call(arguments, 0));
+        return;
+      }
+      retryWithNewConnection(method, args, cb);
+    });
+
+    db[method].apply(db, args);
+    args.pop();
+  });
+};
+
+/**
+ * Retry with new connection
+ *
+ * @param {Function} method
+ * @param {Array} args
+ * @param {Function} cb
+ *
+ * @private
+ */
+var retryWithNewConnection = function(method, args, cb) {
+  mongoClient.connect(mongodburl, function(err, db) {
+    if (err) {
+      db.close();
+      utils.invokeCallback(cb, err);
+      return;
+    }
+
+    db.authenticate(username, password, function(err, result) {
       if (err) {
-        mongoClient.connect(mongodburl, function(err, db) {
-          db.authenticate(username, password, function(err, result) {
-            db[method].apply(null, args);
-          });
-        });
+        db.close();
+        utils.invokeCallback(cb, err);
         return;
       }
 
-      cb.apply(null, Array.prototype.slice.call(arguments, 0));
-    };
+      args.push(function() {
+        db.close();
+        cb.apply(null, Array.prototype.slice.call(arguments, 0));
+      });
 
-    var argsProxy = args.slice(0, args.length - 1);
-    argsProxy.push(cbProxy);
-
-    db[method].apply(null, argsProxy);
+      db[method].apply(db, args);
+    });
   });
-}
+};
