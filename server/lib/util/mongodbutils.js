@@ -1,25 +1,25 @@
 /**
- * This is a mongodb util class.
+ * Mongodb Util
  * Use bae's mongodb code sample as a reference.
  *
- * @author Bobby Tang
+ * @author Bobby Tang, Minix Li
  *
  * @see http://developer.baidu.com/wiki/index.php?title=docs/cplat/bae/mongodb
  */
 
+var mm = require('methodmissing');
 var mongoClient = require('mongodb').MongoClient;
-var config = require('../../config');
 var path = require('path');
 var logger = require('./log').getLogger(__filename);
 
-var DB = module.exports = {};
-
 // generate local variables dynamically
+var config = require('../../config');
 for (var key in config) {
   eval("var " + key + " = '" + config[key] + "'");
 };
 
-mongoClient.connect(mongodburl, {
+// Mongodb options
+var mongodbopts = {
   db: {
     native_parser: false
   },
@@ -32,7 +32,12 @@ mongoClient.connect(mongodburl, {
   },
   replSet: {},
   mongos: {}
-}, function(err, db) {
+};
+
+var exp = module.exports;
+
+// Connect Mongodb server
+mongoClient.connect(mongodburl, mongodbopts, function(err, db) {
   if (err) {
     logger.error(err);
     return;
@@ -42,32 +47,42 @@ mongoClient.connect(mongodburl, {
       logger.error(err);
       db.close();
       return;
-    };
+    }
+    exp.db = db;
+    exp.dbProxy = getDBProxy(db);
+  });
+});
 
-    // exports DB
-    DB = db;
+/**
+ * Get db proxy
+ *
+ * @param {Object} db
+ *
+ * @private
+ *
+ * @return {Object}
+ */
+var getDBProxy = function(db) {
+  return mm(null, function(method, args) {
+    args = Array.prototype.slice.call(args, 0);
 
-    var test_tb = db.collection('test_tb');
-    // testing sql
-    test_tb.save({
-      _id: 101,
-      testkey: 'testvalue'
-    }, {
-      w: 1
-    }, function(err, result) {
+    var cb = args[args.length - 1];
+    var cbProxy = function(err) {
       if (err) {
-        logger.error(err);
-        db.close();
+        mongoClient.connect(mongodburl, function(err, db) {
+          db.authenticate(username, password, function(err, result) {
+            db[method].apply(null, args);
+          });
+        });
         return;
       }
 
-      test_tb.findOne({
-        _id: 101
-      }, function(err, item) {
-        logger.info(item);
-      });
+      cb.apply(null, Array.prototype.slice.call(arguments, 0));
+    };
 
-    });
+    var argsProxy = args.slice(0, args.length - 1);
+    argsProxy.push(cbProxy);
 
+    db[method].apply(null, argsProxy);
   });
-});
+}
