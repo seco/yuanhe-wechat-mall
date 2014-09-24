@@ -17,7 +17,6 @@ var Gateway = function() {
     { "namespace": "common", "path": __dirname + '/common' },
     { "namespace": "events", "path": __dirname + '/events' }
   ]);
-  console.log(this.msgHandlers);
 };
 
 /**
@@ -58,7 +57,7 @@ var loadMsgHandlers = function(items) {
   for (var i = 0, l = items.length; i < l; i++) {
     item = items[i];
 
-    if (module = loader.load(item.path)) {
+    if (modules = loader.load(item.path)) {
       createNamespace(item.namespace, result);
 
       for (var name in modules) {

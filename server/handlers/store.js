@@ -3,16 +3,21 @@
  *
  * @author Bobby Tang
  */
-var db = require('../lib/util/mongodbUtil')();
+
+var app = require('../app');
+var db = app.get('db');
+var dbProxy = app.get('dbProxy');
 var logger = require('../lib/util/log').getLogger(__filename);
 
 exports.index = function(req, res, next) {
   var content = {};
-  var stores = db.getConn().collection('stores');
+  var stores = db.collection('stores');
 
   stores.count(function(err, count) {
     content.total_count = count;
-    stores.find({}, function(err, result) {
+    stores.find({
+      unfollow: false
+    }, function(err, result) {
       content.items = result;
 
       logger.info(content);

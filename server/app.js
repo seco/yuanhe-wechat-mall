@@ -88,7 +88,22 @@ app.use(function(error, req, res, next) {
   });
 });
 
-// start server
-http.createServer(app).listen(port, function() {
-  logger.info('app has started, listening on port ' + port);
+var mongodbUtil = require('./lib/util/mongodbUtil').create();
+
+mongodbUtil.startConnPool(mongodburl, username, password, function(err, result) {
+  app.set('db', result.db);
+  app.set('dbProxy', result.dbProxy);
+
+  result.dbProxy.collection('test_insert', function(err, collection) {
+    if (err) { return; }
+    collection.count(function(err, count) {
+      if (err) { return; }
+      console.log(count);
+    });
+  });
+
+  // start server
+  http.createServer(app).listen(port, function() {
+    logger.info('app has started, listening on port ' + port);
+  });
 });
