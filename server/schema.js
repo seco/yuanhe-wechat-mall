@@ -1,6 +1,6 @@
 //db.stores
 var store = {
-  _id: 9,
+  _id: ObjectId('542270a9f13de9f92dc68d92'),
   alias: 'gitcafe',
   store_name: 'gitcafe store',
   store_type: 'virtual',
@@ -19,12 +19,12 @@ var product = {
 var order = {
   _id: 1,
   sales_store: {
-    id: 9,
+    id: ObjectId('542270a9f13de9f92dc68d92'),
     store_name: '',
     commission: 15.00
   },
   member_store: {
-    id: 9,
+    id: ObjectId('542270a9f13de9f92dc68d92'),
     store_name: '',
     commission: 5.00
   },
@@ -46,7 +46,7 @@ var member = {
   openid: '',
   unfollow: false,
   store: {
-    id: 9,
+    id: ObjectId('542270a9f13de9f92dc68d92'),
     store_name: ''
   },
   products: [{
