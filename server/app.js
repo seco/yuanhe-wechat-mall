@@ -15,9 +15,12 @@ var socketIO = require('socket.io');
 
 // add from express@4.8.0 scaffold
 var favicon = require('serve-favicon');
-//var logger = require('morgan');
+
+// use log4js instead of morgan
+// var logger = require('morgan');
 var log = require('./lib/util/log');
 var logger = log.getLogger(__filename);
+
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 
@@ -27,30 +30,41 @@ var config = require('./config');
 for (var key in config) {
   eval("var " + key + " = '" + config[key] + "'");
 }
+
+// create a new mongodbUtil
 var MongodbUtil = require('./lib/util/mongodbUtil');
 var mongodbUtil = MongodbUtil.create(mongodburl, username, password);
 
+/**
+ * Ensure establishing mongodb connection pool correctly before
+ * starting express application
+ */
+mongodbUtil.establishConnPool(function(err, result) {
+  if (err) {
+    logger.error(err);
+    return;
+  }
 
-// create and export an express application
-module.exports = app = express();
+  // create and export an express application
+  module.exports = app = express();
 
-
-mongodbUtil.startConnPool(function(err, result) {
+  // put config into app
   app.set('yuanhe_config', config);
+
+  // put mongodb connection pool into app
   app.set('db', result.db);
   app.set('dbProxy', result.dbProxy);
 
-  result.dbProxy.collection('test_insert', function(err, collection) {
-    if (err) {
-      return;
-    }
-    collection.count(function(err, count) {
-      if (err) {
-        return;
-      }
-      console.log(count);
-    });
-  });
+  //result.dbProxy.collection('test_insert', function(err, collection) {
+    //if (err) {
+      //return;
+    //}
+    //collection.count(function(err, count) {
+      //if (err) {
+        //return;
+      //}
+    //});
+  //});
 
   // set the view engine
   app.set('view engine', 'hbs');
@@ -63,7 +77,11 @@ mongodbUtil.startConnPool(function(err, result) {
   // using dev logger as the very first middleware
   //app.use(logger('dev'));
 
-  // parse application/x-www-form-urlencoded
+  //
+  /**
+   * Parse application/x-www-form-urlencoded, getting parsed and
+   * raw body simultaneously.
+   */
   app.use(bodyParser.urlencoded({
     extended: false,
     verify: function(req, res, buf, encoding) {
@@ -80,7 +98,7 @@ mongodbUtil.startConnPool(function(err, result) {
   // mark the app dir as a static dir
   app.use(express.static(path.join(__dirname, '../app')));
 
-
+  // use log4js middleware
   app.use(log.getLib().connectLogger(logger, {
     level: 'auto',
     format: ':method :url'
@@ -107,7 +125,7 @@ mongodbUtil.startConnPool(function(err, result) {
     });
   });
 
-  // start server
+  // start listening on port given in config file
   http.createServer(app).listen(port, function() {
     logger.info('app has started, listening on port ' + port);
   });

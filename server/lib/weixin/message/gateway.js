@@ -29,16 +29,16 @@ var Gateway = function() {
  * @public
  */
 Gateway.prototype.dispatch = function(req, res, cb) {
+  var self = this;
   parseString(req.rawBody, { explicitArray: false }, function(err, msgParsed) {
     if (err) {
       utils.invokeCallback(cb, err);
       return;
     }
 
-    route(msgParsed, function(err) {
-      if (err) {
+    dispatcher.route(req, res, msgParsed, self.msgHandlers, function(err) {
+      if(err) {
         utils.invokeCallback(cb, err);
-        return;
       }
     });
   });
@@ -79,37 +79,6 @@ var loadMsgHandlers = function(items) {
  */
 var createNamespace = function(namespace, result) {
   result[namespace] = result[namespace] || {};
-};
-
-/**
- * Route the message to appropriate handler
- *
- * @param {Object} msg
- * @param {Function} cb
- *
- * @private
- */
-var route = function(msg, cb) {
-  var xml, msgType, event;
-
-  if (!(xml = msg['xml']) || !(msgType = xml['MsgType'])) {
-    utils.invokeCallback(cb, new Error('invalid message'));
-    return;
-  }
-  if ((msgType == 'event') && !(event == xml['event'])) {
-    utils.invokeCallback(cb, new Error('invalid message'));
-    return;
-  }
-
-  var namespace = (msgType == 'event' ? 'event' : 'common');
-  var handler = (msgType == 'event' ? event : msgType);
-
-  this.msgHandlers[namespace][handler].handler.call(null, msg, function(err) {
-    if (err) {
-      utils.invokeCallback(cb, err);
-      return;
-    }
-  });
 };
 
 /**

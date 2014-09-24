@@ -44,13 +44,13 @@ var MongoDBUtil = function(url, username, password) {
 };
 
 /**
- * Start connection pool
+ * Establish connection pool
  *
  * @param {Function} cb
  *
  * @public
  */
-MongoDBUtil.prototype.startConnPool = function(cb) {
+MongoDBUtil.prototype.establishConnPool = function(cb) {
   var self = this;
   mongoClient.connect(self.url, self.defaultOpts, function(err, db) {
     if (err) {
