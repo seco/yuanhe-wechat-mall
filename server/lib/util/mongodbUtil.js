@@ -12,47 +12,64 @@ var mongoClient = require('mongodb').MongoClient;
 var path = require('path');
 var logger = require('./log').getLogger(__filename);
 
-// generate local variables dynamically
-var config = require('../../config');
-for (var key in config) {
-  eval("var " + key + " = '" + config[key] + "'");
-};
+var DB = function() {
+  if (!(this instanceof DB)) {
+    return new DB();
+  }
 
-// Mongodb options
-var mongodbopts = {
-  db: {
-    native_parser: false
-  },
-  server: {
-    poolSize: 5,
-    socketOptions: {
-      connectTimeoutMS: 500
+  // Mongodb options
+  var mongodbopts = {
+    db: {
+      native_parser: false
     },
-    auto_reconnect: true
-  },
-  replSet: {},
-  mongos: {}
+    server: {
+      poolSize: 5,
+      socketOptions: {
+        connectTimeoutMS: 500
+      },
+      auto_reconnect: true
+    },
+    replSet: {},
+    mongos: {}
+  };
+  // generate local variables dynamically
+  var config = require('../../config');
+  for (var key in config) {
+    eval("var " + key + " = '" + config[key] + "'");
+  };
+
+  initDB.call(this, mongodburl, username, password, mongodbopts);
+
 };
 
-var exp = module.exports;
+module.exports = DB;
+
+DB.prototype.getConn = function() {
+  return this.conn;
+};
+
 
 // Connect Mongodb server
-mongoClient.connect(mongodburl, mongodbopts, function(err, db) {
-  if (err) {
-    logger.error(err);
-    return;
-  }
-  db.authenticate(username, password, function(err, result) {
+var initDB = function(mongodburl, username, password, mongodbopts) {
+  mongoClient.connect(mongodburl, mongodbopts, function(err, db) {
     if (err) {
       logger.error(err);
-      db.close();
       return;
     }
-    exp.db = db;
-    exp.dbProxy = getDBProxy(db);
-  });
-});
+    db.authenticate(username, password, function(err, result) {
+      if (err) {
+        logger.error(err);
+        db.close();
+        return;
+      }
 
+      logger.info(db);
+
+      this.conn = db;
+      this.proxyConn = getDBProxy(db);
+    });
+  });
+};
 /**
  * Get db proxy
  *
