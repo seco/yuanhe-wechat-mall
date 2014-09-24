@@ -3,12 +3,12 @@
  *
  * @author Bobby Tang
  */
-var db = require('../lib/util/mongodbutils').dbProxy;
+var db = require('../lib/util/mongodbUtil')();
 var logger = require('../lib/util/log').getLogger(__filename);
 
 exports.index = function(req, res, next) {
   var content = {};
-  var stores = db.collection('stores');
+  var stores = db.getConn().collection('stores');
 
   stores.count(function(err, count) {
     content.total_count = count;
@@ -20,9 +20,9 @@ exports.index = function(req, res, next) {
     });
   });
 
-
   res.json(content);
 };
+
 exports.show = function(req, res, next) {
   res.json({
     _id: 10,
