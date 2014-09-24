@@ -7,7 +7,6 @@
 var app = require('../app');
 var db = app.get('db');
 var dbProxy = app.get('dbProxy');
-// var db = require('../lib/util/mongodbUtil').dbProxy;
 var logger = require('../lib/util/log').getLogger(__filename);
 
 exports.index = function(req, res, next) {
@@ -16,7 +15,9 @@ exports.index = function(req, res, next) {
 
   stores.count(function(err, count) {
     content.total_count = count;
-    stores.find({}, function(err, result) {
+    stores.find({
+      unfollow: false
+    }, function(err, result) {
       content.items = result;
 
       logger.info(content);
@@ -24,9 +25,9 @@ exports.index = function(req, res, next) {
     });
   });
 
-
   res.json(content);
 };
+
 exports.show = function(req, res, next) {
   res.json({
     _id: 10,

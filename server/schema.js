@@ -19,22 +19,22 @@ var product = {
 var order = {
   _id: 1,
   sales_store: {
-    store_id: 9,
+    id: 9,
     store_name: '',
     commission: 15.00
   },
   member_store: {
-    store_id: 9,
+    id: 9,
     store_name: '',
     commission: 5.00
   },
   member: {
-    member_id: 88,
+    id: 88,
     member_name: ''
   },
   payment: 10.00,
   product: {
-    product_id: 1,
+    id: 1,
     price: 10.00,
     quantity: 2
   },
@@ -46,11 +46,11 @@ var member = {
   openid: '',
   unfollow: false,
   store: {
-    store_id: 9,
+    id: 9,
     store_name: ''
   },
   products: [{
-    product_id: 77,
+    id: 77,
     viewed_at: new Date()
   }],
   created_at: new Date()
