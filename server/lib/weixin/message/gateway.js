@@ -58,7 +58,7 @@ var loadMsgHandlers = function(items) {
   for (var i = 0, l = items.length; i < l; i++) {
     item = items[i];
 
-    if (module = loader.load(item.path)) {
+    if (modules = loader.load(item.path)) {
       createNamespace(item.namespace, result);
 
       for (var name in modules) {
