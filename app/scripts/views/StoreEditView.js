@@ -23,8 +23,9 @@ define(['jquery',
           });
 
           that.store.fetch({
-            success: function(store) {
-              that.$el.html(storeEditTmpl(store.toJSON()));
+            success: function(res) {
+              var store = new StoreModel(res);
+              that.$el.html(storeEditTmpl(store.attributes.toJSON()));
             }
           });
 
@@ -36,18 +37,17 @@ define(['jquery',
 
       save: function(event) {
         event.preventDefault();
+        var self = this;
         var storeForm = $(event.currentTarget).serializeObject();
         console.log(storeForm);
         var store = new StoreModel();
         store.save(storeForm, {
           success: function(store, res) {
             console.log('suc');
-            console.log(store);
-            console.log(res);
+            self.goTo('stores');
           },
-          error: function(store, res){
+          error: function(store, res) {
             console.log('err');
-            console.log(res);
           }
         });
 

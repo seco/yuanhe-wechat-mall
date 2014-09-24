@@ -12,7 +12,7 @@ define([
     // Initial pagination states
     state: {
       pageSize: 25,
-      sortKey: "dateCreated",
+      sortKey: "created_at",
       order: 1
     },
 

@@ -20,56 +20,52 @@ define(['jquery',
 
       render: function() {
 
+        // Override Column defaults globally
+        Backgrid.Column.prototype.defaults.sortable = false;
+
+        // Override Column defaults locally
+        var MyColumn = Backgrid.Column.extend({
+          defaults: _.defaults({
+            editable: false,
+            sortable: false
+          }, Backgrid.Column.prototype.defaults)
+        });
+
         this.grid = new Backgrid.Grid({
-          columns: [{
+          columns: new Backgrid.Columns([{
             name: "",
             cell: "select-row",
             headerCell: "select-all"
           }, {
-            name: 'id',
-            label: '序号',
-            cell: Backgrid.IntegerCell.extend({
-              orderSeparator: ''
-            }),
-            sortable: false,
-            editable: false
-          }, {
             name: 'alias',
             label: '昵称',
-            cell: 'string',
-            sortable: false,
-            editable: false
+            cell: 'string'
           }, {
             name: 'store_name',
             label: '店铺名称',
-            cell: 'string', // See the TextCell extension
-            sortable: false,
-            editable: false
+            cell: 'string' // See the TextCell extension
           }, {
             name: 'store_type',
             label: '商店类型',
-            cell: 'string', // See the TextCell extension
-            sortable: false,
-            editable: false
+            cell: 'string' // See the TextCell extension
           }, {
             name: 'store_address',
             label: '地址',
-            cell: 'string',
-            sortable: false,
-            editable: false
+            cell: 'string'
           }, {
             name: 'contact_name',
             label: '联系人',
-            cell: 'string',
-            sortable: false,
-            editable: false
+            cell: 'string'
           }, {
             name: 'created_at',
             label: '关注时间',
             cell: 'string',
-            sortable: false,
-            editable: false
-          }],
+            cell: Backgrid.DatetimeCell.extend({
+              includeMilli: true
+            })
+          }], {
+            model: MyColumn
+          }),
 
           collection: this.stores
         });

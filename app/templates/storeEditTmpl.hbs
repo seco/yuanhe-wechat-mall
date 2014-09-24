@@ -3,7 +3,7 @@
     <!-- general form elements disabled -->
     <div class="box box-warning">
       <div class="box-header">
-        {{#if id}}
+        {{#if _id}}
         <h3 class="box-title">店铺编辑界面</h3>
         {{else}}
         <h3 class="box-title">店铺新增界面</h3>
@@ -12,7 +12,7 @@
       <!-- /.box-header -->
       <div class="box-body">
         <form role="form">
-          <input type="hidden" name="id" value="{{id}}">
+          <input type="hidden" name="_id" value="{{_id}}">
           <!-- text input -->
           <div class="form-group">
             <label>店铺名称</label>
