@@ -21,8 +21,6 @@ var logger = log.getLogger(__filename);
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 
-var db = require('./lib/util/mongodbutils').db;
-
 // create and export an express application
 module.exports = app = express();
 
@@ -90,7 +88,23 @@ app.use(function(error, req, res, next) {
   });
 });
 
-// start server
-http.createServer(app).listen(port, function() {
-  logger.info('app has started, listening on port ' + port);
+var MongodbUtil = require('./lib/util/mongodbUtil');
+var mongodbUtil = MongodbUtil.create(mongodburl, username, password);
+
+mongodbUtil.startConnPool(function(err, result) {
+  app.set('db', result.db);
+  app.set('dbProxy', result.dbProxy);
+
+  result.dbProxy.collection('test_insert', function(err, collection) {
+    if (err) { return; }
+    collection.count(function(err, count) {
+      if (err) { return; }
+      console.log(count);
+    });
+  });
+
+  // start server
+  http.createServer(app).listen(port, function() {
+    logger.info('app has started, listening on port ' + port);
+  });
 });

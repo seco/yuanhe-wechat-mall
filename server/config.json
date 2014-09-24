@@ -4,7 +4,7 @@
   "appid": "wx51e688b02487dfc4",
   "secret": "073d77dfeee8c1fef0df4ec9a83a4de5",
 
-  "mongodburl": "mongodb://localhost:27017/yuanhe?w=1",
+  "mongodburl": "mongodb://192.168.1.7:27017/yuanhe?w=1",
   "username": "siteUserAdmin",
   "password": "password"
 }
