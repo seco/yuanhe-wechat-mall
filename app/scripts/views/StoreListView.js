@@ -16,9 +16,6 @@ define(['jquery',
       initialize: function() {
 
         this.stores = new StoreCollection();
-      },
-
-      render: function() {
 
         // Override Column defaults globally
         Backgrid.Column.prototype.defaults.sortable = false;
@@ -53,13 +50,16 @@ define(['jquery',
             label: '地址',
             cell: 'string'
           }, {
+            name: 'telnum',
+            label: '联系电话',
+            cell: 'string'
+          }, {
             name: 'contact_name',
             label: '联系人',
             cell: 'string'
           }, {
             name: 'created_at',
             label: '关注时间',
-            cell: 'string',
             cell: Backgrid.DatetimeCell.extend({
               includeMilli: true
             })
@@ -74,10 +74,22 @@ define(['jquery',
           collection: this.stores
         });
 
+        this.on('enter', this.search, this);
+      },
+
+      render: function() {
+        var self = this;
+
         this.$el.html(storeListTmpl());
 
         this.$el.find('#grid').append(this.grid.render().el);
         this.$el.find('#paginator').append(this.paginator.render().el);
+
+        this.$el.find('input').keyup(function(e) {
+          if (e.keyCode == 13) {
+            self.trigger('enter');
+          };
+        });
 
         this.stores.fetch({
           reset: true
@@ -88,7 +100,8 @@ define(['jquery',
       events: {
         'click button.create': 'create',
         'click button.edit': 'edit',
-        'click button.delete': 'delete'
+        'click button.delete': 'delete',
+        'click button.search': 'search'
       },
 
       create: function() {
@@ -113,7 +126,18 @@ define(['jquery',
             }
           });
         });
+      },
+
+      search: function() {
+        var searchVal = this.$el.find('[name="table_search"]').val();
+        var searchKey = 'store_name';
+        this.stores.queryParams.searchKey = searchKey;
+        this.stores.queryParams.searchVal = searchVal;
+        this.stores.fetch({
+          reset: true
+        });
       }
+
 
     });
 

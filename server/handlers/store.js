@@ -12,15 +12,24 @@ var logger = require('../lib/util/log').getLogger(__filename);
 
 exports.index = function(req, res, next) {
   var content = {};
-  var limit = (req.params.page - 1) * req.params.per_page;
-  var skip = req.params.per_page;
+  var limit = req.query.per_page;
+  var skip = (req.query.page - 1) * req.query.per_page;
+  var searchKey = req.query.searchKey;
+  var searchVal = req.query.searchVal;
+  var filter = {
+    unfollow: false
+  };
+
+  if (searchKey && searchVal) {
+    filter[searchKey] = new RegExp(searchVal);
+  };
+
+  logger.info('recevie backgrid request, set filter[' + JSON.stringify(filter) + '], limit[' + limit + '],skip[' + skip + ']');
 
   dbProxy.collection('stores', function(err, col) {
-    col.count(function(err, count) {
+    col.count(filter, function(err, count) {
       content.total_count = count;
-      col.find({
-        unfollow: false
-      }, {
+      col.find(filter, {
         limit: limit,
         skip: skip,
         sort: {
@@ -80,6 +89,6 @@ exports.update = function(req, res, next) {
 
 };
 exports.destroy = function(req, res, next) {
-  console.dir(req.params);
-  res.send('');
+  //console.dir(req.params);
+  //res.send('');
 };
