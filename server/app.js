@@ -21,85 +21,89 @@ var logger = log.getLogger(__filename);
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 
-// create and export an express application
-module.exports = app = express();
-
 // load config
 var config = require('./config');
-app.set('yuanhe_config', config);
-
 // generate local variables dynamically
 for (var key in config) {
   eval("var " + key + " = '" + config[key] + "'");
 }
-
-// set the view engine
-app.set('view engine', 'hbs');
-// where to find the view files
-app.set('views', __dirname + '/views');
-
-// uncomment after placing your favicon in /public
-// app.use(favicon(__dirname + '/public/favicon.ico'));
-
-// using dev logger as the very first middleware
-//app.use(logger('dev'));
-
-// parse application/x-www-form-urlencoded
-app.use(bodyParser.urlencoded({
-  extended: false,
-  verify: function(req, res, buf, encoding) {
-    req.rawBody = buf.toString();
-  }
-}));
-
-// parse application/json
-app.use(bodyParser.json());
-
-// parse cookie header
-app.use(cookieParser());
-
-// mark the app dir as a static dir
-app.use(express.static(path.join(__dirname, '../app')));
-
-
-app.use(log.getLib().connectLogger(logger, {
-  level: 'auto',
-  format: ':method :url'
-}));
-
-// pass the express instance to the routes module
-var routes = require('./routes')(app);
-
-// 404 error handler
-app.use(function(req, res, next) {
-  logger.warn('not page found in server side');
-  res.status(404);
-  res.render('404', {
-    url: req.url
-  });
-});
-
-// 500 error handler
-app.use(function(error, req, res, next) {
-  logger.error(error);
-  res.status(500);
-  res.render('500', {
-    err: error
-  });
-});
-
 var MongodbUtil = require('./lib/util/mongodbUtil');
 var mongodbUtil = MongodbUtil.create(mongodburl, username, password);
 
+
+// create and export an express application
+module.exports = app = express();
+
+
 mongodbUtil.startConnPool(function(err, result) {
+  app.set('yuanhe_config', config);
   app.set('db', result.db);
   app.set('dbProxy', result.dbProxy);
 
   result.dbProxy.collection('test_insert', function(err, collection) {
-    if (err) { return; }
+    if (err) {
+      return;
+    }
     collection.count(function(err, count) {
-      if (err) { return; }
+      if (err) {
+        return;
+      }
       console.log(count);
+    });
+  });
+
+  // set the view engine
+  app.set('view engine', 'hbs');
+  // where to find the view files
+  app.set('views', __dirname + '/views');
+
+  // uncomment after placing your favicon in /public
+  // app.use(favicon(__dirname + '/public/favicon.ico'));
+
+  // using dev logger as the very first middleware
+  //app.use(logger('dev'));
+
+  // parse application/x-www-form-urlencoded
+  app.use(bodyParser.urlencoded({
+    extended: false,
+    verify: function(req, res, buf, encoding) {
+      req.rawBody = buf.toString();
+    }
+  }));
+
+  // parse application/json
+  app.use(bodyParser.json());
+
+  // parse cookie header
+  app.use(cookieParser());
+
+  // mark the app dir as a static dir
+  app.use(express.static(path.join(__dirname, '../app')));
+
+
+  app.use(log.getLib().connectLogger(logger, {
+    level: 'auto',
+    format: ':method :url'
+  }));
+
+  // pass the express instance to the routes module
+  var routes = require('./routes')(app);
+
+  // 404 error handler
+  app.use(function(req, res, next) {
+    logger.warn('not page found in server side');
+    res.status(404);
+    res.render('404', {
+      url: req.url
+    });
+  });
+
+  // 500 error handler
+  app.use(function(error, req, res, next) {
+    logger.error(error);
+    res.status(500);
+    res.render('500', {
+      err: error
     });
   });
 
