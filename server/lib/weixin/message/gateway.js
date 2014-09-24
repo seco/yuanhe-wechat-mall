@@ -17,7 +17,6 @@ var Gateway = function() {
     { "namespace": "common", "path": __dirname + '/common' },
     { "namespace": "events", "path": __dirname + '/events' }
   ]);
-  console.log(this.msgHandlers);
 };
 
 /**

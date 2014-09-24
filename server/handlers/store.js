@@ -3,7 +3,11 @@
  *
  * @author Bobby Tang
  */
-var db = require('../lib/util/mongodbutils').dbProxy;
+
+var app = require('../app');
+var db = app.get('db');
+var dbProxy = app.get('dbProxy');
+// var db = require('../lib/util/mongodbUtil').dbProxy;
 var logger = require('../lib/util/log').getLogger(__filename);
 
 exports.index = function(req, res, next) {
