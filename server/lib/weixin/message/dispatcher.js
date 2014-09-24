@@ -4,6 +4,8 @@
  * @author Minix Li
  */
 
+var utils = require('../../util/utils');
+
 /**
  * Route the message to appropriate handler
  *
