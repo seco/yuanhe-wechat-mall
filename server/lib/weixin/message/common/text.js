@@ -13,3 +13,9 @@ var MsgHandler = function() {
 };
 
 MsgHandler.prototype.name = 'text';
+
+/**
+ *
+ */
+MsgHandler.prototype.handle = function(req, res, msg, cb) {
+};
