@@ -16,29 +16,29 @@
           <!-- text input -->
           <div class="form-group">
             <label>店铺名称</label>
-            <input type="text" name="storeName" class="form-control" placeholder="请输入" value="{{storeName}}" />
+            <input type="text" name="store_name" class="form-control" placeholder="请输入" value="{{store_name}}" />
           </div>
           <!-- select -->
           <div class="form-group">
             <label>店铺性质</label>
-            <select name="storeType" class="form-control">
+            <select name="store_type" class="form-control">
               {{#select storeType}}
-              <option value="PhysicalStore">实体店</option>
-              <option value="VirtualStore">虚拟店</option>
+              <option value="physical">实体店</option>
+              <option value="virtual">虚拟店</option>
               {{/select}}
             </select>
           </div>
           <div class="form-group">
             <label>地址</label>
-            <input type="text" name="storeAddress" class="form-control" placeholder="请输入" value="{{storeAddress}}" />
+            <input type="text" name="store_address" class="form-control" placeholder="请输入" value="{{store_address}}" />
           </div>
           <div class="form-group">
             <label>电话</label>
-            <input type="text" name="telNum" class="form-control" placeholder="请输入" value="{{telNum}}" />
+            <input type="text" name="telnum" class="form-control" placeholder="请输入" value="{{telnum}}" />
           </div>
           <div class="form-group">
             <label>联系人姓名</label>
-            <input type="text" name="contactName" class="form-control" placeholder="请输入" value="{{contactName}}" />
+            <input type="text" name="contact_name" class="form-control" placeholder="请输入" value="{{contact_name}}" />
           </div>
           <div class="box-footer clearfix no-border">
             <button class="btn btn-default btn-sm cancel pull-right">取消</button>

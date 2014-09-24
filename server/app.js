@@ -21,6 +21,8 @@ var logger = log.getLogger(__filename);
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 
+var db = require('./lib/util/mongodbutils').db;
+
 // create and export an express application
 module.exports = app = express();
 
@@ -72,6 +74,7 @@ var routes = require('./routes')(app);
 
 // 404 error handler
 app.use(function(req, res, next) {
+  logger.warn('not page found in server side');
   res.status(404);
   res.render('404', {
     url: req.url
@@ -80,6 +83,7 @@ app.use(function(req, res, next) {
 
 // 500 error handler
 app.use(function(error, req, res, next) {
+  logger.error(error);
   res.status(500);
   res.render('500', {
     err: error

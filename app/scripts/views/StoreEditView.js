@@ -19,7 +19,7 @@ define(['jquery',
 
         if (opts.id) {
           that.store = new StoreModel({
-            id: opts.id
+            _id: opts.id
           });
 
           that.store.fetch({
