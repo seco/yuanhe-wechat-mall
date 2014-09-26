@@ -14,7 +14,7 @@ var store = {
 };
 //db.counters
 var counter = {
-  _id: 'store_id',
+  _id: 'scene_id',
   seq: 0
 };
 //db.products

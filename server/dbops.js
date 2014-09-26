@@ -53,6 +53,7 @@ db.members.insert({
 });
 db.viewevents.insert({
   member_id: ObjectId(''),
+  member_openid: 'abc',
   product_id: ObjectId(''),
   store_id: ObjectId(''),
   viewed_at: new Date()
@@ -63,9 +64,9 @@ db.members.update({_id: ObjectId('')},
 {
   $set: {
     unfollow: false,
+    member_at: new Date(),
     following_store_id: ObjectId(''),
-    following_at: new Date(),
-    member_at: new Date()
+    following_at: new Date()
   }
 });
 
