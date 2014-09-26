@@ -6,7 +6,8 @@ define(['jquery',
     'backgrid',
     'backgridpaginator',
     'backgridtextcell',
-    'backgridselectall'
+    'backgridselectall',
+    'jqueryext'
   ],
   function($, _, Backbone, storeListTmpl, StoreCollection, Backgrid) {
 
@@ -40,11 +41,23 @@ define(['jquery',
           }, {
             name: 'store_name',
             label: '店铺名称',
-            cell: 'string' // See the TextCell extension
+            cell: 'string'
           }, {
             name: 'store_type',
             label: '商店类型',
-            cell: 'string' // See the TextCell extension
+            cell: Backgrid.Cell.extend({
+              render: function() {
+                var val = '';
+                var modelVal = this.model.get('store_type');
+                if (modelVal === 'physical') {
+                  val = '实体店';
+                } else if (modelVal === 'virtual') {
+                  val = '虚拟店';
+                }
+                this.$el.text(val);
+                return this;
+              }
+            })
           }, {
             name: 'store_address',
             label: '地址',
@@ -91,6 +104,8 @@ define(['jquery',
           };
         });
 
+        this.grid.clearSelectedModels();
+
         this.stores.fetch({
           reset: true
         });
@@ -112,6 +127,9 @@ define(['jquery',
         var selModels = this.grid.getSelectedModels();
         if (selModels && selModels.length === 1) {
           this.goTo('stores/' + selModels[0].id + '/edit');
+        } else {
+          this.grid.clearSelectedModels();
+          $.noty.setText(generate('warning').options.id, '请选择单项！');
         }
       },
 

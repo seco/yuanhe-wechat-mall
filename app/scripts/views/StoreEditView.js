@@ -11,7 +11,8 @@ define(['jquery',
       el: '.content',
 
       events: {
-        'submit form': 'save'
+        'submit form': 'save',
+        'click button.cancel': 'cancel'
       },
 
       render: function(opts) {
@@ -39,18 +40,21 @@ define(['jquery',
         event.preventDefault();
         var self = this;
         var storeForm = $(event.currentTarget).serializeObject();
-        console.log(storeForm);
         var store = new StoreModel();
         store.save(storeForm, {
           success: function(store, res) {
-            console.log('suc');
+            $.noty.setText(generate('success').options.id, '保存成功！');
             self.goTo('stores');
           },
           error: function(store, res) {
-            console.log('err');
+            $.noty.setText(generate('error').options.id, '保存失败！');
+            self.goTo('stores');
           }
         });
+      },
 
+      cancel: function(event) {
+        this.goTo('stores');
       }
 
     });
