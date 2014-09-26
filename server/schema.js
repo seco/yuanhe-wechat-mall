@@ -24,23 +24,23 @@ var product = {
 };
 //db.orders
 var order = {
-  _id: 1,
-  order_status: '',
+  _id: ObjectId('542532bda5ee873861df8c67'),
+  order_status: 'create',
   weixin_order_id: '',
   weixin_order_detail: {},
   sales_store: {
     id: ObjectId('542270a9f13de9f92dc68d92'),
-    store_name: '',
+    store_name: 'this is sales store name',
     commission: 15.00
   },
   member_store: {
     id: ObjectId('542270a9f13de9f92dc68d92'),
-    store_name: '',
+    store_name: 'this is member store name',
     commission: 5.00
   },
   member: {
-    id: ObjectId(''),
-    member_name: ''
+    id: ObjectId('5425316ca5ee873861df8c65'),
+    member_name: 'this is member nane'
   },
   payment: 9.99,
   product: {
@@ -52,8 +52,8 @@ var order = {
 };
 //db.members
 var member = {
-  _id: ObjectId(''),
-  openid: '',
+  _id: ObjectId('5425316ca5ee873861df8c65'),
+  openid: 'abc',
   unfollow: true,
   created_at: new Date(),
   member_at: new Date(),
@@ -63,8 +63,8 @@ var member = {
 //db.viewevents
 var viewevent = {
   _id: ObjectId(''),
-  member_id: ObjectId(''),
-  member_openid: '',
+  member_id: ObjectId('5425316ca5ee873861df8c65'),
+  member_openid: 'abc',
   product_id: ObjectId(''),
   store_id: ObjectId('542270a9f13de9f92dc68d92'),
   viewed_at: new Date()

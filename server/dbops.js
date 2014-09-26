@@ -58,7 +58,7 @@ db.viewevents.insert({
   viewed_at: new Date()
 });
 
-db.viewevents.find({member_openid: ''}).sort(viewed_at: -1).limit(1);//return store_id that member visited recently
+db.viewevents.find({member_openid: 'abc'}).sort({'viewed_at': -1}).limit(1);//return store_id that member visited recently
 db.members.update({_id: ObjectId('')},
 {
   $set: {
@@ -82,7 +82,7 @@ db.members.update({_id: ObjectId('')},
  */
 
 db.viewevents.find({member_openid: ''}).sort(viewed_at: -1).limit(1);//return store_id that member visited recently
-db.members.find({member_openid: ''});//return member following_store_id
+db.members.findOne({member_openid: ''});//return member following_store_id
 db.orders.insert({
   order_status: 'create',
   weixin_order_id: '',
@@ -104,5 +104,12 @@ db.orders.insert({
   created_at: new Date()
 });
 
+//syn
 db.orders.findOne({weixin_order_id: ''});
-db.orders.save({});
+db.orders.update({_id: ObjectId('')},
+{
+  $set: {
+    'sales_store.commission': 20.99,
+    'member_store.commission': 39.99
+  }
+});
