@@ -13,3 +13,29 @@ $.fn.serializeObject = function() {
   });
   return o;
 };
+
+function generate(type) {
+
+  var n = noty({
+    type: type,
+    dismissQueue: true,
+    layout: 'topCenter',
+    theme: 'bootstrapTheme',
+    closeWith: ['button', 'click'],
+    maxVisible: 5,
+    modal: false,
+    timeout: 1000,
+    animation: {
+      open: {
+        opacity: 'toggle'
+      },
+      close: {
+        opacity: 'toggle'
+      },
+      easing: 'swing',
+      speed: 500
+    }
+  });
+  console.log('html: ' + n.options.id);
+  return n;
+}

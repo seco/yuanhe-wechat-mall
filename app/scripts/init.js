@@ -12,10 +12,11 @@ require.config({
     },
     'backbone.paginator': ['backbone'],
     jqueryui: ['jquery'],
-    jqueryext: ['jquery'],
+    jqueryext: ['jquery', 'jquerynoty'],
     jqueryslimscroll: ['jquery'],
     jquerycusttreemenu: ['jquery'],
     jqueryicheck: ['jquery'],
+    jquerynoty: ['jquery'],
     bootstrap: ['jquery'],
     adminLTE: ['jquery', 'jqueryslimscroll', 'jquerycusttreemenu', 'jqueryicheck', 'jqueryui', 'bootstrap'],
     backgrid: {
@@ -34,6 +35,7 @@ require.config({
     jqueryslimscroll: '../bower_components/jquery-slimscroll/jquery.slimscroll.min',
     jquerycusttreemenu: 'vendor/jquery_cust_treemenu',
     jqueryicheck: '../bower_components/jquery-icheck/icheck.min',
+    jquerynoty: '../bower_components/noty/js/noty/packaged/jquery.noty.packaged.min',
     backbone: '../bower_components/backbone/backbone',
     'backbone.paginator': '../bower_components/backbone.paginator/lib/backbone.paginator.min',
     backgrid: '../bower_components/backgrid/lib/backgrid.min',
@@ -44,7 +46,7 @@ require.config({
     underscore: '../bower_components/underscore/underscore-min',
 
     /* alias the bootstrap js lib */
-    bootstrap: '../js/bootstrap.min',
+    bootstrap: '../bower_components/bootstrap/dist/js/bootstrap.min',
 
     adminLTE: '../js/AdminLTE/app',
 
