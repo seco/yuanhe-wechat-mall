@@ -10,6 +10,8 @@ require.config({
       deps: ['underscore', 'jquery'],
       exports: 'Backbone'
     },
+    'backbone-deep-model': ['backbone'],
+    //'backbone-nested': ['backbone'],
     'backbone.paginator': ['backbone'],
     jqueryui: ['jquery'],
     jqueryext: ['jquery', 'jquerynoty'],
@@ -37,6 +39,8 @@ require.config({
     jqueryicheck: '../bower_components/jquery-icheck/icheck.min',
     jquerynoty: '../bower_components/noty/js/noty/packaged/jquery.noty.packaged.min',
     backbone: '../bower_components/backbone/backbone',
+    'backbone-deep-model': '../bower_components/backbone-deep-model/distribution/deep-model.min',
+    //'backbone-nested': '../bower_components/backbone-nested/backbone-nested.min',
     'backbone.paginator': '../bower_components/backbone.paginator/lib/backbone.paginator.min',
     backgrid: '../bower_components/backgrid/lib/backgrid.min',
     /* bower has issue that it downloads a stale version, therfore we download manually  */
