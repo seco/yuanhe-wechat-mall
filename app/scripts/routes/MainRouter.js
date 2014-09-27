@@ -5,6 +5,7 @@ define(['jquery',
     '../views/DashboardView',
     '../views/StoreListView',
     '../views/StoreEditView',
+    '../views/OrderListView',
     'adminLTE' // adminLTE doesnot need to be exported, must add the end of define
   ],
   function($,
@@ -13,7 +14,8 @@ define(['jquery',
     PageHeaderView,
     DashboardView,
     StoreListView,
-    StoreEditView
+    StoreEditView,
+    OrderListView
   ) {
 
     var MainRouter = Backbone.Router.extend({
@@ -22,6 +24,7 @@ define(['jquery',
         'stores': 'showStoreList',
         'stores/new': 'showStoreEdit',
         'stores/:id/edit': 'showStoreEdit',
+        'orders': 'showOrderList',
         '*action': 'showDashboard'
       }
     });
@@ -40,43 +43,54 @@ define(['jquery',
         });
       };
 
+      var menu = {
+        dashboard: {
+          'title': '后台面板',
+          'titlesmall': '快速入口'
+        },
+        storeList: {
+          'title': '查看店铺',
+          'titlesmall': '店铺列表'
+        },
+        storeEdit: {
+          'title': '编辑店铺',
+          'titlesmall': '店铺信息'
+        },
+        orderList: {
+          'title': '查看订单',
+          'titlesmall': '订单信息'
+        }
+      };
+
       var pageHeaderView = new PageHeaderView();
       var dashboardView = new DashboardView();
       var storeListView = new StoreListView();
       var storeEditView = new StoreEditView();
+      var orderListView = new OrderListView();
 
       router.on('route:showDashboard', function() {
-        var env = {
-          'title': '后台面板',
-          'titlesmall': '快速入口'
-        };
-
-        pageHeaderView.render(env);
+        pageHeaderView.render(menu.dashboard);
         dashboardView.render();
 
       });
 
       router.on('route:showStoreList', function() {
-        var env = {
-          'title': '查看店铺',
-          'titlesmall': '店铺列表'
-        };
-
-        pageHeaderView.render(env);
+        pageHeaderView.render(menu.storeList);
         storeListView.render();
 
       });
 
       router.on('route:showStoreEdit', function(id) {
-        var env = {
-          'title': '编辑店铺',
-          'titlesmall': '店铺信息'
-        };
-
-        pageHeaderView.render(env);
+        pageHeaderView.render(menu.storeEdit);
         storeEditView.render({
           id: id
         });
+
+      });
+
+      router.on('route:showOrderList', function() {
+        pageHeaderView.render(menu.orderList);
+        orderListView.render();
 
       });
 
