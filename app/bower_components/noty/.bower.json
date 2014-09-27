@@ -1,0 +1,19 @@
+{
+  "name": "noty",
+  "version": "2.2.8",
+  "main": "js/noty/packaged/jquery.noty.packaged.js",
+  "authors": [
+    "Nedim Arabacı"
+  ],
+  "description": "noty is a jQuery plugin that makes it easy to create alert - success - error - warning - information - confirmation messages as an alternative the standard alert dialog. Each notification is added to a queue. (Optional)",
+  "homepage": "https://github.com/needim/noty",
+  "_release": "2.2.8",
+  "_resolution": {
+    "type": "version",
+    "tag": "v2.2.8",
+    "commit": "d25f7df80c9207493bd3b724f73cb6206f6c8a2c"
+  },
+  "_source": "git://github.com/needim/noty.git",
+  "_target": "2.2.8",
+  "_originalSource": "noty"
+}
