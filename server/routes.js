@@ -11,6 +11,7 @@ var oauth = require('./handlers/weixin/oauth');
 var qrcode = require('./handlers/qrcode');
 
 var store = require('./handlers/store');
+var order = require('./handlers/order');
 var sign = require('./handlers/sign');
 
 module.exports = function(app) {
@@ -50,4 +51,7 @@ module.exports = function(app) {
   app.post('/stores', store.create);
   app.put('/stores/:id', store.update); // Backbone.Model.save()
   app.delete('/stores/:id', store.destroy);
+
+
+  app.get('/orders', order.index);
 };
