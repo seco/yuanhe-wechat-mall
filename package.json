@@ -19,7 +19,8 @@
     "tmp": "0.0.23",
     "xml2js": "0.4.4",
     "log4js": "0.6.21",
-    "methodmissing": "0.0.3"
+    "methodmissing": "0.0.3",
+    "async": "0.9.0"
   },
 
   "devDependencies": {
