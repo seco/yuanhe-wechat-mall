@@ -16,10 +16,21 @@ exports.index = function(req, res, next) {
   var skip = (req.query.page - 1) * req.query.per_page;
   var searchKey = req.query.searchKey;
   var searchVal = req.query.searchVal;
+  var calendarKey = req.query.calendarKey;
+  var startDate = req.query.startDate;
+  var endDate = req.query.endDate;
+
   var filter = {};
 
   if (searchKey && searchVal) {
-    filter[searchKey] = new RegExp(searchVal);
+    var regexp = new RegExp(searchVal);
+    filter['$or'] = [{'sales_store.store_name': regexp}, {'member_store.store_name': regexp}];
+  };
+
+  if (calendarKey && startDate && endDate) {
+    var toDate = new Date();
+    toDate.setDate(new Date(endDate).getDate() + 1);
+    filter[calendarKey] = {$gte: new Date(startDate), $lt: toDate};
   };
 
   logger.info('recevie backgrid request, set filter[' + JSON.stringify(filter) + '], limit[' + limit + '],skip[' + skip + ']');

@@ -7,7 +7,8 @@ define(['jquery',
     'backgridpaginator',
     'backgridtextcell',
     'backgridselectall',
-    'jqueryext'
+    'jqueryext',
+    'bootstrap-daterangepicker'
   ],
   function($, _, Backbone, orderListTmpl, OrderCollection, Backgrid) {
 
@@ -31,10 +32,6 @@ define(['jquery',
 
         this.grid = new Backgrid.Grid({
           columns: new Backgrid.Columns([{
-            name: "",
-            cell: "select-row",
-            headerCell: "select-all"
-          }, {
             name: 'member.member_name',
             label: '会员昵称',
             cell: 'string'
@@ -45,7 +42,7 @@ define(['jquery',
           }, {
             name: 'payment',
             label: '订单金额',
-            cell: 'string'
+            cell: 'number'
           }, {
             name: 'order_status',
             label: '商店类型',
@@ -73,11 +70,11 @@ define(['jquery',
           }, {
             name: 'sales_store.commission',
             label: '销售佣金',
-            cell: 'string'
+            cell: 'number'
           }, {
             name: 'member_store.commission',
             label: '会员佣金',
-            cell: 'string'
+            cell: 'number'
           }, {
             name: 'created_at',
             label: '订单创建时间',
@@ -103,6 +100,30 @@ define(['jquery',
 
         this.$el.html(orderListTmpl());
 
+        //init daterangepricker
+        this.$el.find('#reservation').daterangepicker({
+          locale: {
+            cancelLabel: 'Clear'
+          }
+        });
+        this.$el.find('#reservation').on('cancel.daterangepicker', function(ev, picker) {
+          $(ev.currentTarget).val('');
+          var q = self.orders.queryParams;
+          delete q.startDate;
+          delete q.endDate;
+          delete q.calendarKey;
+        });
+        this.$el.find('#reservation').on('apply.daterangepicker', function(ev, picker) {
+          var startDate = picker.startDate.format('YYYY-MM-DD');
+          var endDate = picker.endDate.format('YYYY-MM-DD');
+          var calendarKey = 'created_at';
+          var q = self.orders.queryParams;
+          q.startDate = startDate;
+          q.endDate = endDate;
+          q.calendarKey = calendarKey;
+        });
+
+
         this.$el.find('#grid').append(this.grid.render().el);
         this.$el.find('#paginator').append(this.paginator.render().el);
 
@@ -121,12 +142,12 @@ define(['jquery',
       },
 
       events: {
-        'click button.search': 'search'
+        'click button.searchOrder': 'search'
       },
 
       search: function() {
-        var searchVal = this.$el.find('[name="table_search"]').val();
         var searchKey = 'store_name';
+        var searchVal = this.$el.find('[name="table_search"]').val();
         this.orders.queryParams.searchKey = searchKey;
         this.orders.queryParams.searchVal = searchVal;
         this.orders.fetch({
