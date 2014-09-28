@@ -19,6 +19,8 @@ require.config({
     jquerycusttreemenu: ['jquery'],
     jqueryicheck: ['jquery'],
     jquerynoty: ['jquery'],
+    moment: ['jquery'],
+    'bootstrap-daterangepicker': ['jquery', 'moment'],
     bootstrap: ['jquery'],
     adminLTE: ['jquery', 'jqueryslimscroll', 'jquerycusttreemenu', 'jqueryicheck', 'jqueryui', 'bootstrap'],
     backgrid: {
@@ -38,6 +40,9 @@ require.config({
     jquerycusttreemenu: 'vendor/jquery_cust_treemenu',
     jqueryicheck: '../bower_components/jquery-icheck/icheck.min',
     jquerynoty: '../bower_components/noty/js/noty/packaged/jquery.noty.packaged.min',
+    'bootstrap-daterangepicker': '../bower_components/bootstrap-daterangepicker/daterangepicker',
+    //daterangepicker: '../js/plugins/daterangepicker/daterangepicker',
+    moment: '../bower_components/moment/min/moment.min',
     backbone: '../bower_components/backbone/backbone',
     'backbone-deep-model': '../bower_components/backbone-deep-model/distribution/deep-model.min',
     //'backbone-nested': '../bower_components/backbone-nested/backbone-nested.min',
