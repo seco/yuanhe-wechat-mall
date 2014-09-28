@@ -4,6 +4,9 @@
  * @author Minix Li
  */
 
+var async = require('async');
+var db = require('../../../../app').get('db');
+var dbProxy = require('../../../../app').get('dbProxy');
 var utils = require('../../../util/utils');
 
 var MsgHandler = function() {};
@@ -18,7 +21,45 @@ MsgHandler.prototype.name = 'scan';
 MsgHandler.prototype.handle = function(req, res, msg, cb) {
   if (!msgIsValid(msg)) {
     utils.invokeCallback(cb, new Error('invalid message'));
+    return;
   }
+
+  async.waterfall([
+    function() {
+      dbProxy.collection("stores", cb);
+    },
+    function(collection, cb) {
+      collection.findOne(
+        { "scene_id": scene_id }, cb
+      )
+    }
+  ], function(err, store) {
+    if (err) {
+      utils.invokeCallback(cb, err);
+      return;
+    }
+
+    async.waterfall([
+      function(cb) {
+        dbProxy.collection("members", cb);
+      },
+      function(collection, cb) {
+        collection.update(
+          { "openid": openid },
+          { "$set": {
+            "following_store_id": store._id,
+            "time_following": new Date()
+          } }, cb
+        );
+      }
+    ], function(err, result) {
+      if (err) {
+        utils.invokeCallback(cb, err);
+        return;
+      }
+      uitls.invokeCallback(cb, null);
+    });
+  });
 };
 
 /**

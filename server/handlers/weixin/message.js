@@ -27,6 +27,7 @@ exports.access = function(req, res) {
  */
 exports.receive = function(req, res) {
   gateway.dispatch(req, res, function(err) {
-    console.log(err);
+    if (err) { logger.error(err); }
+    res.end();
   });
 };

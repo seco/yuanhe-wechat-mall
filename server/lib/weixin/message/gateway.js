@@ -39,7 +39,9 @@ Gateway.prototype.dispatch = function(req, res, cb) {
     dispatcher.route(req, res, msgParsed, self.msgHandlers, function(err) {
       if(err) {
         utils.invokeCallback(cb, err);
+        return;
       }
+      utils.invokeCallback(cb, null);
     });
   });
 };
