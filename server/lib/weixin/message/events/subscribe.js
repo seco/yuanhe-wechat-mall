@@ -50,12 +50,15 @@ MsgHandler.prototype.handle = function(req, res, msg, cb) {
         if (member_event && time_created) {
           collection.update(
             { "_id": member_event.member_id },
-            { "$set": { "following_store_id": member_event.store_id } }, cb
+            { "$set": {
+              "following_store_id": member_event.store_id,
+              "time_following": new Date()
+            } }, cb
           );
         } else {
           collection.update(
             { "_id": member_event.member_id },
-            { "$set": { "following_store_id":  } }, cb
+            { "$set": { "following_store_id": } }, cb
           );
         }
       }
