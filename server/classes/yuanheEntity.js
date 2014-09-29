@@ -14,6 +14,9 @@ var dbProxy = require('../app').dbProxy;
 var utils = require('../lib/util/utils');
 var YuanheData = require('./yuanheData');
 
+/**
+ *
+ */
 YuanheEntity = YuanheData.extend(function() {
   throw new Error("Can't instantiate abstract classes");
 });
@@ -35,7 +38,7 @@ pro.initializeAttributes = function() {
 };
 
 /**
- * Loads attributes from the entities collection into the object
+ * Load attributes from the entities collection into the object
  *
  * @param {String} name collection name
  * @param {String} id document id

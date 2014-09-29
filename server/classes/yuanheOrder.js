@@ -14,11 +14,20 @@
 var utils = require('../lib/util/utils');
 var YuanheEntity = require('./yuanheEntity');
 
-YuanheOrder = YuanheEntity.extend(function(id) {
+/**
+ * @param {String} id
+ * @param {Function} cb
+ */
+YuanheOrder = YuanheEntity.extend(function(id, cb) {
+  this.name = 'orders';
   this.initializeAttributes();
 
   if (id) {
-    this.load('orders', id, function() {
+    this.load(this.name, id, function(err) {
+      if (err) {
+        utils.invokeCallback(cb, err);
+        return;
+      }
     });
   }
 });
