@@ -62,14 +62,25 @@ pro.load = function(id, cb) {
       utils.invokeCallback(cb, err);
       return;
     }
-    for (var field in doc) {
-      if (field in this.attributes) {
-        this.attributes[field] = doc[field];
-      }
-    }
+    this.drawAttrFromDoc(doc);
     utils.invokeCallback(cb, null);
   });
 };
+
+/**
+ * Draw attributes from entity document
+ *
+ * @param {Object} doc
+ *
+ * @protected
+ */
+pro.drawAttrFromDoc = function(doc) {
+  for (var key in doc) {
+    if (key in this.attributes) {
+      this.attributes[key] = doc[key];
+    }
+  }
+}
 
 /**
  * Return the value of a property

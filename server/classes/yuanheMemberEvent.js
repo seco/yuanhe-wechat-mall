@@ -25,7 +25,7 @@ YuanheMemberEvent = function() {
 // inherit from YuanheEntity
 YuanheEntity.extend(YuanheMemberEvent);
 
-// CLASS PROPERTIES  //////////////////////////////////////////////////////////
+// CLASS PROPERTIES //////////////////////////////////////////////////////////
 
 /**
  * Put collection name into class properties

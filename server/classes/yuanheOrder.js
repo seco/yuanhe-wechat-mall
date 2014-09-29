@@ -24,7 +24,7 @@ YuanheOrder = function() {
 // inherit from YuanheEntity
 YuanheEntity.extend(YuanheOrder);
 
-// CLASS PROPERTIES  //////////////////////////////////////////////////////////
+// CLASS PROPERTIES //////////////////////////////////////////////////////////
 
 /**
  * Put collection name into class properties

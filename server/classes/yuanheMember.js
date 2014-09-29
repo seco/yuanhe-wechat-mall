@@ -23,7 +23,7 @@ YuanheMember = function() {
 // inherit from YuanheEntity
 YuanheEntity.extend(YuanheMember);
 
-// CLASS PROPERTIES  //////////////////////////////////////////////////////////
+// CLASS PROPERTIES //////////////////////////////////////////////////////////
 
 /**
  * Put collection name into class properties
@@ -106,11 +106,7 @@ pro.loadByOpenid = function(openid, cb) {
       utils.invokeCallback(cb, err);
       return;
     }
-    for (var field in doc) {
-      if (field in this.attributes) {
-        this.attributes[field] = doc[field];
-      }
-    }
+    this.drawAttrFromDoc(doc);
     utils.invokeCallback(cb, null);
   });
 };

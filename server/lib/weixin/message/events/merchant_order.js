@@ -137,45 +137,6 @@ var getMemberEvent = function(openid, cb) {
 };
 
 /**
- * Get member by openid
- *
- * @param {String} openid
- *
- * @private
- */
-var getMemberByOpenId = function(openid, cb) {
-  async.waterfall([
-    function(cb) {
-      dbProxy.collection("members", cb);
-    },
-    function(collection, cb) {
-      collection.find(
-        { "openid": openid },
-        cb
-      );
-    }
-  ], function(err, member) {
-    if (err) {
-      utils.invokeCallback(cb, err);
-      return;
-    }
-    utils.invokeCallback(cb, null, member);
-  });
-};
-
-/**
- * Update order info
- *
- * @param {String} order_id
- * @param {String} sales_store_id
- * @param {String} member_store_id
- *
- * @private
- */
-var updateOrderInfo = function(order_id, sales_store_id, member_store_id) {
-};
-
-/**
  * Check whether a message is valid
  *
  * @private
