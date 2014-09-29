@@ -15,11 +15,13 @@ var utils = require('../lib/util/utils');
 var YuanheData = require('./yuanheData');
 
 /**
- *
+ * YuanheEntity constructor
  */
-YuanheEntity = YuanheData.extend(function() {
+YuanheEntity = function() {
   throw new Error("Can't instantiate abstract classes");
-});
+};
+
+YuanheData.extend(YuanheEntity);
 
 var pro = YuanheEntity.prototype;
 
@@ -38,7 +40,7 @@ pro.initializeAttributes = function() {
 };
 
 /**
- * Load attributes from the entities collection into the object
+ * Load attributes from the entity collection into the object
  *
  * @param {String} name collection name
  * @param {String} id document id
@@ -59,15 +61,36 @@ pro.load = function(name, id, cb) {
       utils.invokeCallback(cb, err);
       return;
     }
-
     for (var field in doc) {
       if (field in this.attributes) {
         this.attributes[field] = doc[field];
       }
     }
-
     utils.invokeCallback(cb, null);
   });
+};
+
+/**
+ * Return the value of a property
+ *
+ * @param {String} name
+ *
+ * @public
+ */
+pro.get = function(name) {
+  return this.attributes[name];
+};
+
+/**
+ * Set the value of a property
+ *
+ * @param {String} name
+ * @param {Object} value
+ *
+ * @public
+ */
+pro.set = function(name, value) {
+  this.attributes[name] = value;
 };
 
 /**

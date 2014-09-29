@@ -173,27 +173,6 @@ var getMemberByOpenId = function(openid, cb) {
  * @private
  */
 var updateOrderInfo = function(order_id, sales_store_id, member_store_id) {
-  async.waterfall([
-    function(cb) {
-      dbProxy.collection("orders", cb);
-    },
-    function(collection, cb) {
-      collection.update(
-        { "_id": order_id },
-        { "$set": {
-          "sales_store": { "id": sales_store_id },
-          "member_store": { "id": member_store_id }
-        } },
-        cb
-      );
-    }
-  ], function(err, result) {
-    if (err) {
-      utils.invokeCallback(cb, err);
-      return;
-    }
-    utils.invokeCallback(cb, null, result);
-  });
 };
 
 /**
