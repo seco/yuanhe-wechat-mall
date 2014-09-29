@@ -58,7 +58,7 @@ MsgHandler.prototype.handle = function(req, res, msg, cb) {
         } else {
           collection.update(
             { "_id": member_event.member_id },
-            { "$set": { "following_store_id": } }, cb
+            { "$set": { "following_store_id": null} }, cb
           );
         }
       }
