@@ -58,7 +58,7 @@ pro.load = function(order_id, cb) {
     }
     utils.invokeCallback(cb, null);
   });
-}
+};
 
 /**
  * Update both sales and member stores
@@ -100,6 +100,71 @@ pro.updateStores = function(sales_store_id, member_store_id, cb) {
   });
 };
 
+/**
+ * Update sales store in the order
+ *
+ * @param {String} sales_store_id
+ * @param {Function} cb
+ *
+ * @public
+ */
+pro.updateSalesStore = function(sales_store_id) {
+  var sales_store_value = { "id": sales_store_id };
+
+  async.waterfall([
+    function(cb) {
+      dbProxy.collection(this.name, cb);
+    },
+    function(collection, cb) {
+      collection.update(
+        { "_id": this.get('_id') },
+        { "$set": { "sales_store": sales_store_value } },
+        cb
+      );
+    }
+  ], function(err, result) {
+    if (err) {
+      utils.invokeCallback(cb, err);
+      return;
+    }
+
+    this.set('sales_store', sales_store_value);
+    utils.invokeCallback(cb, null);
+  });
+};
+
+/**
+ * Update member store in the order
+ *
+ * @param {String} member_store_id
+ * @param {Function} cb
+ *
+ * @public
+ */
+pro.updateMemberStore = function(member_store_id) {
+  var member_store_value = { "id": member_store_id };
+
+  async.waterfall([
+    function(cb) {
+      dbProxy.collection(this.name, cb);
+    },
+    function(collection, cb) {
+      collection.update(
+        { "_id": this.get('_id') },
+        { "$set": { "member_store": member_store_value } },
+        cb
+      );
+    }
+  ], function(err, result) {
+    if (err) {
+      utils.invokeCallback(cb, err);
+      return;
+    }
+
+    this.set('member_store', member_store_value);
+    utils.invokeCallback(cb, null);
+  });
+};
 /**
  * export YuanheOrder
  */
