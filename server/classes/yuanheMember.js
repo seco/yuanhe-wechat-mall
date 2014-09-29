@@ -56,6 +56,14 @@ YuanheMember.getById = function(id, cb) {
  */
 YuanheMember.getByOpenid = function(openid, cb) {
   var member = new YuanheMember();
+
+  member.loadByOpenid(openid, function(err) {
+    if (err) {
+      utils.invokeCallback(cb, err);
+      return;
+    }
+    utils.invokeCallback(cb, null, member);
+  });
 };
 
 // INSTANCE METHODS //////////////////////////////////////////////////////////
@@ -73,6 +81,38 @@ pro.initializeAttributes = function() {
   this.attributes['openid'] = null;
   this.attributes['following_store_id'] = null;
   this.attributes['time_following'] = null;
+};
+
+/**
+ * Load member attributes by openid
+ *
+ * @param {String} openid
+ * @param {Function} cb
+ *
+ * @public
+ */
+pro.loadByOpenid = function(openid, cb) {
+  var col_name = this.constructor.col_name;
+
+  async.waterfall([
+    function(cb) {
+      dbProxy.collection(col_name, cb);
+    },
+    function(collection, cb) {
+      collection.findOne({ "openid": openid }, cb);
+    }
+  ], function(err, doc) {
+    if (err) {
+      utils.invokeCallback(cb, err);
+      return;
+    }
+    for (var field in doc) {
+      if (field in this.attributes) {
+        this.attributes[field] = doc[field];
+      }
+    }
+    utils.invokeCallback(cb, null);
+  });
 };
 
 /**
