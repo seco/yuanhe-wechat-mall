@@ -32,6 +32,24 @@ YuanheEntity.extend(YuanheMemberEvent);
  */
 YuanheMemberEvent.col_name = 'member_events';
 
+/**
+ * Get the last member event by openid
+ *
+ * @param {String} openid
+ * @param {Function} cb
+ */
+YuanheMemberEvent.getLastByOpenid = function(openid, cb) {
+  var event = new YuanheMemberEvent();
+
+  event.loadLastByOpenid(openid, function(err) {
+    if (err) {
+      utils.invokeCallback(cb, err);
+      return;
+    }
+    utils.invokeCallback(cb, null, event);
+  });
+};
+
 // INSTANCE METHODS //////////////////////////////////////////////////////////
 
 var pro = YuanheMemberEvent.prototype;
@@ -49,6 +67,35 @@ pro.initializeAttributes = function() {
   this.attributes['object_id'] = null;
   this.attributes['annotation_id'] = null;
   this.attributes['posted'] = null;
+};
+
+/**
+ * Load the last event attributes by openid
+ *
+ * @public
+ */
+pro.loadLastByOpenid = function(openid, cb) {
+  var col_name = this.constructor.col_name;
+
+  async.waterfall([
+    function(cb) {
+      dbProxy.collection(col_name, cb);
+    },
+    function(collection, cb) {
+      collection.find(
+        { 'openid': openid },
+        { 'limit': 1, 'sort': { 'time_created': -1 } },
+        cb
+      );
+    }
+  ], function(err, doc) {
+    if (err) {
+      utils.invokeCallback(cb, err);
+      return;
+    }
+    this.drawAttrFromDoc(doc);
+    utils.invokeCallback(cb, null);
+  });
 };
 
 /**
