@@ -29,7 +29,7 @@ YuanheEntity.extend(YuanheOrder);
 /**
  * Put collection name into class properties
  */
-YuanheOrder.collection_name = 'orders';
+YuanheOrder.col_name = 'orders';
 
 /**
  * Get order by id

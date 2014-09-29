@@ -28,7 +28,7 @@ YuanheEntity.extend(YuanheMember);
 /**
  * Put collection name into class properties
  */
-YuanheMember.collection_name = 'members';
+YuanheMember.col_name = 'members';
 
 /**
  * Get member by id

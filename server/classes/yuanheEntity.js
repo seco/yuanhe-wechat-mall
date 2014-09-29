@@ -48,11 +48,11 @@ pro.initializeAttributes = function() {
  * @protected
  */
 pro.load = function(id, cb) {
-  var name = this.constructor.name;
+  var col_name = this.constructor.col_name;
 
   async.waterfall([
     function(cb) {
-      dbProxy.collection(name, cb);
+      dbProxy.collection(col_name, cb);
     },
     function(collection, cb) {
       collection.findOne({ "_id": id }, cb);
