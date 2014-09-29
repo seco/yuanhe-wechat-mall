@@ -20,9 +20,7 @@ var defaultOpts = {
   },
   server: {
     poolSize: 5,
-    socketOptions: {
-      connectTimeoutMS: 500
-    },
+    socketOptions: { connectTimeoutMS: 500 },
     auto_reconnect: true
   },
   replSet: {},
