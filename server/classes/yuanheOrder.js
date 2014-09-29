@@ -11,15 +11,17 @@
  * @author Minix Li
  */
 
+var utils = require('../lib/util/utils');
 var YuanheEntity = require('./yuanheEntity');
 
-YuanheOrder = function(id) {
+YuanheOrder = YuanheEntity.extend(function(id) {
   this.initializeAttributes();
 
   if (id) {
-
+    this.load('orders', id, function() {
+    });
   }
-};
+});
 
 var pro = YuanheOrder.prototype;
 
@@ -40,4 +42,4 @@ pro.initializeAttributes = function() {
 /**
  * export YuanheOrder
  */
-module.exports = YuanheEntity.extend(YuanheOrder);
+module.exports = YuanheOrder;
