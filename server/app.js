@@ -72,7 +72,7 @@ mongodbUtil.establishConnPool(function(err, result) {
   app.set('views', __dirname + '/views');
 
   // uncomment after placing your favicon in /public
-  // app.use(favicon(__dirname + '/public/favicon.ico'));
+  app.use(favicon(path.join(__dirname, '../app/images/yuanhe_favicon.png')));
 
   // using dev logger as the very first middleware
   //app.use(logger('dev'));
@@ -98,7 +98,13 @@ mongodbUtil.establishConnPool(function(err, result) {
   // mark the app dir as a static dir
   app.use(express.static(path.join(__dirname, '../app')));
 
-  // use log4js middleware
+  /**
+   * use log4js middleware
+   *
+   * http responses 3xx, level = WARN
+   * http responses 4xx & 5xx, level = ERROR
+   * else, level = INFO
+   */
   app.use(log.getLib().connectLogger(logger, {
     level: 'auto',
     format: ':method :url'
