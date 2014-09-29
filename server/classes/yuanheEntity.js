@@ -106,6 +106,53 @@ pro.set = function(name, value) {
 };
 
 /**
+ * Save an entity
+ *
+ * @param {Function} cb
+ *
+ * @public
+ */
+pro.save = function(cb) {
+  var col_name = this.constructor.col_name;
+
+  if (this.get('_id')) {
+    async.waterfall([
+      function(cb) {
+        dbProxy.collection(col_name, cb);
+      },
+      function(collection, cb) {
+        collection.update(
+          { '_id': this.get('_id') },
+          { '$set': this.attributes }
+          cb
+        );
+      }
+    ], function(err, result) {
+      if (err) {
+        utils.invokeCallback(cb, err);
+        return;
+      }
+      utils.invokeCallback(cb, null, result);
+    });
+  } else {
+    async.waterfall([
+      function(cb) {
+        dbProxy.collection(col_name, cb);
+      },
+      function(collection, cb) {
+        collection.insert(this.attributes, cb);
+      }
+    ], function(err, result) {
+      if (err) {
+        utils.invokeCallback(cb, err);
+        return;
+      }
+      utils.invokeCallback(cb, null, result);
+    });
+  }
+};
+
+/**
  * export YuanheEntity
  */
 module.exports = YuanheEntity;
