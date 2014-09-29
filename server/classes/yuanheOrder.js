@@ -16,15 +16,40 @@ var dbProxy = require('../app').dbProxy;
 var utils = require('../lib/util/utils');
 var YuanheEntity = require('./yuanheEntity');
 
-/**
- * YuanheOrder constructor
- */
+// YuanheOrder constructor
 YuanheOrder = function() {
-  this.name = 'orders';
   this.initializeAttributes();
 };
 
+// inherit from YuanheEntity
 YuanheEntity.extend(YuanheOrder);
+
+// CLASS PROPERTIES  //////////////////////////////////////////////////////////
+
+/**
+ * Put collection name into class properties
+ */
+YuanheOrder.collection_name = 'orders';
+
+/**
+ * Get order by id
+ *
+ * @param {String} id
+ * @param {Function} cb
+ */
+YuanheOrder.getById = function(id, cb) {
+  var order = new YuanheOrder();
+
+  order.load(id, function(err) {
+    if (err) {
+      utils.invokeCallback(cb, err);
+      return;
+    }
+    utils.invokeCallback(cb, null, order);
+  });
+};
+
+// INSTANCE METHODS //////////////////////////////////////////////////////////
 
 var pro = YuanheOrder.prototype;
 
@@ -40,24 +65,6 @@ pro.initializeAttributes = function() {
   this.attributes['member'] = {};
   this.attributes['sales_store'] = {};
   this.attributes['member_store'] = {};
-};
-
-/**
- * Load attributes from the order collection into the object
- *
- * @param {String} order_id
- * @param {Function} cb
- *
- * @public
- */
-pro.load = function(order_id, cb) {
-  this.load(this.name, order_id, function(err) {
-    if (err) {
-      utils.invokeCallback(cb, err);
-      return;
-    }
-    utils.invokeCallback(cb, null);
-  });
 };
 
 /**
@@ -165,6 +172,7 @@ pro.updateMemberStore = function(member_store_id) {
     utils.invokeCallback(cb, null);
   });
 };
+
 /**
  * export YuanheOrder
  */

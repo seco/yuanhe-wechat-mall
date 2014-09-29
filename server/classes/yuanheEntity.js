@@ -42,13 +42,14 @@ pro.initializeAttributes = function() {
 /**
  * Load attributes from the entity collection into the object
  *
- * @param {String} name collection name
- * @param {String} id document id
- * @param {Function} cb callback
+ * @param {String} id
+ * @param {Function} cb
  *
  * @protected
  */
-pro.load = function(name, id, cb) {
+pro.load = function(id, cb) {
+  var name = this.constructor.name;
+
   async.waterfall([
     function(cb) {
       dbProxy.collection(name, cb);
