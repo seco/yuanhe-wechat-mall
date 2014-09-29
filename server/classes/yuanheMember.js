@@ -68,7 +68,7 @@ YuanheMember.getByOpenid = function(openid, cb) {
 
 // INSTANCE METHODS //////////////////////////////////////////////////////////
 
-var pro = YuanheOrder.prototype;
+var pro = YuanheMember.prototype;
 
 /**
  * Initialize the attributes array
@@ -116,6 +116,6 @@ pro.loadByOpenid = function(openid, cb) {
 };
 
 /**
- * export YuanheOrder
+ * export YuanheMember
  */
-module.exports = YuanheOrder;
+module.exports = YuanheMember;
