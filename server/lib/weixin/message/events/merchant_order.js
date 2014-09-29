@@ -5,10 +5,12 @@
  */
 
 var async = require('async');
-var db = require('../../../../app').get('db');
 var dbProxy = require('../../../../app').get('dbProxy');
 var merchant = require('../../merchant');
 var utils = require('../../../util/utils');
+var YuanheMember = require('../../../../classes/yuanheMember');
+var YuanheMemberEvent = require('../../../../classes/yuanheMemberEvent');
+var YuanheOrder = require('../../../../classes/yuanheOrder');
 
 var MsgHandler = function() {};
 
@@ -16,6 +18,11 @@ MsgHandler.prototype.name = 'merchant_order';
 
 /**
  * message handler
+ *
+ * @param {Object} req
+ * @param {Object} res
+ * @param {Object} msg
+ * @param {Function} cb
  *
  * @public
  */
@@ -25,49 +32,88 @@ MsgHandler.prototype.handle = function(req, res, msg, cb) {
     return;
   }
 
-  // Fetch order info from weixin and insert it into database.
-  createOrder(order_id, function(err, result) {
+  async.auto({
+    // fetch order from weixin
+    get_order: function(cb) {
+      merchant.getOrderInfoById(order_id, cb);
+    },
+    // create and save order
+    save_order: ['get_order', function(cb, results) {
+      var order = new YuanheOrder();
+      var order_info = results.get_order;
+
+      order.set('weixin_order_id', order_id);
+      order.set('weixin_order_info', order_info);
+
+      order.save(cb);
+    }],
+    // get the last member event by openid
+    get_event: ['save_order', function(cb, results) {
+      YuanheMemberEvent.getLastByOpenid(openid, cb);
+    }],
+    // check whether the member event is in the past 30 days
+    check_event: ['get_event', function(cb, results) {
+      var order = results.save_order;
+      var event = results.get_event;
+
+      // sink into the next layer
+      if (checkEventPosted(event)) {
+        decisionA(openid, order, event, cb);
+      } else {
+        decisionB(cb);
+      }
+    }]
+  }, function(err, results) {
     if (err) {
       utils.invokeCallback(cb, err);
       return;
     }
-
-    var order_id = result;
-
-    // Get the newest member event in the past 30 days
-    getMemberEvent(openid, function(err, event) {
-      if (err) {
-        utils.invokeCallback(cb, err);
-        return;
-      }
-
-      var sales_store_id, member_store_id;
-
-      if (event) {
-        var sales_store_id = event.store_id;
-
-        // get member by openid
-        getMemberByOpenId(openid, function(err, member) {
-          if (member.following_store_id) {
-            member_store_id = member.following_store_id;
-          } else {
-            member_store_id = sales_store_id;
-          }
-
-          // update order info
-          updateOrderInfo(order_id, sales_store_id, member_store_id, function(err, result) {
-            if (err) {
-              utils.invokeCallback(cb, err);
-              return;
-            }
-            utils.invokeCallback(cb, null);
-          });
-        });
-      } else {
-
-      }
-    });
+    utils.invokeCallback(cb, null);
   });
+};
+
+/**
+ * Decision A
+ *
+ * @param {String} openid
+ * @param {YuanheOrder} order
+ * @param {YuanheEvent} event
+ * @param {Function} cb
+ *
+ * @private
+ */
+var decisionA = function(openid, order, event, cb) {
+  async.waterfall([
+    function(cb) {
+      // get yuanhe member by openid
+      YuanheMember.getByOpenid(openid, cb);
+    },
+    function(member, cb) {
+      var sales_id = event.get('store_id');
+      var member_id = member.get('following_store_id')
+      // assign sales_id to member_id if the member didn't follow
+      if (!member_id) {
+        member_id = sales_id;
+      }
+      // update both sales and member stores
+      order.updateStores(sales_id, member_id, cb);
+    }
+  ], function(err, result) {
+    if (err) {
+      utils.invokeCallback(cb, err);
+      return;
+    }
+    utils.invokeCallback(cb, null);
+  });
+};
+
+/**
+ * Decision B
+ *
+ * @private
+ */
+var decisionB = function() {
+
 };
 
 /**

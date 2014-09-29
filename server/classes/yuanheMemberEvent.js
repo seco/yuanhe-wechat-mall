@@ -72,6 +72,9 @@ pro.initializeAttributes = function() {
 /**
  * Load the last event attributes by openid
  *
+ * @param {String} openid
+ * @param {Function} cb
+ *
  * @public
  */
 pro.loadLastByOpenid = function(openid, cb) {

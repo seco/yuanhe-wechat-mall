@@ -147,6 +147,7 @@ pro.save = function(cb) {
         utils.invokeCallback(cb, err);
         return;
       }
+      this.set('_id', result._id);
       utils.invokeCallback(cb, null, result);
     });
   }
