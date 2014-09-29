@@ -182,7 +182,7 @@ var updateOrderInfo = function(order_id, sales_store_id, member_store_id) {
         { "_id": order_id },
         { "$set": {
           "sales_store": { "id": sales_store_id },
-          "member_store": { "id" member_store_id }
+          "member_store": { "id": member_store_id }
         } },
         cb
       );
