@@ -43,5 +43,8 @@ DecisionTreeNode.prototype.addChild = function(node) {
   this.childNodes.push(node);
 };
 
-// export DecisionTree
-module.exports = DecisionTree;
+// export DecisionTree and DecisionTreeNode
+module.exports = {
+  'DecisionTree': DecisionTree,
+  'DecisionTreeNode': DecisionTreeNode
+};
