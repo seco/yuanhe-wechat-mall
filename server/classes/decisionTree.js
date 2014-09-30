@@ -21,14 +21,12 @@ var Tree = function(callback) {
 /**
  * Set root node
  *
- * @param {TreeNode} node
+ * @param {Function} cb
  *
  * @public
  */
-Tree.prototype.root = function(node) {
-  if (this.root) {
-    return;
-  }
+Tree.prototype.root = function(cb) {
+  var node = new TreeNode(cb);
   this.root = node;
 };
 
@@ -38,16 +36,17 @@ Tree.prototype.root = function(node) {
  * @param {String} cname
  * @param {String} pname
  * @param {Boolean} cond
- * @param {TreeNode} node
+ * @param {Function} cb
  *
  * @public
  */
-Tree.prototype.addChild = function(cname, pname, cond, node) {
+Tree.prototype.addChild = function(cname, pname, cond, cb) {
   // decision tree only supports true/false condition
   if (typeof cond !== 'boolean') {
     return;
   }
 
+  var node = new TreeNode(cb);
   this.children[cname] = node;
 
   if (this.children[pname]) {
@@ -136,7 +135,8 @@ var auto = function(decisions, cb) {
 
     // set tree root
     if (typeof value == 'function') {
-      tree.root(new TreeNode(value));
+      var cb = value;
+      tree.root(cb);
     }
 
     // append child
