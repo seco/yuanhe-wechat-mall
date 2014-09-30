@@ -33,11 +33,12 @@ MsgHandler.prototype.handle = function(req, res, msg, cb) {
   }
 
   async.auto({
-    // fetch order from weixin
+    // fetch order info from weixin
     get_order: function(cb) {
       merchant.getOrderInfoById(order_id, cb);
     },
-    // create and save order
+
+    // create and save new order
     save_order: ['get_order', function(cb, results) {
       var order = new YuanheOrder();
       var order_info = results.get_order;
@@ -47,16 +48,19 @@ MsgHandler.prototype.handle = function(req, res, msg, cb) {
 
       order.save(cb);
     }],
+
     // get the last member event by openid
     get_event: ['save_order', function(cb, results) {
       YuanheMemberEvent.getLastByOpenid(openid, cb);
     }],
-    // check whether the member event is in the past 30 days
+
+    // check whether the member event is in the
+    // past 30 days
     check_event: ['get_event', function(cb, results) {
       var order = results.save_order;
       var event = results.get_event;
 
-      // sink into the next layer
+      // sink into the next decision layer
       if (checkEventPosted(event)) {
         decisionA(openid, order, event, cb);
       } else {
@@ -85,18 +89,20 @@ MsgHandler.prototype.handle = function(req, res, msg, cb) {
 var decisionA = function(openid, order, event, cb) {
   async.waterfall([
     function(cb) {
-      // get yuanhe member by openid
       YuanheMember.getByOpenid(openid, cb);
     },
+
     function(member, cb) {
-      var sales_id = event.get('store_id');
-      var member_id = member.get('following_store_id')
-      // assign sales_id to member_id if the member didn't follow
-      if (!member_id) {
-        member_id = sales_id;
+      var sales_store_id = event.get('store_id');
+
+      // assign sales_store_id to member_store_id if
+      // the member hasn't
+      var member_store_id = member.get('following_store_id')
+      if (!member_store_id) {
+        member_store_id = sales_store_id;
       }
-      // update both sales and member stores
-      order.updateStores(sales_id, member_id, cb);
+
+      order.updateStores(sales_store_id, member_store_id, cb);
     }
   ], function(err, result) {
     if (err) {
