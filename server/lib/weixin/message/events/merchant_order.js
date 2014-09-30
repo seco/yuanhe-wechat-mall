@@ -1,6 +1,36 @@
 /**
  * Merchant order event message handler
  *
+ *
+ * ******************************* DECISION TREE *******************************
+ *
+ *
+ *   start --- decision A --- decision C --- decision D --- decision E --- end
+ *                 |              |              |              |
+ *                 |              |              |              |
+ *                 |              |              |              |
+ *     end --- decision B        end            end            end
+ *                 |
+ *                 |
+ *                 |
+ *                end
+ *
+ *
+ *   Decision A check whether a member has viewed the product promotion page
+ *   in the past 30 days.
+ *
+ *   Decision B check whether a member has been marked a channel source.
+ *
+ *   Decision C check whether a member has been marked a channel source.
+ *
+ *   Decision D check whether a member has subscribed yuanhe in the past
+ *   30 days.
+ *
+ *   Decision E check whether a member has viewed the product promotion page.
+ *
+ * *****************************************************************************
+ *
+ *
  * @author Minix Li
  */
 
@@ -64,7 +94,7 @@ MsgHandler.prototype.handle = function(req, res, msg, cb) {
       if (checkEventPosted(event)) {
         decisionA(openid, order, event, cb);
       } else {
-        decisionB(cb);
+        decisionD(cb);
       }
     }]
   }, function(err, results) {
@@ -119,6 +149,33 @@ var decisionA = function(openid, order, event, cb) {
  * @private
  */
 var decisionB = function() {
+
+};
+
+/**
+ * Decision C
+ *
+ * @private
+ */
+var decisionC = function() {
+
+};
+
+/**
+ * Decision D
+ *
+ * @private
+ */
+var decisionD = function() {
+
+};
+
+/**
+ * Decision E
+ *
+ * @private
+ */
+var decisionE = function() {
 
 };
 
