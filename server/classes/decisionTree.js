@@ -6,28 +6,29 @@
  * @author Minix Li
  */
 
+var utils = require('../lib/util/utils');
+
 /**
  * Tree constructor
  *
  * @param {Function} callback
  */
 var Tree = function(callback) {
+  this.cb = callback;
   this.root = null;
   this.children = {};
-
-  this.cb = callback;
 };
 
 /**
  * Set root node
  *
+ * @param {String} cname
  * @param {Function} cb
  *
  * @public
  */
-Tree.prototype.root = function(cb) {
-  var node = new TreeNode(cb);
-  this.root = node;
+Tree.prototype.setRoot = function(cname, cb) {
+  this.root = this.children[cname] = new TreeNode(cb);
 };
 
 /**
@@ -57,13 +58,11 @@ Tree.prototype.addChild = function(cname, pname, cond, cb) {
 /**
  * Start decisions
  *
- * @param {Function} cb
- *
  * @public
  */
-Tree.prototype.startDecisions = function(cb) {
+Tree.prototype.startDecisions = function() {
   if (this.root) {
-    this.root.startDecision(cb);
+    this.root.startDecision(this.cb, {});
   }
 };
 
@@ -97,13 +96,14 @@ TreeNode.prototype.appendChild = function(cond, node) {
  * Start decision
  *
  * @param {Function} callback
+ * @param {Object} context
  *
  * @public
  */
-TreeNode.prototype.startDecision = function(callback) {
+TreeNode.prototype.startDecision = function(callback, context) {
   var self = this;
 
-  utils.invokeCallback(this.cb, function(err, cond) {
+  utils.invokeCallback(this.cb, function(err, cond, res) {
     if (err) {
       utils.invokeCallback(callback, err);
       return;
@@ -116,9 +116,15 @@ TreeNode.prototype.startDecision = function(callback) {
     cond ? (node = self.leftChild) : (node = self.rightChild);
 
     if (node) {
-      node.startDecision(callback);
+      for (var attr in res) {
+        context[attr] = res[attr];
+      }
+
+      node.startDecision(callback, context);
+    } else {
+      utils.invokeCallback(callback, null);
     }
-  });
+  }, context);
 };
 
 /**
@@ -135,8 +141,10 @@ var auto = function(decisions, cb) {
 
     // set tree root
     if (typeof value == 'function') {
+      var cname = key;
       var cb = value;
-      tree.root(cb);
+
+      tree.setRoot(cname, cb);
     }
 
     // append child
