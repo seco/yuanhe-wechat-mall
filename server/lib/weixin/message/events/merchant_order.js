@@ -2,33 +2,31 @@
  * Merchant order event message handler
  *
  *
- * ******************************* DECISION TREE *******************************
+ * ***************************************** DECISION TREE *****************************************
  *
  *
- *   start --- decision A --- decision C --- decision D --- decision E --- end
- *                 |              |              |              |
- *                 |              |              |              |
- *                 |              |              |              |
- *     end --- decision B        end            end            end
- *                 |
- *                 |
- *                 |
- *                end
+ *        start ----- decision A ----- decision C ----- decision D ----- decision E ----- end
+ *                        |                |                |                |
+ *                        |                |                |                |
+ *                        |                |                |                |
+ *          end ----- decision B          end              end              end
+ *                        |
+ *                        |
+ *                        |
+ *                       end
  *
  *
- *   Decision A check whether a member has viewed the product promotion page
- *   in the past 30 days.
+ *   Decision A check whether a client has viewed the product promotion page in the past 30 days.
  *
- *   Decision B check whether a member has been marked a channel source.
+ *   Decision B check whether a client has been marked a channel source.
  *
- *   Decision C check whether a member has been marked a channel source.
+ *   Decision C check whether a client has been marked a channel source.
  *
- *   Decision D check whether a member has subscribed yuanhe in the past
- *   30 days.
+ *   Decision D check whether a client has subscribed yuanhe in the past 30 days.
  *
- *   Decision E check whether a member has viewed the product promotion page.
+ *   Decision E check whether a client has viewed the product promotion page in the past.
  *
- * *****************************************************************************
+ * *************************************************************************************************
  *
  *
  * @author Minix Li
