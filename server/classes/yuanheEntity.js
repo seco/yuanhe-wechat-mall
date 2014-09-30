@@ -123,7 +123,7 @@ pro.save = function(cb) {
       function(collection, cb) {
         collection.update(
           { '_id': this.get('_id') },
-          { '$set': this.attributes }
+          { '$set': this.attributes },
           cb
         );
       }
