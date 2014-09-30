@@ -16,6 +16,11 @@ var sign = require('./handlers/sign');
 
 module.exports = function(app) {
 
+  // auth(order sensitive)
+  app.get('/login', sign.login);
+  app.post('/signin', sign.signin);
+  app.get('/signout', sign.signout);
+  app.all('*', sign.checkAuth);
   // manager
   app.get('/', routes.index);
 
@@ -30,8 +35,6 @@ module.exports = function(app) {
   app.get('/qrcode/scene_id/:scene_id', qrcode.showWithSceneId);
   app.get('/qrcode/url/:url', qrcode.showWithUrl);
 
-  app.get('/login', sign.login);
-  app.get('/register', sign.register);
 
   /*
    *GET     /forums              ->  index

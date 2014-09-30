@@ -1,5 +1,5 @@
 /**
- * This is store action handler module.
+ * This is store action handler class.
  *
  * @author Bobby Tang
  */

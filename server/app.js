@@ -22,6 +22,7 @@ var log = require('./lib/util/log');
 var logger = log.getLogger(__filename);
 
 var cookieParser = require('cookie-parser');
+var expressSession = require('express-session');
 var bodyParser = require('body-parser');
 
 // load config
@@ -56,14 +57,14 @@ mongodbUtil.establishConnPool(function(err, result) {
   app.set('dbProxy', result.dbProxy);
 
   //result.dbProxy.collection('test_insert', function(err, collection) {
-    //if (err) {
-      //return;
-    //}
-    //collection.count(function(err, count) {
-      //if (err) {
-        //return;
-      //}
-    //});
+  //if (err) {
+  //return;
+  //}
+  //collection.count(function(err, count) {
+  //if (err) {
+  //return;
+  //}
+  //});
   //});
 
   // set the view engine
@@ -92,8 +93,17 @@ mongodbUtil.establishConnPool(function(err, result) {
   // parse application/json
   app.use(bodyParser.json());
 
+  var secret_id = 'yuanhe_session_secret';
+
   // parse cookie header
-  app.use(cookieParser());
+  app.use(cookieParser(secret_id));
+
+  // must use cookieParser before expressSession
+  app.use(expressSession({
+    secret: secret_id,
+    resave: true,
+    saveUninitialized: true
+  }));
 
   // mark the app dir as a static dir
   app.use(express.static(path.join(__dirname, '../app')));

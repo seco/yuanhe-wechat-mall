@@ -69,3 +69,12 @@ var viewevent = {
   store_id: ObjectId('542270a9f13de9f92dc68d92'),
   viewed_at: new Date()
 };
+//db.accounts
+var account = {
+  _id: Object('542a1ef1a5ee873861df8c6c'),
+  act_name: 'yuanhe_sa',
+  act_displayname: '元合超级管理员',
+  act_password: 'yuanhe_201410',
+  role_name: 'superadmin',
+  created_at: new Date()
+};
