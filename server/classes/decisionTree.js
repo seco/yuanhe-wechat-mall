@@ -1,5 +1,5 @@
 /**
- * Decision tree
+ * Decision Tree
  *
  * This decision tree only supports true/false condition now.
  *
@@ -9,30 +9,30 @@
 var utils = require('../lib/util/utils');
 
 /**
- * Tree constructor
+ * DecisionTree constructor
  *
- * @param {Function} callback
+ * @param {Function} cb
  */
-var Tree = function(callback) {
-  this.cb = callback;
+var DecisionTree = function(cb) {
+  this.cb = cb;
   this.root = null;
   this.children = {};
 };
 
 /**
- * Set root node
+ * Set root
  *
- * @param {String} cname
+ * @param {String} name
  * @param {Function} cb
  *
  * @public
  */
-Tree.prototype.setRoot = function(cname, cb) {
-  this.root = this.children[cname] = new TreeNode(cb);
+DecisionTree.prototype.setRoot = function(name, cb) {
+  this.root = this.children[name] = new DecisionNode(cb);
 };
 
 /**
- * Add child node
+ * Add child
  *
  * @param {String} cname
  * @param {String} pname
@@ -41,18 +41,11 @@ Tree.prototype.setRoot = function(cname, cb) {
  *
  * @public
  */
-Tree.prototype.addChild = function(cname, pname, cond, cb) {
-  // decision tree only supports true/false condition
-  if (typeof cond !== 'boolean') {
-    return;
-  }
+DecisionTree.prototype.addChild = function(cname, pname, cond, cb) {
+  var child = new DecisionNode(cb);
 
-  var node = new TreeNode(cb);
-  this.children[cname] = node;
-
-  if (this.children[pname]) {
-    this.children[pname].appendChild(cond, node);
-  }
+  this.children[cname] = child;
+  this.children[pname].append(cond, child);
 };
 
 /**
@@ -60,22 +53,18 @@ Tree.prototype.addChild = function(cname, pname, cond, cb) {
  *
  * @public
  */
-Tree.prototype.startDecisions = function() {
-  if (this.root) {
-    this.root.startDecision(this.cb, {});
-  }
+DecisionTree.prototype.startDecisions = function() {
+  // feed an empty context
+  this.root.decide(this.cb, {});
 };
 
 /**
- * TreeNode constructor
+ * DecisionNode constructor
  *
- * @param {Function} callback
+ * @param {Function} cb
  */
-var TreeNode = function(callback) {
-  // decision callback
-  this.cb = callback;
-
-  // child nodes
+var DecisionNode = function(cb) {
+  this.cb = cb; // decision callback
   this.leftChild = null;
   this.rightChild = null;
 };
@@ -84,85 +73,67 @@ var TreeNode = function(callback) {
  * Append child to this node
  *
  * @param {Boolean} cond
- * @param {TreeNode} node
+ * @param {TreeNode} child
  *
  * @public
  */
-TreeNode.prototype.appendChild = function(cond, node) {
-  cond ? (this.leftChild = node) : (this.rightChild = node);
+DecisionNode.prototype.append = function(cond, child) {
+  cond ? (this.leftChild = child) : (this.rightChild = child);
 };
 
 /**
- * Start decision
+ * Decide and sink into the next decision node
  *
- * @param {Function} callback
+ * @param {Function} cb
  * @param {Object} context
  *
  * @public
  */
-TreeNode.prototype.startDecision = function(callback, context) {
+DecisionNode.prototype.decide = function(cb, context) {
   var self = this;
 
   utils.invokeCallback(this.cb, function(err, cond, res) {
+    for (var attr in res) {
+      context[attr] = res[attr];
+    }
+
     if (err) {
-      utils.invokeCallback(callback, err);
-      return;
-    }
-    if (typeof cond !== 'boolean') {
+      utils.invokeCallback(cb, err, context);
       return;
     }
 
-    var node;
-    cond ? (node = self.leftChild) : (node = self.rightChild);
+    var child;
+    cond ? (child = self.leftChild) : (child = self.rightChild);
 
-    if (node) {
-      for (var attr in res) {
-        context[attr] = res[attr];
-      }
-
-      node.startDecision(callback, context);
+    if (child) {
+      child.decide(cb, context);
     } else {
-      utils.invokeCallback(callback, null);
+      utils.invokeCallback(cb, null, context);
     }
   }, context);
 };
 
 /**
- * Decision tree auto
+ * Auto decision
  *
  * @param {Object} decisions
  * @param {Function} cb
  */
 var auto = function(decisions, cb) {
-  var tree = new Tree(cb);
+  var tree = new DecisionTree(cb);
 
-  for (var key in decisions) {
-    var value = decisions[key];
+  for (var name in decisions) {
+    var value = decisions[name];
 
     // set tree root
     if (typeof value == 'function') {
-      var cname = key;
-      var cb = value;
-
-      tree.setRoot(cname, cb);
+      tree.setRoot(name, value);
     }
 
     // append child
-    if (Array.isArray(value) && value.length == 3) {
-      if (typeof value[0] !== 'string') {
-        continue;
-      }
-      if (typeof value[1] !== 'boolean') {
-        continue;
-      }
-      if (typeof value[2] !== 'function') {
-        continue;
-      }
-
-      var cname = key;
+    if (Array.isArray(value)) {
       var pname = value[0], cond = value[1], cb = value[2];
-
-      tree.addChild(cname, pname, cond, cb);
+      tree.addChild(name, pname, cond, cb);
     }
   }
 
