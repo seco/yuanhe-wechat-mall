@@ -5,15 +5,15 @@
  * ***************************************** DECISION TREE *****************************************
  *
  *
- *        start ----- decision A ----- decision C ----- decision D ----- decision E ----- end
+ *       start ----- decision A ----- decision C ----- decision D ----- decision E ----- end 6
  *                        |                |                |                |
  *                        |                |                |                |
  *                        |                |                |                |
- *          end ----- decision B          end              end              end
+ *        end 1 ----- decision B         end 3            end 4            end 5
  *                        |
  *                        |
  *                        |
- *                       end
+ *                      end 2
  *
  *
  *   Decision A check whether a client has viewed the product promotion page in the past 30 days.
@@ -34,6 +34,7 @@
 
 var async = require('async');
 var dbProxy = require('../../../../app').get('dbProxy');
+var decisiontree = require('../../../util/decisionTree');
 var merchant = require('../../merchant');
 var utils = require('../../../util/utils');
 var YuanheMember = require('../../../../classes/yuanheMember');
