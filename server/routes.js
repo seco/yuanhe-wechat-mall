@@ -29,11 +29,15 @@ module.exports = function(app) {
   app.post('/weixin/message/receive', message.receive);
 
   // weixin OAuth
-  app.get('/oauth_response.php', oauth.response);
+  app.get('/oauth_response/product/:store_id/:product_id', oauth.product);
 
   // QR code
   app.get('/qrcode/scene_id/:scene_id', qrcode.showWithSceneId);
   app.get('/qrcode/url/:url', qrcode.showWithUrl);
+
+  // product
+  app.get('/product/:store_id/:product_id', product.show);
+  app.get('/product/promotion/:store_id/:product_id', product.promotion);
 
 
   /*
