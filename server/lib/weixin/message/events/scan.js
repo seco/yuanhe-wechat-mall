@@ -14,7 +14,12 @@ var MsgHandler = function() {};
 MsgHandler.prototype.name = 'scan';
 
 /**
- * message handler
+ * Message handler
+ *
+ * @param {Object} req
+ * @param {Object} res
+ * @param {Object} msg
+ * @param {Function} cb
  *
  * @public
  */
