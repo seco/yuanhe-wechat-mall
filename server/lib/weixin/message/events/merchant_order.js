@@ -270,9 +270,43 @@ var endBHandler = function(callback, context) {
  * @private
  */
 var decisionCHandler = function(callback, context) {
+  var cond = false;
+  var handlerCtx = {};
 
+  var member = context.member;
+
+  if (member.get('following_store_id')) { cond = true; }
+  utils.invokeCallback(callback, null, cond, handlerCtx);
 };
 
+
+/**
+ * End C handler
+ *
+ * @param {Function} callback
+ * @param {Object} context
+ *
+ * @private
+ */
+var endCHandler = function(callback, context) {
+  var order = context.order;
+  var member = context.member;
+
+  async.waterfall([
+    function(cb) {
+      order.updateStores(
+        // TODO
+        member.get('following_store_id'), cb
+      );
+    }
+  ], function(err, result) {
+    if (err) {
+      utils.invokeCallback(callback, err);
+      return;
+    }
+    utils.invokeCallback(callback, null);
+  });
+};
 /**
  * Decision D handler
  *
@@ -294,18 +328,6 @@ var decisionDHandler = function(callback, context) {
  * @private
  */
 var decisionEHandler = function(callback, context) {
-
-};
-
-/**
- * End C handler
- *
- * @param {Function} callback
- * @param {Object} context
- *
- * @private
- */
-var endCHandler = function(callback, context) {
 
 };
 
