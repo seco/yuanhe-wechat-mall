@@ -5,15 +5,15 @@
  * ***************************************** DECISION TREE *****************************************
  *
  *
- *               start ----- decision A ----- decision C ----- decision D ----- end D
+ *               start ----- decision A ----- decision C ----- decision D ----- end F
  *                                |                |                |
  *                                |                |                |
  *                                |                |                |
- *               end A ----- decision B         end C         decision E ----- end E
+ *               end A ----- decision B          end C         decision E ----- end D
  *                                |                                 |
  *                                |                                 |
  *                                |                                 |
- *                              end B                             end F
+ *                              end B                             end E
  *
  *
  *   Decision A check whether a client has viewed the product promotion page in the past 30 days.
@@ -342,6 +342,41 @@ var decisionDHandler = function(callback, context) {
 };
 
 /**
+ * End F handler
+ *
+ * @param {Function} callback
+ * @param {Object} context
+ *
+ * @private
+ */
+var endFHandler = function(callback, context) {
+  var order = context.order;
+  var member = context.member;
+
+  async.waterfall([
+    function(cb) {
+      member.updateFollowingStoreId(
+        // TODO
+        cb
+      );
+    },
+    function(result, cb) {
+      order.updateStores(
+        // TODO
+        // TODO
+        cb
+      );
+    }
+  ], function(err, result) {
+    if (err) {
+      utils.invokeCallback(callback, err);
+      return;
+    }
+    utils.invokeCallback(callback, null);
+  });
+};
+
+/**
  * Decision E handler
  *
  * @param {Function} callback
@@ -350,7 +385,11 @@ var decisionDHandler = function(callback, context) {
  * @private
  */
 var decisionEHandler = function(callback, context) {
+  var cond = false;
+  var handlerCtx = {};
 
+  if (context.memberEvent) { cond = true; }
+  utils.invokeCallback(callback, null, cond, handlerCtx);
 };
 
 /**
@@ -362,7 +401,30 @@ var decisionEHandler = function(callback, context) {
  * @private
  */
 var endDHandler = function(callback, context) {
+  var order = context.order;
+  var member = context.member;
+  var memberEvent = context.memberEvent;
 
+  async.waterfall([
+    function(cb) {
+      member.updateFollowingStoreId(
+        memberEvent.get('store_id'), cb
+      );
+    },
+    function(result, cb) {
+      order.updateStores(
+        memberEvent.get('store_id'),
+        // TODO
+        cb
+      );
+    }
+  ], function(err, result) {
+    if (err) {
+      utils.invokeCallback(callback, err);
+      return;
+    }
+    utils.invokeCallback(callback, null);
+  });
 };
 
 /**
@@ -374,18 +436,30 @@ var endDHandler = function(callback, context) {
  * @private
  */
 var endEHandler = function(callback, context) {
+  var order = context.order;
+  var member = context.member;
 
-};
-
-/**
- * End F handler
- *
- * @param {Function} callback
- * @param {Object} context
- *
- * @private
- */
-var endFHandler = function(callback, context) {
+  async.waterfall([
+    function(cb) {
+      member.updateFollowingStoreId(
+        // TODO
+        cb
+      );
+    },
+    function(result, cb) {
+      order.updateStores(
+        // TODO
+        // TODO
+        cb
+      );
+    }
+  ], function(err, result) {
+    if (err) {
+      utils.invokeCallback(callback, err);
+      return;
+    }
+    utils.invokeCallback(callback, null);
+  });
 
 };
 
