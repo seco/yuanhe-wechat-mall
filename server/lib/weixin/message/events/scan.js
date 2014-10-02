@@ -7,7 +7,10 @@
 var async = require('async');
 var db = require('../../../../app').get('db');
 var dbProxy = require('../../../../app').get('dbProxy');
+var decisiontree = require('../../../util/decisionTree');
 var utils = require('../../../util/utils');
+var YuanheMember = require('../../../../classes/yuanheMember');
+var YuanheStore = require('../../../../classes/yuanheStore');
 
 var MsgHandler = function() {};
 
@@ -29,41 +32,119 @@ MsgHandler.prototype.handle = function(req, res, msg, cb) {
     return;
   }
 
-  async.waterfall([
-    function() {
-      dbProxy.collection("stores", cb);
+  var startCtx = {
+    'openid': openid,
+    'sceneId': scene_id
+  };
+
+  decisiontree.auto({
+    start: function(cb, context) {
+      utils.invokeCallback(cb, null, true, startCtx);
     },
-    function(collection, cb) {
-      collection.findOne(
-        { "scene_id": scene_id }, cb
-      )
-    }
-  ], function(err, store) {
+
+    decisionA: ['start', true, function(cb, context) {
+      decisionAHandler(cb, context);
+    }],
+
+    endA: ['decisionA', false, function(cb, context) {
+      endAHandler(cb, context);
+    }],
+
+    endB: ['decisionA', true, function(cb, context) {
+      endBHandler(cb, context);
+    }],
+  }, function(err, context) {
+
+  });
+};
+
+/**
+ * Decision A handler
+ *
+ * @param {Function} callback
+ * @param {Object} context
+ *
+ * @private
+ */
+var decisionAHandler = function(callback, context) {
+  var cond = false;
+  var handlerCtx = {};
+
+  var openid = context.openid;
+
+  YuanheMember.getByOpenid(openid, function(err, member) {
     if (err) {
-      utils.invokeCallback(cb, err);
+      utils.invokeCallback(callback, err);
       return;
     }
 
-    async.waterfall([
-      function(cb) {
-        dbProxy.collection("members", cb);
-      },
-      function(collection, cb) {
-        collection.update(
-          { "openid": openid },
-          { "$set": {
-            "following_store_id": store._id,
-            "time_following": new Date()
-          } }, cb
-        );
-      }
-    ], function(err, result) {
-      if (err) {
-        utils.invokeCallback(cb, err);
-        return;
-      }
-      uitls.invokeCallback(cb, null);
-    });
+    if (member) { cond = true; }
+    handlerCtx = { 'member': member };
+
+    utils.invokeCallback(callback, null, cond, handlerCtx);
+  });
+};
+
+/**
+ * End A handler
+ *
+ * @param {Function} callback
+ * @param {Object} context
+ *
+ * @private
+ */
+var endAHandler = function(callback, context) {
+  var openid = context.openid;
+  var sceneId = context.sceneId;
+
+  async.waterfall([
+    function(cb) {
+      YuanheStore.getBySceneId(sceneId, cb);
+    },
+    function(store, cb) {
+      var member = new YuanheMember();
+      member.set('openid', openid);
+      member.set('status', 'following');
+      member.set('following_store_id', store.get('_id'));
+      member.set('time_following', new Date());
+      member.save(cb);
+    }
+  ], function(err, result) {
+    if (err) {
+      utils.invokeCallback(callback, err);
+      return;
+    }
+    utils.invokeCallback(callback, null);
+  });
+};
+
+/**
+ * End B handler
+ *
+ * @param {Function} callback
+ * @param {Object} context
+ *
+ * @private
+ */
+var endBHandler = function(callback, context) {
+  var member = context.member;
+
+  async.waterfall([
+    function(cb) {
+      YuanheStore.getBySceneId(sceneId, cb);
+    },
+    function(store, cb) {
+      member.set('status', 'following');
+      member.set('following_store_id', store.get('_id'));
+      member.set('time_following', new Date());
+      member.save(cb);
+    }
+  ], function(err, result) {
+    if (err) {
+      utils.invokeCallback(callback, err);
+      return;
+    }
+    utils.invokeCallback(callback, null);
   });
 };
 
