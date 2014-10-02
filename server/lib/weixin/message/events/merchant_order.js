@@ -5,15 +5,15 @@
  * ***************************************** DECISION TREE *****************************************
  *
  *
- *       start ----- decision A ----- decision C ----- decision D ----- decision E ----- end F
- *                        |                |                |                |
- *                        |                |                |                |
- *                        |                |                |                |
- *        end A ----- decision B         end C            end D            end E
- *                        |
- *                        |
- *                        |
- *                      end B
+ *               start ----- decision A ----- decision C ----- decision D ----- end D
+ *                                |                |                |
+ *                                |                |                |
+ *                                |                |                |
+ *               end A ----- decision B         end C         decision E ----- end E
+ *                                |                                 |
+ *                                |                                 |
+ *                                |                                 |
+ *                              end B                             end F
  *
  *
  *   Decision A check whether a client has viewed the product promotion page in the past 30 days.
@@ -147,6 +147,7 @@ var decisionAHandler = function(callback, context) {
     get_member_event: ['save_order', function(cb, results) {
       YuanheMemberEvent.getLastByOpts({
         'openid': openid,
+        'type': 'view',
         'product_id': productId
       }, cb);
     }],
@@ -279,7 +280,6 @@ var decisionCHandler = function(callback, context) {
   utils.invokeCallback(callback, null, cond, handlerCtx);
 };
 
-
 /**
  * End C handler
  *
@@ -307,6 +307,7 @@ var endCHandler = function(callback, context) {
     utils.invokeCallback(callback, null);
   });
 };
+
 /**
  * Decision D handler
  *
@@ -316,7 +317,28 @@ var endCHandler = function(callback, context) {
  * @private
  */
 var decisionDHandler = function(callback, context) {
+  var cond = false;
+  var handlerCtx = {};
 
+  var openid = context.openid;
+
+  async.waterfall([
+    function(cb) {
+      YuanheMemberEvent.getLastByOpts({
+        'openid': openid,
+        'type': 'subscribe'
+      }, cb);
+    }
+  ], function(err, result) {
+    if (err) {
+      utils.invokeCallback(callback, err);
+      return;
+    }
+
+    // TODO
+    if (false) { cond = true; }
+    utils.invokeCallback(callback, null, cond, handlerCtx);
+  });
 };
 
 /**
