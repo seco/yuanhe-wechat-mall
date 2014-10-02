@@ -29,7 +29,7 @@ MsgHandler.prototype.handle = function(req, res, msg, cb) {
  * @return {Boolean}
  */
 var msgIsValid = function(msg) {
-  return false;
+  return true;
 };
 
 /**

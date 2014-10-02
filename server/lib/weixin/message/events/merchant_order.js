@@ -471,7 +471,7 @@ var endEHandler = function(callback, context) {
  * @return {Boolean}
  */
 var msgIsValid = function(msg) {
-  return false;
+  return true;
 };
 
 /**

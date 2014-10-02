@@ -14,7 +14,12 @@ var MsgHandler = function() {};
 MsgHandler.prototype.name = 'subscribe';
 
 /**
- * message handler
+ * Message handler
+ *
+ * @param {Object} req
+ * @param {Object} res
+ * @param {Object} msg
+ * @param {Function} cb
  *
  * @public
  */
@@ -80,7 +85,7 @@ MsgHandler.prototype.handle = function(req, res, msg, cb) {
  * @return {Boolean}
  */
 var msgIsValid = function(msg) {
-  return false;
+  return true;
 };
 
 /**
