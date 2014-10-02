@@ -112,6 +112,35 @@ pro.loadByOpenid = function(openid, cb) {
 };
 
 /**
+ * Update following store id of the member
+ *
+ * @param {String} store_id
+ * @param {Function} cb
+ */
+pro.updateFollowingStoreId = function(store_id, cb) {
+  var col_name = this.constructor.col_name;
+
+  async.waterfall([
+    function(cb) {
+      dbProxy.collection(col_name, cb);
+    },
+    function(collection, cb) {
+      collection.update(
+        { "_id": this.get('_id') },
+        { "$set": { "following_store_id": store_id } }, cb
+      );
+    }
+  ], function(err, result) {
+    if (err) {
+      utils.invokeCallback(cb, err);
+      return;
+    }
+    this.set('following_store_id', store_id);
+    utils.invokeCallback(cb, null);
+  });
+};
+
+/**
  * export YuanheMember
  */
 module.exports = YuanheMember;

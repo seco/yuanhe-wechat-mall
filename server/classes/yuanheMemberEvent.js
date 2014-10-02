@@ -35,13 +35,13 @@ YuanheMemberEvent.col_name = 'member_events';
 /**
  * Get the last member event by openid
  *
- * @param {String} openid
+ * @param {Object} opts
  * @param {Function} cb
  */
-YuanheMemberEvent.getLastByOpenid = function(openid, cb) {
+YuanheMemberEvent.getLastByOpts = function(opts, cb) {
   var event = new YuanheMemberEvent();
 
-  event.loadLastByOpenid(openid, function(err) {
+  event.loadLastByOpts(opts, function(err) {
     if (err) {
       utils.invokeCallback(cb, err);
       return;
@@ -70,14 +70,14 @@ pro.initializeAttributes = function() {
 };
 
 /**
- * Load the last event attributes by openid
+ * Load the last event attributes by opts
  *
- * @param {String} openid
+ * @param {Object} opts
  * @param {Function} cb
  *
  * @public
  */
-pro.loadLastByOpenid = function(openid, cb) {
+pro.loadLastByOpts = function(opts, cb) {
   var col_name = this.constructor.col_name;
 
   async.waterfall([
@@ -86,7 +86,7 @@ pro.loadLastByOpenid = function(openid, cb) {
     },
     function(collection, cb) {
       collection.find(
-        { 'openid': openid },
+        opts,
         { 'limit': 1, 'sort': { 'time_created': -1 } },
         cb
       );

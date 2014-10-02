@@ -141,7 +141,7 @@ pro.updateSalesStore = function(sales_store_id) {
 };
 
 /**
- * Update member store in the order
+ * Update member store of the order
  *
  * @param {String} member_store_id
  * @param {Function} cb

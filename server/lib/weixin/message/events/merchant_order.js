@@ -61,354 +61,287 @@ MsgHandler.prototype.handle = function(req, res, msg, cb) {
     return;
   }
 
+  var startCtx = {
+    'orderId': orderId,
+    'productId': productId,
+    'openid': openid
+  };
   decisiontree.auto({
-    start: function(cb, ctx) {
-      utils.invokeCallback(cb, null, true, {
-        'order_id': order_id
-      });
+    start: function(cb, context) {
+      utils.invokeCallback(cb, null, true, startCtx);
     },
 
-    decisionA: ['start', true, function(cb, ctx) {
-      decisionAHandler(cb, ctx);
+    decisionA: ['start', true, function(cb, context) {
+      decisionAHandler(cb, context);
     }],
 
-    decisionB: ['decisionA', true, function(cb, ctx) {
-      decisionBHandler(cb, ctx),
+    decisionB: ['decisionA', true, function(cb, context) {
+      decisionBHandler(cb, context),
     }],
 
-    endA: ['decisionB', true, function(cb, ctx) {
-      endAHandler(cb, ctx);
+    endA: ['decisionB', true, function(cb, context) {
+      endAHandler(cb, context);
     }],
 
-    endB: ['decisionB', false, function(cb, ctx) {
-      endBHandler(cb, ctx);
+    endB: ['decisionB', false, function(cb, context) {
+      endBHandler(cb, context);
     }],
 
-    decisionC: ['decisionA', false, function(cb, ctx) {
-      decisionCHandler(cb, ctx),
+    decisionC: ['decisionA', false, function(cb, context) {
+      decisionCHandler(cb, context),
     }],
 
-    endC: ['decisionC', true, function(cb, ctx) {
-      endCHandler(cb, ctx),
+    endC: ['decisionC', true, function(cb, context) {
+      endCHandler(cb, context),
     }],
 
-    decisionD: ['decisionC', false, function(cb, ctx) {
-      decisionDHandler(cb, ctx),
+    decisionD: ['decisionC', false, function(cb, context) {
+      decisionDHandler(cb, context),
     }],
 
-    endD: ['decisionD', true, function(cb, ctx) {
-      endDHandler(cb, ctx);
+    endD: ['decisionD', true, function(cb, context) {
+      endDHandler(cb, context);
     }],
 
-    decisionE: ['decisionD', false, function(cb, ctx) {
-      decisionEHandler(cb, ctx);
+    decisionE: ['decisionD', false, function(cb, context) {
+      decisionEHandler(cb, context);
     }],
 
-    endE: ['decisionE', true, function(cb, ctx) {
-      endEHandler(cb, ctx);
+    endE: ['decisionE', true, function(cb, context) {
+      endEHandler(cb, context);
     }],
 
-    endF: ['decisionE', false, function(cb, ctx) {
-      endFHandler(cb, ctx);
+    endF: ['decisionE', false, function(cb, context) {
+      endFHandler(cb, context);
     }]
-  }, function(err, ctx) {
-
-  });
-
-  async.auto({
-    // fetch order info from weixin
-    get_order: function(cb) {
-      merchant.getOrderInfoById(order_id, cb);
-    },
-
-    // create and save new order
-    save_order: ['get_order', function(cb, results) {
-      var order = new YuanheOrder();
-      var order_info = results.get_order;
-
-      order.set('weixin_order_id', order_id);
-      order.set('weixin_order_info', order_info);
-
-      order.save(cb);
-    }],
-
-    // get the last member event by openid
-    get_event: ['save_order', function(cb, results) {
-      YuanheMemberEvent.getLastByOpenid(openid, cb);
-    }],
-
-    // check whether the member event is in the
-    // past 30 days
-    check_event: ['get_event', function(cb, results) {
-      var order = results.save_order;
-      var event = results.get_event;
-
-      // sink into the next decision layer
-      if (checkEventPosted(event)) {
-        decisionA(openid, order, event, cb);
-      } else {
-        decisionD(cb);
-      }
-    }]
-  }, function(err, results) {
-    if (err) {
-      utils.invokeCallback(cb, err);
-      return;
-    }
-    utils.invokeCallback(cb, null);
+  }, function(err, context) {
   });
 };
 
 /**
  * Decision A handler
  *
- * @param {Function} cb
- * @param {Object} ctx
+ * @param {Function} callback
+ * @param {Object} context
  *
  * @private
  */
-var decisionAHandler = function(cb, ctx) {
+var decisionAHandler = function(callback, context) {
+  var orderId = context.orderId;
+  var productId = context.productId;
+  var openid = context.openid;
 
+  var cond = false;
+  var handlerCtx = {};
+
+  async.auto({
+    fetch_order: function(cb) {
+      merchant.getOrderInfoById(orderId, cb);
+    },
+    save_order: ['fetch_order', function(cb, results) {
+      var order = new YuanheOrder();
+      order.set('weixin_order_id', orderId);
+      order.set('weixin_order_info', results.fetch_order);
+      order.save(cb);
+    }],
+    get_member_event: ['save_order', function(cb, results) {
+      YuanheMemberEvent.getLastByOpts({
+        'openid': openid,
+        'product_id': productId
+      }, cb);
+    }],
+  }, function(err, results) {
+    if (err) {
+      utils.invokeCallback(callback, err);
+      return;
+    }
+
+    // TODO
+    if (false) { cond = true; }
+    handlerCtx = {
+      'order': results.save_order,
+      'memberEvent': results.get_member_event
+    };
+
+    utils.invokeCallback(callback, null, cond, handlerCtx);
+  });
 };
 
 /**
  * Decision B handler
  *
- * @param {Function} cb
- * @param {Object} ctx
+ * @param {Function} callback
+ * @param {Object} context
  *
  * @private
  */
-var decisionBHandler = function(cb, ctx) {
+var decisionBHandler = function(callback, context) {
+  var cond = false;
+  var handlerCtx = {};
 
+  var openid = context.openid;
+
+  async.waterfall([
+    function(cb) {
+      YuanheMember.getByOpenid(openid, cb);
+    }
+  ], function(err, member) {
+    if (err) {
+      utils.invokeCallback(callback, err);
+      return;
+    }
+
+    if (member.get('following_store_id')) { cond = true; }
+    handlerCtx = { 'member': member };
+
+    utils.invokeCallback(callback, null, cond, handlerCtx);
+  });
+};
+
+/**
+ * End A handler
+ *
+ * @param {Function} callback
+ * @param {Object} context
+ *
+ * @private
+ */
+var endAHandler = function(callback, context) {
+  var order = context.order;
+  var member = context.member;
+  var memberEvent = context.memberEvent;
+
+  async.waterfall([
+    function(cb) {
+      order.updateStores(
+        memberEvent.get('store_id'),
+        member.get('following_store_id'), cb
+      );
+    }
+  ], function(err, result) {
+    if (err) {
+      utils.invokeCallback(callback, err);
+      return;
+    }
+    utils.invokeCallback(callback, null);
+  });
+};
+
+/**
+ * End B handler
+ *
+ * @param {Function} callback
+ * @param {Object} context
+ *
+ * @private
+ */
+var endBHandler = function(callback, context) {
+  var order = context.order;
+  var member = context.member;
+  var memberEvent = context.memberEvent;
+
+  async.waterfall([
+    function(cb) {
+      member.updateFollowingStoreId(
+        memberEvent.get('store_id'), cb
+      );
+    },
+    function(result, cb) {
+      order.updateStores(
+        memberEvent.get('store_id'),
+        memberEvent.get('store_id'), cb
+      );
+    }
+  ], function(err, result) {
+    if (err) {
+      utils.invokeCallback(callback, err);
+      return;
+    }
+    utils.invokeCallback(callback, null);
+  });
 };
 
 /**
  * Decision C handler
  *
- * @param {Function} cb
- * @param {Object} ctx
+ * @param {Function} callback
+ * @param {Object} context
  *
  * @private
  */
-var decisionCHandler = function(cb, ctx) {
+var decisionCHandler = function(callback, context) {
 
 };
 
 /**
  * Decision D handler
  *
- * @param {Function} cb
- * @param {Object} ctx
+ * @param {Function} callback
+ * @param {Object} context
  *
  * @private
  */
-var decisionDHandler = function(cb, ctx) {
+var decisionDHandler = function(callback, context) {
 
 };
 
 /**
  * Decision E handler
  *
- * @param {Function} cb
- * @param {Object} ctx
+ * @param {Function} callback
+ * @param {Object} context
  *
  * @private
  */
-var decisionEHandler = function(cb, ctx) {
-
-};
-
-/**
- * End A handler
- *
- * @param {Function} cb
- * @param {Object} ctx
- *
- * @private
- */
-var endAHandler = function(cb, ctx) {
-
-};
-
-/**
- * End B handler
- *
- * @param {Function} cb
- * @param {Object} ctx
- *
- * @private
- */
-var endBHandler = function(cb, ctx) {
+var decisionEHandler = function(callback, context) {
 
 };
 
 /**
  * End C handler
  *
- * @param {Function} cb
- * @param {Object} ctx
+ * @param {Function} callback
+ * @param {Object} context
  *
  * @private
  */
-var endCHandler = function(cb, ctx) {
+var endCHandler = function(callback, context) {
 
 };
 
 /**
  * End D handler
  *
- * @param {Function} cb
- * @param {Object} ctx
+ * @param {Function} callback
+ * @param {Object} context
  *
  * @private
  */
-var endDHandler = function(cb, ctx) {
+var endDHandler = function(callback, context) {
 
 };
 
 /**
  * End E handler
  *
- * @param {Function} cb
- * @param {Object} ctx
+ * @param {Function} callback
+ * @param {Object} context
  *
  * @private
  */
-var endEHandler = function(cb, ctx) {
+var endEHandler = function(callback, context) {
 
 };
 
 /**
  * End F handler
  *
- * @param {Function} cb
- * @param {Object} ctx
+ * @param {Function} callback
+ * @param {Object} context
  *
  * @private
  */
-var endFHandler = function(cb, ctx) {
-
-};
-
-/**
- *
- */
-var phaseA = function() {
-  async.auto({
-    // fetch order info from weixin
-    get_order: function(cb) {
-      merchant.getOrderInfoById(order_id, cb);
-    },
-
-    // create and save new order
-    save_order: ['get_order', function(cb, results) {
-      var order = new YuanheOrder();
-      var order_info = results.get_order;
-
-      order.set('weixin_order_id', order_id);
-      order.set('weixin_order_info', order_info);
-
-      order.save(cb);
-    }],
-
-    // get the last member event by openid
-    get_event: ['save_order', function(cb, results) {
-      YuanheMemberEvent.getLastByOpenid(openid, cb);
-    }],
-
-    // check whether the member event is in the
-    // past 30 days
-    check_event: ['get_event', function(cb, results) {
-      var order = results.save_order;
-      var event = results.get_event;
-
-      // sink into the next decision layer
-      if (checkEventPosted(event)) {
-        decisionA(openid, order, event, cb);
-      } else {
-        decisionD(cb);
-      }
-    }]
-  }, function(err, results) {
-    if (err) {
-      utils.invokeCallback(cb, err);
-      return;
-    }
-    utils.invokeCallback(cb, null);
-  });
-};
-
-/**
- * Decision A
- *
- * @param {String} openid
- * @param {YuanheOrder} order
- * @param {YuanheEvent} event
- * @param {Function} cb
- *
- * @private
- */
-var decisionA = function(openid, order, event, cb) {
-  async.waterfall([
-    function(cb) {
-      YuanheMember.getByOpenid(openid, cb);
-    },
-
-    function(member, cb) {
-      var sales_store_id = event.get('store_id');
-
-      // assign sales_store_id to member_store_id if
-      // the member hasn't
-      var member_store_id = member.get('following_store_id')
-      if (!member_store_id) {
-        member_store_id = sales_store_id;
-      }
-
-      order.updateStores(sales_store_id, member_store_id, cb);
-    }
-  ], function(err, result) {
-    if (err) {
-      utils.invokeCallback(cb, err);
-      return;
-    }
-    utils.invokeCallback(cb, null);
-  });
-};
-
-/**
- * Decision B
- *
- * @private
- */
-var decisionB = function() {
-
-};
-
-/**
- * Decision C
- *
- * @private
- */
-var decisionC = function() {
-
-};
-
-/**
- * Decision D
- *
- * @private
- */
-var decisionD = function() {
-
-};
-
-/**
- * Decision E
- *
- * @private
- */
-var decisionE = function() {
+var endFHandler = function(callback, context) {
 
 };
 
