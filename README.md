@@ -25,7 +25,7 @@ $ node server/app.js
 - backgrid
 - backgrid-paginator
 - backgrid-text-cell
-- backgrid-text-cell
+- backgrid-select-all
 
 ##Back-end Tech Stack
 - express & express middlewares
@@ -36,7 +36,7 @@ $ node server/app.js
 - methodmissing
 
 ## More Information
-- Read the [weixin documentation](http://mp.weixin.qq.com/wiki/index.php?title=%E6%8E%A5%E5%85%A5%E6%8C%87%E5%8D%97)
-
+- Read the [weixin api](http://mp.weixin.qq.com/wiki/index.php?title=%E6%8E%A5%E5%85%A5%E6%8C%87%E5%8D%97)
+- Read the [oauth2](http://oauth.net/2/)
 
 
