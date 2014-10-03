@@ -98,6 +98,7 @@ pro.loadBySceneId = function(sceneId, cb) {
     utils.invokeCallback(cb, null);
   });
 };
+
 /**
  * export YuanheStore
  */

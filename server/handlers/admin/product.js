@@ -6,6 +6,7 @@ var async = require('async');
 var decisiontree = require('../../lib/util/decisionTree');
 var merchant = require('../../lib/weixin/merchant');
 var utils = require('../../lib/util/utils');
+var YuanheProduct = require('../../classes/yuanheProduct');
 
 // status
 var ALL = 0;
@@ -51,7 +52,9 @@ var refreshHandler = function(productInfo, cb) {
       var ctx = {};
 
       async.waterfall([
-        YuanheProduct.getByProductId(productId, cb);
+        function(cb) {
+          YuanheProduct.getByProductId(productId, cb);
+        }
       ], function(err, product) {
         if (err) {
           utils.invokeCallback(cb, err);
