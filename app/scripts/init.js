@@ -47,11 +47,11 @@ require.config({
     'backbone-deep-model': '../bower_components/backbone-deep-model/distribution/deep-model.min',
     //'backbone-nested': '../bower_components/backbone-nested/backbone-nested.min',
     'backbone.paginator': '../bower_components/backbone.paginator/lib/backbone.paginator.min',
-    backgrid: '../bower_components/backgrid/lib/backgrid.min',
+    backgrid: 'vendor/backgrid',
     /* bower has issue that it downloads a stale version, therfore we download manually  */
     backgridpaginator: 'vendor/backgrid-paginator.min',
-    backgridtextcell: '../bower_components/backgrid-text-cell/backgrid-text-cell.min',
-    backgridselectall: '../bower_components/backgrid-select-all/backgrid-select-all.min',
+    backgridtextcell: 'vendor/backgrid-text-cell.min',
+    backgridselectall: 'vendor/backgrid-select-all.min',
     underscore: '../bower_components/underscore/underscore-min',
 
     /* alias the bootstrap js lib */
