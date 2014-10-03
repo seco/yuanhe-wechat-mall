@@ -13,6 +13,7 @@ exports.checkAuth = function(req, res, next) {
     // add res.locals, this will make sure each page can reach session data
     res.locals.act_displayname = req.session.act_displayname;
     res.locals.role_name = req.session.role_name;
+
     next();
   } else {
     logger.warn('fail to login due to lack of auth');
@@ -42,6 +43,7 @@ exports.signin = function(req, res, next) {
           req.session.act_password = doc.act_password;
           req.session.role_name = doc.role_name;
           req.session.act_displayname = doc.act_displayname;
+
           logger.info('account[_id=' + doc._id + ', act_name=' + doc.act_name + '] has signed in successfully, then render to index page.');
           res.render('index', doc);
         } else {
