@@ -95,6 +95,11 @@ define(['jquery',
 
         this.$el.html(storeListTmpl());
 
+        var sa_flag = $('#role_name').val();
+        if (sa_flag === 'superadmin') {
+          this.$el.find('button.edit').removeAttr('disabled');
+        };
+
         this.$el.find('#grid').append(this.grid.render().el);
         this.$el.find('#paginator').append(this.paginator.render().el);
 
