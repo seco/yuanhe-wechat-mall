@@ -9,6 +9,7 @@ var db = require('../../../../app').get('db');
 var dbProxy = require('../../../../app').get('dbProxy');
 var decisiontree = require('../../../util/decisionTree');
 var utils = require('../../../util/utils');
+var YuanheGlobalCounter = require('../../../../classes/YuanheGlobalCounter');
 var YuanheStore = require('../../../../classes/yuanheStore');
 
 var MsgHandler = function() {};
@@ -117,18 +118,26 @@ var endAHandler = function(callback, context) {
 var endBHandler = function(callback, context) {
   var openid = context.openid;
 
-  var store = new YuanheStore();
-  store.set('openid', openid);
-  store.set('status', 'following');
-  store.set('time_following', new Date());
-
-  store.save(function(err, result) {
+  async.waterfall({
+    function(cb) {
+      YuanheGlobalCounter.yieldSceneId(cb);
+    },
+    function(sceneId, cb) {
+      var store = new YuanheStore();
+      store.set('openid', openid);
+      store.set('scene_id', sceneId);
+      store.set('status', 'following');
+      store.set('time_following', new Date());
+      store.save(cb);
+    }
+  }, function(err, result) {
     if (err) {
       utils.invokeCallback(callback, err);
       return;
     }
     utils.invokeCallback(callback, null);
   });
+
 };
 
 /**
