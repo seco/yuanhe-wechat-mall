@@ -106,8 +106,8 @@ mongodbUtil.establishConnPool(function(err, result) {
   }));
 
   // mark the app dir as a static dir
-  app.use(express.static(path.join(__dirname, '../app')));
-  //app.use(express.static(path.join(__dirname, '../appdirectory-build')));
+  //app.use(express.static(path.join(__dirname, '../app')));
+  app.use(express.static(path.join(__dirname, staticdir)));
 
   /**
    * use log4js middleware

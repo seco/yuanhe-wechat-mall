@@ -2,8 +2,8 @@
   appDir: "../",
   baseUrl: "scripts",
   mainConfigFile: "init.js",
-  dir: "../../appdirectory-build",
-  optimize: "uglify2",
+  dir: "../../app-build",
+  optimizeCss: "standard",
   modules: [{
     name: "main"
   }]
