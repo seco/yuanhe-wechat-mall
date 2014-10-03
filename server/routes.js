@@ -9,8 +9,8 @@ var routes = require('./handlers');
 
 var message = require('./handlers/weixin/message');
 var oauth = require('./handlers/weixin/oauth');
-
 var qrcode = require('./handlers/qrcode');
+var adminProduct = require('./handlers/admin/product');
 
 var store = require('./handlers/store');
 var order = require('./handlers/order');
@@ -42,7 +42,8 @@ module.exports = function(app) {
   app.get('/qrcode/url/:url', qrcode.showWithUrl);
 
   // product
-  // app.get('/product/:store_id/:product_id', product.show);
+  // app.get('/products/:store_id/:product_id', product.show);
+  app.post('/admin/products/refresh', adminProduct.refresh);
 
 
   /*
