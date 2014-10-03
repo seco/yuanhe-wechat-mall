@@ -33,13 +33,13 @@
  */
 
 var async = require('async');
-var dbProxy = require('../../../../app').get('dbProxy');
-var decisiontree = require('../../../util/decisionTree');
-var merchant = require('../../merchant');
-var utils = require('../../../util/utils');
-var YuanheMember = require('../../../../classes/yuanheMember');
-var YuanheMemberEvent = require('../../../../classes/yuanheMemberEvent');
-var YuanheOrder = require('../../../../classes/yuanheOrder');
+var dbProxy = require('../../../../../app').get('dbProxy');
+var decisiontree = require('../../../../util/decisionTree');
+var merchant = require('../../../merchant');
+var utils = require('../../../../util/utils');
+var YuanheMember = require('../../../../../classes/yuanheMember');
+var YuanheMemberEvent = require('../../../../../classes/yuanheMemberEvent');
+var YuanheOrder = require('../../../../../classes/yuanheOrder');
 
 var MsgHandler = function() {};
 
@@ -76,7 +76,7 @@ MsgHandler.prototype.handle = function(req, res, msg, cb) {
     }],
 
     decisionB: ['decisionA', true, function(cb, context) {
-      decisionBHandler(cb, context),
+      decisionBHandler(cb, context);
     }],
 
     endA: ['decisionB', true, function(cb, context) {
@@ -88,15 +88,15 @@ MsgHandler.prototype.handle = function(req, res, msg, cb) {
     }],
 
     decisionC: ['decisionA', false, function(cb, context) {
-      decisionCHandler(cb, context),
+      decisionCHandler(cb, context);
     }],
 
     endC: ['decisionC', true, function(cb, context) {
-      endCHandler(cb, context),
+      endCHandler(cb, context);
     }],
 
     decisionD: ['decisionC', false, function(cb, context) {
-      decisionDHandler(cb, context),
+      decisionDHandler(cb, context);
     }],
 
     endD: ['decisionD', true, function(cb, context) {

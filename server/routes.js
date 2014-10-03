@@ -42,7 +42,7 @@ module.exports = function(app) {
   app.get('/qrcode/url/:url', qrcode.showWithUrl);
 
   // product
-  app.get('/product/:store_id/:product_id', product.show);
+  // app.get('/product/:store_id/:product_id', product.show);
 
 
   /*

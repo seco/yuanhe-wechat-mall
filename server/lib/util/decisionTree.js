@@ -6,7 +6,7 @@
  * @author Minix Li
  */
 
-var utils = require('../lib/util/utils');
+var utils = require('./utils');
 
 /**
  * DecisionTree constructor

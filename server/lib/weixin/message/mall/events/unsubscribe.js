@@ -4,7 +4,7 @@
  * @author Minix Li
  */
 
-var utils = require('../../../util/utils');
+var utils = require('../../../../util/utils');
 
 var MsgHandler = function() {};
 

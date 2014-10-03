@@ -5,7 +5,7 @@
  */
 
 var async = require('async');
-var dbProxy = require('../../../app');.get('dbProxy');
+var dbProxy = require('../../app').get('dbProxy');
 var oauth = require('../../lib/weixin/oauth');
 var utils = require('../../lib/util/utils');
 var YuanheMember = require('../../classes/yuanheMember');

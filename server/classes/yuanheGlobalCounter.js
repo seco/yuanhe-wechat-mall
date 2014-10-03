@@ -41,6 +41,6 @@ YuanheGlobalCounter.yieldSceneId = function(cb) {
 };
 
 /**
- * export YuanheMember
+ * export YuanheGlobalCounter
  */
 module.exports = YuanheGlobalCounter;

@@ -5,12 +5,12 @@
  */
 
 var async = require('async');
-var db = require('../../../../app').get('db');
-var dbProxy = require('../../../../app').get('dbProxy');
-var decisiontree = require('../../../util/decisionTree');
-var utils = require('../../../util/utils');
-var YuanheMember = require('../../../../classes/yuanheMember');
-var YuanheStore = require('../../../../classes/yuanheStore');
+var db = require('../../../../../app').get('db');
+var dbProxy = require('../../../../../app').get('dbProxy');
+var decisiontree = require('../../../../util/decisionTree');
+var utils = require('../../../../util/utils');
+var YuanheMember = require('../../../../../classes/yuanheMember');
+var YuanheStore = require('../../../../../classes/yuanheStore');
 
 var MsgHandler = function() {};
 
