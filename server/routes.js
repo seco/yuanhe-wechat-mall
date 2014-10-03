@@ -1,5 +1,7 @@
 /**
  * routes
+ *
+ * @author Bobby Tang, Minix Li
  */
 
 // Load the route handlers
@@ -24,9 +26,13 @@ module.exports = function(app) {
   // manager
   app.get('/', routes.index);
 
-  // weixin message
-  app.get('/weixin/message/receive', message.access);
-  app.post('/weixin/message/receive', message.receive);
+  // message from weixin mall public number
+  app.get('/weixin/message/mall', message.access);
+  app.post('/weixin/message/mall', message.receive);
+
+  // message from store weixin public number
+  app.get('/weixin/message/store', message.access);
+  app.post('/weixin/message/store', message.receive);
 
   // weixin OAuth
   app.get('/oauth_response/product/:store_id/:product_id', oauth.product);
@@ -37,7 +43,6 @@ module.exports = function(app) {
 
   // product
   app.get('/product/:store_id/:product_id', product.show);
-  app.get('/product/promotion/:store_id/:product_id', product.promotion);
 
 
   /*

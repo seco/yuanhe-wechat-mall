@@ -13,10 +13,16 @@ var utils = require('../../util/utils');
  * Gateway initializer
  */
 var Gateway = function() {
-  this.msgHandlers = loadMsgHandlers([
-    { "namespace": "common", "path": __dirname + '/common' },
-    { "namespace": "events", "path": __dirname + '/events' }
-  ]);
+  this.msgHandlers = {
+    '/wexin/message/mall': loadMsgHandlers([
+      { 'namespace': 'common', 'path': __dirname + '/mall/common' },
+      { 'namespace': 'events', 'path': __dirname + '/mall/events' }
+    ]),
+    '/weixin/message/store': loadMsgHandlers([
+      { 'namespace': 'common', 'path': __dirname + '/store/common' },
+      { 'namespace': 'events', 'path': __dirname + '/store/events' }
+    ])
+  };
 };
 
 /**

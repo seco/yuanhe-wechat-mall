@@ -32,7 +32,7 @@ module.exports.route = function(req, res, msg, handlers, cb) {
   var namespace = (msgType == 'event' ? 'event' : 'common');
   var handler = (msgType == 'event' ? event : msgType);
 
-  handlers[namespace][handler].handle.call(null, req, res, msg, function(err) {
+  handlers[req.route][namespace][handler].handle.call(null, req, res, msg, function(err) {
     if (err) {
       utils.invokeCallback(cb, err);
       return;

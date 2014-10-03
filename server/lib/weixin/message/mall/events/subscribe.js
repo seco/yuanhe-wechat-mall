@@ -31,6 +31,14 @@ MsgHandler.prototype.handle = function(req, res, msg, cb) {
     return;
   }
 
+  // handle message from weixin mall public number
+  if (req.route == '/weixin/message/mall') {
+
+  // handle message from store weixin public number
+  } else if (req.route == '/weixin/message/store') {
+
+  }
+
   var startCtx = { 'openid': openid };
   decisiontree.auto({
     start: function(cb, context) {

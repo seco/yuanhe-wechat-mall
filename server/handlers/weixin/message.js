@@ -20,7 +20,7 @@ exports.access = function(req, res) {
 };
 
 /**
- * Message receive handler
+ * Message receiver
  *
  * @param {Object} req
  * @param {Object} res
