@@ -22,29 +22,29 @@ var product = {
   _id: 77,
   weixin_product_info: {
     'product_base': {
-        "name": "testaddproduct",
-        "img": ["http://mmbiz.qpic.cn/mmbiz/4whpV1VZl2iccsvYbHvnphkyGtnvjD3ulEKogfsiaua49pvLfUS8Ym0GSYjViaLic0FD3vN0V8PILcibEGb2fPfEOmw/0"]
-     },
+      "name": "testaddproduct",
+      "img": ["http://mmbiz.qpic.cn/mmbiz/4whpV1VZl2iccsvYbHvnphkyGtnvjD3ulEKogfsiaua49pvLfUS8Ym0GSYjViaLic0FD3vN0V8PILcibEGb2fPfEOmw/0"]
+    },
     'product_id': 'pDF3iY6Kr_BV_CXaiYysoGqJhppQ'
   },
   redirect_url: 'http://www.taobao.com'
 };
 //db.orders
 var order = {
-  _id: ObjectId('542532bda5ee873861df8c67'),
   order_status: 'create',
   weixin_order_id: '',
-  weixin_order_detail: {},
-  sales_store: {
-    id: ObjectId('542270a9f13de9f92dc68d92'),
+  weixin_order_info: {},
+  stores: [{
+    id: ObjectId('5423072cf13de9f92dc68dae'),
     store_name: 'this is sales store name',
+    store_type: 'sales_store',
     commission: 15.00
-  },
-  member_store: {
-    id: ObjectId('542270a9f13de9f92dc68d92'),
+  }, {
+    id: ObjectId('5423072cf13de9f92dc68daf'),
     store_name: 'this is member store name',
+    store_type: 'member_store',
     commission: 5.00
-  },
+  }],
   member: {
     id: ObjectId('5425316ca5ee873861df8c65'),
     member_name: 'this is member nane'
