@@ -14,13 +14,13 @@
  */
 
 var async = require('async');
-var dbProxy = require('../app').dbProxy;
+var dbProxy = require('../app').get('dbProxy');
 var utils = require('../lib/util/utils');
 var YuanheEntity = require('./yuanheEntity');
 
 // YuanheStore constructor
 YuanheStore = function() {
-  this.initializeAttributes();
+  initializeAttributes.apply(this);
 };
 
 // inherit from YuanheEntity
@@ -51,6 +51,26 @@ YuanheStore.getBySceneId = function(sceneId, cb) {
   });
 };
 
+/**
+ * Get store by openid
+ *
+ * @param {String} openid
+ * @param {Function} cb
+ *
+ * @public
+ */
+YuanheStore.getByOpenid = function(openid, cb) {
+  var store = new YuanheStore();
+
+  store.loadByOpenid(openid, function(err) {
+    if (err) {
+      utils.invokeCallback(cb, err);
+      return;
+    }
+    utils.invokeCallback(cb, null, store);
+  });
+};
+
 // INSTANCE METHODS //////////////////////////////////////////////////////////
 
 var pro = YuanheStore.prototype;
@@ -60,7 +80,7 @@ var pro = YuanheStore.prototype;
  *
  * @protected
  */
-pro.initializeAttributes = function() {
+var initializeAttributes = function() {
   YuanheEntity.prototype.initializeAttributes.apply(this);
 
   this.attributes['openid'] = null;
@@ -82,6 +102,7 @@ pro.initializeAttributes = function() {
 pro.loadBySceneId = function(sceneId, cb) {
   var col_name = this.constructor.col_name;
 
+  var self = this;
   async.waterfall([
     function(cb) {
       dbProxy.collection(col_name, cb);
@@ -94,7 +115,40 @@ pro.loadBySceneId = function(sceneId, cb) {
       utils.invokeCallback(cb, err);
       return;
     }
-    this.drawAttrFromDoc(doc);
+    if (doc) {
+      self.drawAttrFromDoc(doc);
+    }
+    utils.invokeCallback(cb, null);
+  });
+};
+
+/**
+ * Load store attributes by openid
+ *
+ * @param {String} openid
+ * @param {Function} cb
+ *
+ * @public
+ */
+pro.loadByOpenid = function(openid, cb) {
+  var col_name = this.constructor.col_name;
+
+  var self = this;
+  async.waterfall([
+    function(cb) {
+      dbProxy.collection(col_name, cb);
+    },
+    function(collection, cb) {
+      collection.findOne({ 'openid': openid }, cb);
+    }
+  ], function(err, doc) {
+    if (err) {
+      utils.invokeCallback(cb, err);
+      return;
+    }
+    if (doc) {
+      self.drawAttrFromDoc(doc);
+    }
     utils.invokeCallback(cb, null);
   });
 };

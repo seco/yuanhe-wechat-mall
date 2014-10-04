@@ -35,7 +35,7 @@ exports.receive = function(req, res) {
   if (req.path == '/weixin/message/mall') {
     var msgHandlers = mallMsgHandlers;
   } else if (req.path == '/weixin/message/store') {
-    var msgHandlers = mallMsgHandlers;
+    var msgHandlers = storeMsgHandlers;
   }
 
   dispatch(req, res, msgHandlers, function(err) {
