@@ -4,12 +4,14 @@
  * @author Minix Li
  */
 
+var appPath = process.argv[1];
+
 var async = require('async');
-var dbProxy = require('../../app').get('dbProxy');
-var oauth = require('../../lib/weixin/oauth');
-var utils = require('../../lib/util/utils');
-var YuanheMember = require('../../models/yuanheMember');
-var YuanheMemberEvent = require('../../models/yuanheMemberEvent');
+var dbProxy = require(appPath).get('dbProxy');
+var oauth = require(appPath + '/../lib/weixin/oauth');
+var utils = require(appPath + '/../lib/util/utils');
+var YuanheMember = require(appPath + '/../models/yuanheMember');
+var YuanheMemberEvent = require(appPath + '/../models/yuanheMemberEvent');
 
 /**
  * OAuth response handler when visiting product page

@@ -4,10 +4,12 @@
  * @author Minix Li
  */
 
+var appPath = process.argv[1];
+
 var parseString = require('xml2js').parseString;
 var dispatcher = require('./dispatcher');
-var loader = require('../../../lib/util/loader');
-var utils = require('../../../lib/util/utils');
+var loader = require(appPath + '/../lib/util/loader');
+var utils = require(appPath + '/../lib/util/utils');
 
 /**
  * Access weixin interface
@@ -31,22 +33,18 @@ exports.access = function(req, res) {
  */
 exports.receive = function(req, res) {
   if (req.route == '/weixin/message/mall') {
-    dispatch(req, res, mallMsgHandlers, function(err) {
-      if (err) {
-        res.status(500).end();
-        return;
-      }
-      res.status(200).end();
-    });
+    var msgHandlers = mallMsgHandlers;
   } else if (req.route == '/weixin/message/store') {
-    dispatch(req, res, storeMsgHandlers, function(err) {
-      if (err) {
-        res.status(500).end();
-        return;
-      }
-      res.status(200).end();
-    });
+    var msgHandlers = mallMsgHandlers;
   }
+
+  dispatch(req, res, msgHandlers, function(err) {
+    if (err) {
+      res.status(500).end();
+      return;
+    }
+    res.status(200).end();
+  });
 };
 
 /**

@@ -2,11 +2,13 @@
  * @author Minix Li
  */
 
+var appPath = process.argv[1];
+
 var async = require('async');
-var decisiontree = require('../../lib/util/decisionTree');
-var merchant = require('../../lib/weixin/merchant');
-var utils = require('../../lib/util/utils');
-var YuanheProduct = require('../../models/yuanheProduct');
+var decisiontree = require(appPath + '/../lib/util/decisionTree');
+var merchant = require(appPath + '/../lib/weixin/merchant');
+var utils = require(appPath + '/../lib/util/utils');
+var YuanheProduct = require(appPath + '/../models/yuanheProduct');
 
 // status
 var ALL = 0;

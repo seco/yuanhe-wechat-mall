@@ -4,9 +4,11 @@
  * @author Minix Li
  */
 
+var appPath = process.argv[1];
+
 var async = require('async');
-var dbProxy = require('../../app').get('dbProxy');
-var utils = require('../lib/util/utils');
+var dbProxy = require(appPath).get('dbProxy');
+var utils = require(appPath + '/../lib/util/utils');
 
 /**
  * @param {Object} req

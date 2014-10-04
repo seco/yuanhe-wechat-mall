@@ -4,12 +4,14 @@
  * @author Minix Li
  */
 
+var appPath = process.argv[1];
+
 var async = require('async');
-var dbProxy = require('../../../../../app').get('dbProxy');
-var decisiontree = require('../../../../../lib/util/decisionTree');
-var utils = require('../../../../../lib/util/utils');
-var YuanheMember = require('../../../../../models/yuanheMember');
-var YuanheStore = require('../../../../../models/yuanheStore');
+var dbProxy = require(appPath).get('dbProxy');
+var decisiontree = require(appPath + '/../lib/util/decisionTree');
+var utils = require(appPath + '/../lib/util/utils');
+var YuanheMember = require(appPath + '/../models/yuanheMember');
+var YuanheStore = require(appPath + '/../models/yuanheStore');
 
 var MsgHandler = function() {};
 

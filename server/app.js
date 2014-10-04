@@ -56,17 +56,6 @@ mongodbUtil.establishConnPool(function(err, result) {
   app.set('db', result.db);
   app.set('dbProxy', result.dbProxy);
 
-  //result.dbProxy.collection('test_insert', function(err, collection) {
-  //if (err) {
-  //return;
-  //}
-  //collection.count(function(err, count) {
-  //if (err) {
-  //return;
-  //}
-  //});
-  //});
-
   // set the view engine
   app.set('view engine', 'hbs');
   // where to find the view files
@@ -76,7 +65,7 @@ mongodbUtil.establishConnPool(function(err, result) {
   app.use(favicon(path.join(__dirname, '../app/images/yuanhe_favicon.png')));
 
   // using dev logger as the very first middleware
-  //app.use(logger('dev'));
+  // app.use(logger('dev'));
 
   //
   /**

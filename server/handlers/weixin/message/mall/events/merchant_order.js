@@ -32,14 +32,16 @@
  * @author Minix Li
  */
 
+var appPath = process.argv[1];
+
 var async = require('async');
-var dbProxy = require('../../../../../app').get('dbProxy');
-var decisiontree = require('../../../../../lib/util/decisionTree');
-var merchant = require('../../../../../lib/weixin/merchant');
-var utils = require('../../../../../lib/util/utils');
-var YuanheMember = require('../../../../../models/yuanheMember');
-var YuanheMemberEvent = require('../../../../../models/yuanheMemberEvent');
-var YuanheOrder = require('../../../../../models/yuanheOrder');
+var dbProxy = require(appPath).get('dbProxy');
+var decisiontree = require(appPath + '/../lib/util/decisionTree');
+var utils = require(appPath + '/../lib/util/utils');
+var merchant = require(appPath + '/../lib/weixin/merchant');
+var YuanheMember = require(appPath + '/../models/yuanheMember');
+var YuanheMemberEvent = require(appPath + '/../models/yuanheMemberEvent');
+var YuanheOrder = require(appPath + '/../models/yuanheOrder');
 
 var MsgHandler = function() {};
 

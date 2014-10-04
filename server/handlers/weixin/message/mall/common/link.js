@@ -4,7 +4,9 @@
  * @author Minix Li
  */
 
-var utils = require('../../../../../lib/util/utils');
+
+var appPath = process.argv[1];
+var utils = require(appPath + '/../lib/util/utils');
 
 var MsgHandler = function() {};
 
