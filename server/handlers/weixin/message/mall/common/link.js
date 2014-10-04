@@ -13,7 +13,12 @@ var MsgHandler = function() {};
 MsgHandler.prototype.name = 'link';
 
 /**
- * message handler
+ * Message handler
+ *
+ * @param {Object} req
+ * @param {Object} res
+ * @param {Object} msg
+ * @param {Function} cb
  *
  * @public
  */
@@ -26,6 +31,8 @@ MsgHandler.prototype.handle = function(req, res, msg, cb) {
 /**
  * Check whether a message is valid
  *
+ * @param {Object} msg
+ *
  * @private
  *
  * @return {Boolean}
@@ -34,9 +41,7 @@ var msgIsValid = function(msg) {
   return true;
 };
 
-/**
- * Initialize a new link message handler
- */
+// export a new link message handler
 module.exports = function() {
   return new MsgHandler();
 };
