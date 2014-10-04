@@ -48,13 +48,15 @@ exports.refresh = function(req, res) {
  *
  * @param {Object} productInfo
  * @param {Function} cb
+ *
+ * @private
  */
 var refreshHandler = function(productInfo, cb) {
-  var startCtx = { 'productInfo': productInfo };
-
   decisiontree.auto({
     start: function(cb, context) {
-      utils.invokeCallback(cb, null, true, startCtx);
+      utils.invokeCallback(cb, null, true, {
+        'productInfo': productInfo 
+      });
     },
     decisionA: ['start', true, function(cb, context) {
       decisionAHandler(cb, context);

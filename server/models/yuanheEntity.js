@@ -21,7 +21,10 @@ YuanheEntity = function() {
   throw new Error("Can't instantiate abstract classes");
 };
 
+// inherit from YuanheData
 YuanheData.extend(YuanheEntity);
+
+// INSTANCE METHODS //////////////////////////////////////////////////////////
 
 var pro = YuanheEntity.prototype;
 
@@ -45,42 +48,30 @@ pro.initializeAttributes = function() {
  * @param {String} id
  * @param {Function} cb
  *
- * @protected
+ * @public
  */
 pro.load = function(id, cb) {
   var col_name = this.constructor.col_name;
 
+  var self = this;
   async.waterfall([
     function(cb) {
       dbProxy.collection(col_name, cb);
     },
     function(collection, cb) {
-      collection.findOne({ "_id": id }, cb);
+      collection.findOne({ '_id': id }, cb);
     }
   ], function(err, doc) {
     if (err) {
       utils.invokeCallback(cb, err);
       return;
     }
-    this.drawAttrFromDoc(doc);
+    if (doc) {
+      self.drawAttrFromDoc(doc);
+    }
     utils.invokeCallback(cb, null);
   });
 };
-
-/**
- * Draw attributes from entity document
- *
- * @param {Object} doc
- *
- * @protected
- */
-pro.drawAttrFromDoc = function(doc) {
-  for (var key in doc) {
-    if (key in this.attributes) {
-      this.attributes[key] = doc[key];
-    }
-  }
-}
 
 /**
  * Return the value of a property
@@ -104,6 +95,21 @@ pro.get = function(name) {
 pro.set = function(name, value) {
   this.attributes[name] = value;
 };
+
+/**
+ * Draw attributes from entity document
+ *
+ * @param {Object} doc
+ *
+ * @protected
+ */
+pro.drawAttrFromDoc = function(doc) {
+  for (var key in doc) {
+    if (key in this.attributes) {
+      this.attributes[key] = doc[key];
+    }
+  }
+}
 
 /**
  * Save an entity
