@@ -25,7 +25,7 @@ module.exports.route = function(req, res, msg, msgHandlers, cb) {
     utils.invokeCallback(cb, new Error('invalid message'));
     return;
   }
-  if ((msgType == 'event') && !(event == xml['event'])) {
+  if ((msgType == 'event') && !(event = xml['Event'])) {
     utils.invokeCallback(cb, new Error('invalid message'));
     return;
   }
@@ -33,7 +33,7 @@ module.exports.route = function(req, res, msg, msgHandlers, cb) {
   var namespace = (msgType == 'event' ? 'event' : 'common');
   var handler = (msgType == 'event' ? event : msgType);
 
-  msgHandlers[req.route][namespace][handler].handle.call(null, req, res, msg, function(err) {
+  msgHandlers[namespace][handler].handle.call(null, req, res, msg, function(err) {
     if (err) {
       utils.invokeCallback(cb, err);
       return;
