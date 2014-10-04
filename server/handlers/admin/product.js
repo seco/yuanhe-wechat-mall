@@ -53,17 +53,19 @@ exports.refresh = function(req, res) {
  */
 var refreshHandler = function(productInfo, cb) {
   decisiontree.auto({
+    // put product info into context and start decision A
     start: function(cb, context) {
-      utils.invokeCallback(cb, null, true, {
-        'productInfo': productInfo 
-      });
+      utils.invokeCallback(cb, null, true, { 'productInfo': productInfo });
     },
+    // check whether exists a product with the product id
     decisionA: ['start', true, function(cb, context) {
       decisionAHandler(cb, context);
     }],
+    // update product's weixin product info field
     endA: ['decisionA', true, function(cb, context) {
       endAHandler(cb, context);
     }],
+    // save new product
     endB: ['decisionA', false, function(cb, context) {
       endBHandler(cb, context);
     }],
@@ -77,7 +79,7 @@ var refreshHandler = function(productInfo, cb) {
 };
 
 /**
- * Decision A handler
+ * Check whether exists a product with the product id
  *
  * @param {Function} callback
  * @param {Object} context
@@ -86,7 +88,7 @@ var refreshHandler = function(productInfo, cb) {
  */
 var decisionAHandler = function(callback, context) {
   var cond = false;
-  var ctx = {};
+  var handlerCtx = {};
 
   var productInfo = context.productInfo;
   var productId = productInfo.product_id;
@@ -102,14 +104,14 @@ var decisionAHandler = function(callback, context) {
     }
 
     if (product.get('_id')) { cond = true; }
-    ctx = { 'productEntity': product };
+    handlerCtx = { 'productEntity': product };
 
-    utils.invokeCallback(callback, null, cond, ctx);
+    utils.invokeCallback(callback, null, cond, handlerCtx);
   });
 };
 
 /**
- * End A handler
+ * Update product's weixin product info field
  *
  * @param {Function} callback
  * @param {Object} context
@@ -135,7 +137,7 @@ var endAHandler = function(callback, context) {
 };
 
 /**
- * End B handler
+ * Save new product
  *
  * @param {Function} callback
  * @param {Object} context

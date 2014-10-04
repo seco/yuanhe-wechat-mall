@@ -5,7 +5,7 @@
  */
 
 var async = require('async');
-var dbProxy = require('../app').dbProxy;
+var dbProxy = require('../app').get('dbProxy');
 var utils = require('../lib/util/utils');
 
 // YuanheGlobalCounter constructor
@@ -20,6 +20,8 @@ YuanheGlobalCounter.col_name = 'global_counters';
  * Yield scene id
  *
  * @param {Function} cb
+ *
+ * @public
  */
 YuanheGlobalCounter.yieldSceneId = function(cb) {
   var col_name = this.col_name;
@@ -31,12 +33,12 @@ YuanheGlobalCounter.yieldSceneId = function(cb) {
     function(collection, cb) {
       collection.findAndModify({ '_id': 'scene_id' }, [], { $inc: { value: 1 } }, { new: true }, cb);
     }
-  ], function(err, doc) {
+  ], function(err, result) {
     if (err) {
       utils.invokeCallback(cb, err);
       return;
     }
-    utils.invokeCallback(cb, null, doc.value);
+    utils.invokeCallback(cb, null, result.value);
   });
 };
 

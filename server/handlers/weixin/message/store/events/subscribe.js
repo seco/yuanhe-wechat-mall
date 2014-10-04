@@ -33,30 +33,36 @@ MsgHandler.prototype.handle = function(req, res, msg, cb) {
     return;
   }
 
-  var startCtx = { 'openid': openid };
-  decisiontree.auto({
-    start: function(cb, context) {
-      utils.invokeCallback(cb, null, true, startCtx);
-    },
+  var openid = msg['xml']['FromUserName'];
 
+  decisiontree.auto({
+    // put openid into context and start decision A
+    start: function(cb, context) {
+      utils.invokeCallback(cb, null, true, { 'openid': openid });
+    },
+    // check whether exists a store with the openid
     decisionA: ['start', true, function(cb, context) {
       decisionAHandler(cb, context);
     }],
-
+    // update store's status
     endA: ['decisionA', true, function(cb, context) {
       endAHandler(cb, context);
     }],
-
+    // save new store
     endB: ['decisionA', false, function(cb, context) {
       endBHandler(cb, context);
-    }],
+    }]
   }, function(err, context) {
-
+    if (err) {
+      utils.invokeCallback(cb, err);
+      return;
+    }
+    utils.invokeCallback(cb, null);
   });
 };
 
 /**
- * Decision A handler
+ * Check whether exists a store with the openid
  *
  * @param {Function} callback
  * @param {Object} context
@@ -75,15 +81,15 @@ var decisionAHandler = function(callback, context) {
       return;
     }
 
-    if (store) { cond = true; }
-    handlerCtx = { 'store': store };
+    if (store.get('_id')) { cond = true; }
+    handlerCtx = { 'storeEntity': store };
 
     utils.invokeCallback(callback, null, cond, handlerCtx);
   });
 };
 
 /**
- * End A handler
+ * Update store's status
  *
  * @param {Function} callback
  * @param {Object} context
@@ -91,13 +97,13 @@ var decisionAHandler = function(callback, context) {
  * @private
  */
 var endAHandler = function(callback, context) {
-  var store = context.store;
+  var storeEntity = context.storeEntity;
 
   async.waterfall([
     function(cb) {
-      store.set('status', 'following');
-      store.set('time_following', new Date());
-      store.save(cb);
+      storeEntity.set('status', 'following');
+      storeEntity.set('time_following', new Date());
+      storeEntity.save(cb);
     }
   ], function(err, result) {
     if (err) {
@@ -109,7 +115,7 @@ var endAHandler = function(callback, context) {
 };
 
 /**
- * End B handler
+ * Save new store
  *
  * @param {Function} callback
  * @param {Object} context
@@ -118,18 +124,18 @@ var endAHandler = function(callback, context) {
  */
 var endBHandler = function(callback, context) {
   var openid = context.openid;
+  var storeEntity = context.storeEntity;
 
   async.waterfall([
     function(cb) {
       YuanheGlobalCounter.yieldSceneId(cb);
     },
     function(sceneId, cb) {
-      var store = new YuanheStore();
-      store.set('openid', openid);
-      store.set('scene_id', sceneId);
-      store.set('status', 'following');
-      store.set('time_following', new Date());
-      store.save(cb);
+      storeEntity.set('openid', openid);
+      storeEntity.set('scene_id', sceneId);
+      storeEntity.set('status', 'following');
+      storeEntity.set('time_following', new Date());
+      storeEntity.save(cb);
     }
   ], function(err, result) {
     if (err) {
@@ -138,7 +144,6 @@ var endBHandler = function(callback, context) {
     }
     utils.invokeCallback(callback, null);
   });
-
 };
 
 /**

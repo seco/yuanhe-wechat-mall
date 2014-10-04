@@ -31,6 +31,9 @@ MsgHandler.prototype.handle = function(req, res, msg, cb) {
     utils.invokeCallback(cb, new Error('invalid message'));
     return;
   }
+
+  var openid = msg['xml']['FromUserName'];
+
   decisiontree.auto({
     // put openid into context and start decision A
     start: function(cb, context) {
@@ -139,7 +142,11 @@ var decisionBHandler = function(callback, context) {
       utils.invokeCallback(callback, err);
       return;
     }
-    if (member.get('following_store_id')) { cond = true; }
+
+    if (memberEntity.get('following_store_id')) {
+      cond = true;
+    }
+
     utils.invokeCallback(callback, null, cond, handlerCtx);
   });
 };
@@ -157,13 +164,12 @@ var decisionCHandler = function(callback, context) {
   var cond = false;
   var handlerCtx = {};
 
-  var memberEntity = context.memberEntity;
-  var memberId = memberEntity.get('_id');
+  var openid = context.openid;
 
   async.waterfall([
     function(cb) {
       YuanheMemberEvent.getLastByOpts({
-        'member_id': memberId,
+        'member_openid': openid,
         'type': 'view'
       }, cb);
     }
@@ -193,14 +199,14 @@ var decisionCHandler = function(callback, context) {
  *
  * @private
  */
-var endC = function(callback, context) {
+var endCHandler = function(callback, context) {
   var memberEntity = context.memberEntity;
   var memberEvent = context.memberEvent;
 
   async.waterfall([
     function(cb) {
       memberEntity.updateFollowingStoreId(
-        memberEvent.get('store_id'), cb
+        memberEvent.get('object_id'), cb
       );
     }
   ], function(err, result) {
@@ -220,14 +226,16 @@ var endC = function(callback, context) {
  *
  * @private
  */
-var decisionDHandler = function() {
+var decisionDHandler = function(callback, context) {
   var cond = true;
   var handlerCtx = {};
 
+  var openid = context.openid;
   var memberEntity = context.memberEntity;
 
   async.waterfall([
     function(cb) {
+      memberEntity.set('openid', openid);
       memberEntity.set('status', 'following');
       memberEntity.set('time_following', new Date());
       memberEntity.save(cb);
@@ -254,13 +262,12 @@ var decisionEHandler = function(callback, context) {
   var cond = false;
   var handlerCtx = {};
 
-  var memberEntity = context.memberEntity;
-  var memberId = memberEntity.get('_id');
+  var openid = context.openid;
 
   async.waterfall([
     function(cb) {
       YuanheMemberEvent.getLastByOpts({
-        'member_id': memberId,
+        'member_openid': openid,
         'type': 'view'
       }, cb);
     }
@@ -290,7 +297,7 @@ var decisionEHandler = function(callback, context) {
  *
  * @private
  */
-var endE = function(callback, context) {
+var endEHandler = function(callback, context) {
   var memberEntity = context.memberEntity;
   var memberEvent = context.memberEvent;
 
