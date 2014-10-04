@@ -24,7 +24,8 @@ exports.index = function(req, res, next) {
 
   if (searchKey && searchVal) {
     var regexp = new RegExp(searchVal);
-    filter['$or'] = [{'sales_store.store_name': regexp}, {'member_store.store_name': regexp}];
+    //filter['$or'] = [{'sales_store.store_name': regexp}, {'member_store.store_name': regexp}];
+    filter[searchKey] = regexp;
   };
 
   if (calendarKey && startDate && endDate) {

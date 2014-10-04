@@ -31,7 +31,7 @@ var product = {
 };
 //db.orders
 var order = {
-  order_status: 'create',
+  order_status: 'created',
   weixin_order_id: '',
   weixin_order_info: {},
   stores: [{
