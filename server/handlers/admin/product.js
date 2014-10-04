@@ -6,7 +6,7 @@ var async = require('async');
 var decisiontree = require('../../lib/util/decisionTree');
 var merchant = require('../../lib/weixin/merchant');
 var utils = require('../../lib/util/utils');
-var YuanheProduct = require('../../classes/yuanheProduct');
+var YuanheProduct = require('../../models/yuanheProduct');
 
 // status
 var ALL = 0;

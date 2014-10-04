@@ -7,7 +7,7 @@
 // Load the route handlers
 var routes = require('./handlers');
 
-var message = require('./handlers/weixin/message');
+var gateway = require('./handlers/weixin/message/gateway');
 var oauth = require('./handlers/weixin/oauth');
 var qrcode = require('./handlers/qrcode');
 var adminProduct = require('./handlers/admin/product');
@@ -27,12 +27,11 @@ module.exports = function(app) {
   app.get('/', routes.index);
 
   // message from weixin mall public number
-  app.get('/weixin/message/mall', message.access);
-  app.post('/weixin/message/mall', message.receive);
-
+  app.get('/weixin/message/mall', gateway.access);
+  app.post('/weixin/message/mall', gateway.receive);
   // message from store weixin public number
-  app.get('/weixin/message/store', message.access);
-  app.post('/weixin/message/store', message.receive);
+  app.get('/weixin/message/store', gateway.access);
+  app.post('/weixin/message/store', gateway.receive);
 
   // weixin OAuth
   app.get('/oauth_response/product/:store_id/:product_id', oauth.product);

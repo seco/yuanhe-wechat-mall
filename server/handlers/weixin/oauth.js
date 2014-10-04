@@ -8,8 +8,8 @@ var async = require('async');
 var dbProxy = require('../../app').get('dbProxy');
 var oauth = require('../../lib/weixin/oauth');
 var utils = require('../../lib/util/utils');
-var YuanheMember = require('../../classes/yuanheMember');
-var YuanheMemberEvent = require('../../classes/yuanheMemberEvent');
+var YuanheMember = require('../../models/yuanheMember');
+var YuanheMemberEvent = require('../../models/yuanheMemberEvent');
 
 /**
  * OAuth response handler when visiting product page
