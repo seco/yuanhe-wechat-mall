@@ -43,7 +43,7 @@ exports.receive = function(req, res) {
       res.status(500).end();
       return;
     }
-    res.status(200).end();
+    res.end();
   });
 };
 

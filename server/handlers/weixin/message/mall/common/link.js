@@ -26,6 +26,7 @@ MsgHandler.prototype.handle = function(req, res, msg, cb) {
   if (!msgIsValid(msg)) {
     utils.invokeCallback(cb, new Error('invalid message'));
   }
+  utils.invokeCallback(cb, null);
 };
 
 /**

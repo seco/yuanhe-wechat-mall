@@ -34,7 +34,7 @@ exports.refresh = function(req, res) {
         return;
       }
       if (index >= productsInfo.length) {
-        res.status(200).end();
+        res.end();
         return;
       }
       refreshHandler(productsInfo[index++], next);

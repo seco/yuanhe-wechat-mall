@@ -16,7 +16,7 @@ var utils = require(appPath + '/../lib/util/utils');
  * @param {Object} msgHandlers
  * @param {Function} cb
  *
- * @private
+ * @public
  */
 module.exports.route = function(req, res, msg, msgHandlers, cb) {
   var xml, msgType, event;
