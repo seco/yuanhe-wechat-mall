@@ -138,6 +138,25 @@ db.orders.insert({
 db.orders.findOne({
   weixin_order_id: ''
 });
+//insert store source
+db.orders.update({
+  _id: ObjectId('')
+}, {
+  "$push": {
+    "stores": {
+      "$each": [{
+        id: ObjectId('5423072cf13de9f92dc68dae'),
+        store_name: 'this is sales store name',
+        store_type: 'sales_store'
+      }, {
+        id: ObjectId('5423072cf13de9f92dc68daf'),
+        store_name: 'this is member store name',
+        store_type: 'member_store'
+      }]
+    }
+  }
+});
+//update commission
 db.orders.update({
   _id: ObjectId(''),
   //'stores.id': ObjectId(''),
