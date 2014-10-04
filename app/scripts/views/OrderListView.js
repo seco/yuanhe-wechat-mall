@@ -45,7 +45,7 @@ define(['jquery',
             cell: 'number'
           }, {
             name: 'order_status',
-            label: '商店类型',
+            label: '订单状态',
             cell: Backgrid.Cell.extend({
               render: function() {
                 var val = '';
@@ -60,21 +60,77 @@ define(['jquery',
               }
             })
           }, {
-            name: 'sales_store.store_name',
             label: '店铺名称（销售）',
-            cell: 'string'
+            cell: Backgrid.Cell.extend({
+              render: function() {
+                var storesAry = this.model.get('stores');
+                var self = this;
+                if (storesAry) {
+                  storesAry.forEach(
+                    function(store) {
+                      if (store.store_type && store.store_type === 'sales_store') {
+                        self.$el.text(store.store_name);
+                      }
+                    }
+                  );
+                }
+                return this;
+              }
+            })
           }, {
-            name: 'member_store.store_name',
             label: '店铺名称（会员）',
-            cell: 'string'
+            cell: Backgrid.Cell.extend({
+              render: function() {
+                var storesAry = this.model.get('stores');
+                var self = this;
+                if (storesAry) {
+                  storesAry.forEach(
+                    function(store) {
+                      if (store.store_type && store.store_type === 'member_store') {
+                        self.$el.text(store.store_name);
+                      }
+                    }
+                  );
+                }
+                return this;
+              }
+            })
           }, {
-            name: 'sales_store.commission',
             label: '销售佣金',
-            cell: 'number'
+            cell: Backgrid.Cell.extend({
+              render: function() {
+                var storesAry = this.model.get('stores');
+                var self = this;
+                if (storesAry) {
+                  storesAry.forEach(
+                    function(store) {
+                      if (store.store_type && store.store_type === 'sales_store') {
+                        self.$el.text(store.commission);
+                      }
+                    }
+                  );
+                }
+                return this;
+              }
+            })
           }, {
-            name: 'member_store.commission',
             label: '会员佣金',
-            cell: 'number'
+            cell: Backgrid.Cell.extend({
+              render: function() {
+                var storesAry = this.model.get('stores');
+                var self = this;
+                if (storesAry) {
+                  storesAry.forEach(
+                    function(store) {
+                      if (store.store_type && store.store_type === 'member_store') {
+                        self.$el.text(store.commission);
+                      }
+                    }
+                  );
+                }
+                return this;
+              }
+            })
           }, {
             name: 'created_at',
             label: '订单创建时间',
@@ -146,7 +202,7 @@ define(['jquery',
       },
 
       search: function() {
-        var searchKey = 'store_name';
+        var searchKey = 'stores.store_name';
         var searchVal = this.$el.find('[name="table_search"]').val();
         this.orders.queryParams.searchKey = searchKey;
         this.orders.queryParams.searchVal = searchVal;
