@@ -16,7 +16,7 @@ var YuanheEntity = require('./yuanheEntity');
 
 // YuanheProduct constructor
 YuanheProduct = function() {
-  this.initializeAttributes();
+  initializeAttributes.apply(this);
 };
 
 // inherit from YuanheEntity
@@ -34,6 +34,8 @@ YuanheProduct.col_name = 'products';
  *
  * @param {String} productId
  * @param {Function} cb
+ *
+ * @public
  */
 YuanheProduct.getByProductId = function(productId, cb) {
   var product = new YuanheProduct();
@@ -54,9 +56,9 @@ var pro = YuanheProduct.prototype;
 /**
  * Initialize the attributes array
  *
- * @protected
+ * @private
  */
-pro.initializeAttributes = function() {
+var initializeAttributes = function() {
   YuanheEntity.prototype.initializeAttributes.apply(this);
 
   this.attributes['weixin_product_info'] = null;
@@ -64,9 +66,11 @@ pro.initializeAttributes = function() {
 };
 
 /**
- * Load product by id
+ * Load product attributes by product id
  *
  * @param {String} productId
+ *
+ * @public
  */
 pro.loadByProductId = function(productId, cb) {
   var col_name = this.constructor.col_name;

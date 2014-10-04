@@ -17,7 +17,7 @@ var YuanheEntity = require('./yuanheEntity');
 
 // YuanheMember constructor
 YuanheMember = function() {
-  this.initializeAttributes();
+  initializeAttributes.apply(this);
 };
 
 // inherit from YuanheEntity
@@ -35,6 +35,8 @@ YuanheMember.col_name = 'members';
  *
  * @param {String} id
  * @param {Function} cb
+ *
+ * @public
  */
 YuanheMember.getById = function(id, cb) {
   var member = new YuanheMember();
@@ -53,6 +55,8 @@ YuanheMember.getById = function(id, cb) {
  *
  * @param {String} openid
  * @param {Function} cb
+ *
+ * @public
  */
 YuanheMember.getByOpenid = function(openid, cb) {
   var member = new YuanheMember();
@@ -73,9 +77,9 @@ var pro = YuanheMember.prototype;
 /**
  * Initialize the attributes array
  *
- * @protected
+ * @private
  */
-pro.initializeAttributes = function() {
+var initializeAttributes = function() {
   YuanheEntity.prototype.initializeAttributes.apply(this);
 
   this.attributes['openid'] = null;
@@ -94,19 +98,22 @@ pro.initializeAttributes = function() {
 pro.loadByOpenid = function(openid, cb) {
   var col_name = this.constructor.col_name;
 
+  var self = this;
   async.waterfall([
     function(cb) {
       dbProxy.collection(col_name, cb);
     },
     function(collection, cb) {
-      collection.findOne({ "openid": openid }, cb);
+      collection.findOne({ 'openid': openid }, cb);
     }
   ], function(err, doc) {
     if (err) {
       utils.invokeCallback(cb, err);
       return;
     }
-    this.drawAttrFromDoc(doc);
+    if (doc) {
+      self.drawAttrFromDoc(doc);
+    }
     utils.invokeCallback(cb, null);
   });
 };
@@ -116,18 +123,21 @@ pro.loadByOpenid = function(openid, cb) {
  *
  * @param {String} store_id
  * @param {Function} cb
+ *
+ * @public
  */
 pro.updateFollowingStoreId = function(store_id, cb) {
   var col_name = this.constructor.col_name;
 
+  var self = this;
   async.waterfall([
     function(cb) {
       dbProxy.collection(col_name, cb);
     },
     function(collection, cb) {
       collection.update(
-        { "_id": this.get('_id') },
-        { "$set": { "following_store_id": store_id } }, cb
+        { '_id': this.get('_id') },
+        { '$set': { 'following_store_id': store_id } }, cb
       );
     }
   ], function(err, result) {

@@ -1,8 +1,6 @@
 /**
  * A generic class that contains shared code b/w YuanheEntity
  *
- * @property {String} time_created
- *
  * @author Minix Li
  */
 
@@ -25,8 +23,6 @@ pro.initializeAttributes = function() {
   if (typeof this.attributes === 'undefined') {
     this.attributes = {};
   }
-
-  this.attributes['time_created'] = null;
 };
 
 /**
