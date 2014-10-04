@@ -113,45 +113,70 @@ pro.set = function(name, value) {
  * @public
  */
 pro.save = function(cb) {
+  if (this.get('_id')) {
+    updateDocument.apply(this, [cb]);
+  } else {
+    insertDocument.apply(this, [cb]);
+  }
+};
+
+/**
+ * Insert document
+ *
+ * @param {Function} cb
+ *
+ * @private
+ */
+var insertDocument = function(cb) {
   var col_name = this.constructor.col_name;
 
   var self = this;
-  if (this.get('_id')) {
-    async.waterfall([
-      function(cb) {
-        dbProxy.collection(col_name, cb);
-      },
-      function(collection, cb) {
-        collection.update(
-          { '_id': self.get('_id') },
-          { '$set': self.attributes },
-          cb
-        );
-      }
-    ], function(err, result) {
-      if (err) {
-        utils.invokeCallback(cb, err);
-        return;
-      }
-      utils.invokeCallback(cb, null, result);
-    });
-  } else {
-    async.waterfall([
-      function(cb) {
-        dbProxy.collection(col_name, cb);
-      },
-      function(collection, cb) {
-        collection.insert(self.attributes, cb);
-      }
-    ], function(err, result) {
-      if (err) {
-        utils.invokeCallback(cb, err);
-        return;
-      }
-      self.set('_id', result._id);
-      utils.invokeCallback(cb, null, result);
-    });
-  }
+  async.waterfall([
+    function(cb) {
+      dbProxy.collection(col_name, cb);
+    },
+    function(collection, cb) {
+      collection.insert(self.attributes, cb);
+    }
+  ], function(err, result) {
+    if (err) {
+      utils.invokeCallback(cb, err);
+      return;
+    }
+    self.set('_id', result._id);
+    utils.invokeCallback(cb, null, result);
+  });
+};
+
+/**
+ * Update document
+ *
+ * @param {Function} cb
+ *
+ * @private
+ */
+var updateDocument = function(cb) {
+  var col_name = this.constructor.col_name;
+
+  var self = this;
+  async.waterfall([
+    function(cb) {
+      dbProxy.collection(col_name, cb);
+    },
+    function(collection, cb) {
+      collection.update(
+        { '_id': self.get('_id') },
+        { '$set': self.attributes },
+        cb
+      );
+    }
+  ], function(err, result) {
+    if (err) {
+      utils.invokeCallback(cb, err);
+      return;
+    }
+    utils.invokeCallback(cb, null, result);
+  });
 };
 
 /**
