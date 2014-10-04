@@ -173,8 +173,12 @@ var decisionCHandler = function(callback, context) {
       return;
     }
 
-    // TODO
-    if (false) { cond = true; }
+    if (memberEvent.get('_id')) {
+      var posted = memberEvent.get('posted');
+      if (utils.checkInPastDays(posted, 30)) {
+        cond = true;
+      }
+    }
     handlerCtx = { 'memberEvent': memberEvent };
 
     utils.invokeCallback(callback, null, cond, handlerCtx);
@@ -266,8 +270,12 @@ var decisionEHandler = function(callback, context) {
       return;
     }
 
-    // TODO
-    if (false) { cond = true; }
+    if (memberEvent.get('_id')) {
+      var posted = memberEvent.get('posted');
+      if (utils.checkInPastDays(posted, 30)) {
+        cond = true;
+      }
+    }
     handlerCtx = { 'memberEvent': memberEvent };
 
     utils.invokeCallback(callback, null, cond, handlerCtx);

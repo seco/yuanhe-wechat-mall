@@ -10,11 +10,32 @@ var utils = module.exports;
  * Check and invoke callback
  *
  * @param {Function} cb
+ *
+ * @public
  */
 utils.invokeCallback = function(cb) {
   if (!!cb && typeof cb === 'function') {
     cb.apply(null, Array.prototype.slice.call(arguments, 1));
   }
+};
+
+/**
+ * Check whether a date is in the given past days
+ *
+ * @param {Date} date
+ * @param {Number} days
+ *
+ * @public
+ *
+ * @return {Boolean}
+ */
+utils.checkInPastDays = function(date, days) {
+  var now = new Date();
+  var mseconds = days*(24*3600000);
+  if ((now - date) <= mseconds) {
+    return true;
+  }
+  return false;
 };
 
 /**
