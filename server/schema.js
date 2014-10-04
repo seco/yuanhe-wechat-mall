@@ -20,14 +20,14 @@ var counter = {
 //db.products
 var product = {
   _id: 77,
-  product_info: {
+  weixin_product_info: {
     'product_base': {
         "name": "testaddproduct",
         "img": ["http://mmbiz.qpic.cn/mmbiz/4whpV1VZl2iccsvYbHvnphkyGtnvjD3ulEKogfsiaua49pvLfUS8Ym0GSYjViaLic0FD3vN0V8PILcibEGb2fPfEOmw/0"]
      },
     'product_id': 'pDF3iY6Kr_BV_CXaiYysoGqJhppQ'
   },
-  promotion_url: 'http://www.taobao.com'
+  redirect_url: 'http://www.taobao.com'
 };
 //db.orders
 var order = {

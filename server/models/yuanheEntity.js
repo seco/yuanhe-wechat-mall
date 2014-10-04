@@ -10,7 +10,7 @@
  */
 
 var async = require('async');
-var dbProxy = require('../app').dbProxy;
+var dbProxy = require('../app').get('dbProxy');
 var utils = require('../lib/util/utils');
 var YuanheData = require('./yuanheData');
 
@@ -115,6 +115,7 @@ pro.set = function(name, value) {
 pro.save = function(cb) {
   var col_name = this.constructor.col_name;
 
+  var self = this;
   if (this.get('_id')) {
     async.waterfall([
       function(cb) {
@@ -122,8 +123,8 @@ pro.save = function(cb) {
       },
       function(collection, cb) {
         collection.update(
-          { '_id': this.get('_id') },
-          { '$set': this.attributes },
+          { '_id': self.get('_id') },
+          { '$set': self.attributes },
           cb
         );
       }
@@ -140,14 +141,14 @@ pro.save = function(cb) {
         dbProxy.collection(col_name, cb);
       },
       function(collection, cb) {
-        collection.insert(this.attributes, cb);
+        collection.insert(self.attributes, cb);
       }
     ], function(err, result) {
       if (err) {
         utils.invokeCallback(cb, err);
         return;
       }
-      this.set('_id', result._id);
+      self.set('_id', result._id);
       utils.invokeCallback(cb, null, result);
     });
   }

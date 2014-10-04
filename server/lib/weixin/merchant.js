@@ -8,6 +8,7 @@
 var request = require('request');
 var app = require('../../app');
 var utils = require('../util/utils');
+var commonUtil = require('./commonUtil');
 
 var exp = module.exports;
 

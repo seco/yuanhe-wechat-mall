@@ -22,18 +22,18 @@ var OFFSHELF = 2;
  * @param {Object} res
  */
 exports.refresh = function(req, res) {
-  merchant.getProductsByStatus(ONSHELF, function(err, products_info) {
+  merchant.getProductsByStatus(ONSHELF, function(err, productsInfo) {
     var index = 0;
     var next = function(err) {
       if (err) {
         res.status(500).end();
         return;
       }
-      if (index >= product_info.length) {
+      if (index >= productsInfo.length) {
         res.status(200).end();
         return;
       }
-      refreshHandler(products_info[index++], next);
+      refreshHandler(productsInfo[index++], next);
     };
     next();
   });
@@ -46,7 +46,7 @@ exports.refresh = function(req, res) {
  * @param {Function} cb
  */
 var refreshHandler = function(productInfo, cb) {
-  var productId = product_info.product_id;
+  var productId = productInfo.product_id;
 
   decisiontree.auto({
     decisionA: function(cb, context) {
@@ -62,8 +62,10 @@ var refreshHandler = function(productInfo, cb) {
           utils.invokeCallback(cb, err);
           return;
         }
-        if (product) { cond = true; }
+
+        if (product.get('_id')) { cond = true; }
         ctx = { 'product': product };
+
         utils.invokeCallback(cb, null, cond, ctx);
       });
     },
@@ -73,7 +75,7 @@ var refreshHandler = function(productInfo, cb) {
 
       async.waterfall([
         function(cb) {
-          product.set('product_info', productInfo);
+          product.set('weixin_product_info', productInfo);
           product.save(cb);
         }
       ], function(err, result) {
@@ -86,10 +88,11 @@ var refreshHandler = function(productInfo, cb) {
     }],
 
     endB: ['decisionA', false, function(cb, context) {
+      var product = context.product;
+
       async.waterfall([
         function(cb) {
-          var product = new YuanheProduct();
-          product.set('product_info', productInfo);
+          product.set('weixin_product_info', productInfo);
           product.save(cb);
         }
       ], function(err, result) {
@@ -101,6 +104,10 @@ var refreshHandler = function(productInfo, cb) {
       });
     }],
   }, function(err, context) {
-
+    if (err) {
+      utils.invokeCallback(cb, err);
+      return;
+    }
+    utils.invokeCallback(cb, null);
   });
 };

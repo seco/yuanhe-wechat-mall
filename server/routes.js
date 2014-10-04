@@ -22,7 +22,8 @@ module.exports = function(app) {
   app.get('/login', sign.login);
   app.post('/signin', sign.signin);
   app.get('/signout', sign.signout);
-  app.all('*', sign.checkAuth);
+  //app.all('*', sign.checkAuth);
+
   // manager
   app.get('/', routes.index);
 
