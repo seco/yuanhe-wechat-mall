@@ -1,4 +1,6 @@
 /**
+ * Administrate products
+ *
  * @author Minix Li
  */
 
@@ -10,7 +12,7 @@ var merchant = require(appPath + '/../lib/weixin/merchant');
 var utils = require(appPath + '/../lib/util/utils');
 var YuanheProduct = require(appPath + '/../models/yuanheProduct');
 
-// status
+// product status
 var ALL = 0;
 var ONSHELF = 1;
 var OFFSHELF = 2;
@@ -20,6 +22,8 @@ var OFFSHELF = 2;
  *
  * @param {Object} req
  * @param {Object} res
+ *
+ * @public
  */
 exports.refresh = function(req, res) {
   merchant.getProductsByStatus(ONSHELF, function(err, productsInfo) {
@@ -46,62 +50,20 @@ exports.refresh = function(req, res) {
  * @param {Function} cb
  */
 var refreshHandler = function(productInfo, cb) {
-  var productId = productInfo.product_id;
+  var startCtx = { 'productInfo': productInfo };
 
   decisiontree.auto({
-    decisionA: function(cb, context) {
-      var cond = false;
-      var ctx = {};
-
-      async.waterfall([
-        function(cb) {
-          YuanheProduct.getByProductId(productId, cb);
-        }
-      ], function(err, product) {
-        if (err) {
-          utils.invokeCallback(cb, err);
-          return;
-        }
-
-        if (product.get('_id')) { cond = true; }
-        ctx = { 'product': product };
-
-        utils.invokeCallback(cb, null, cond, ctx);
-      });
+    start: function(cb, context) {
+      utils.invokeCallback(cb, null, true, startCtx);
     },
-
-    endA: ['decisionA', true, function(cb, context) {
-      var product = context.product;
-
-      async.waterfall([
-        function(cb) {
-          product.set('weixin_product_info', productInfo);
-          product.save(cb);
-        }
-      ], function(err, result) {
-        if (err) {
-          utils.invokeCallback(cb, err);
-          return;
-        }
-        utils.invokeCallback(cb, null);
-      });
+    decisionA: ['start', true, function(cb, context) {
+      decisionAHandler(cb, context);
     }],
-
+    endA: ['decisionA', true, function(cb, context) {
+      endAHandler(cb, context);
+    }],
     endB: ['decisionA', false, function(cb, context) {
-      var product = context.product;
-
-      async.waterfall([
-        function(cb) {
-          product.set('weixin_product_info', productInfo);
-          product.save(cb);
-        }
-      ], function(err, result) {
-        if (err) {
-          utils.invokeCallback(cb, err);
-          return;
-        }
-        utils.invokeCallback(cb, null);
-      });
+      endBHandler(cb, context);
     }],
   }, function(err, context) {
     if (err) {
@@ -109,5 +71,89 @@ var refreshHandler = function(productInfo, cb) {
       return;
     }
     utils.invokeCallback(cb, null);
+  });
+};
+
+/**
+ * Decision A handler
+ *
+ * @param {Function} callback
+ * @param {Object} context
+ *
+ * @private
+ */
+var decisionAHandler = function(callback, context) {
+  var cond = false;
+  var ctx = {};
+
+  var productInfo = context.productInfo;
+  var productId = productInfo.product_id;
+
+  async.waterfall([
+    function(cb) {
+      YuanheProduct.getByProductId(productId, cb);
+    }
+  ], function(err, product) {
+    if (err) {
+      utils.invokeCallback(callback, err);
+      return;
+    }
+
+    if (product.get('_id')) { cond = true; }
+    ctx = { 'productEntity': product };
+
+    utils.invokeCallback(callback, null, cond, ctx);
+  });
+};
+
+/**
+ * End A handler
+ *
+ * @param {Function} callback
+ * @param {Object} context
+ *
+ * @private
+ */
+var endAHandler = function(callback, context) {
+  var productInfo = context.productInfo;
+  var productEntity = context.productEntity;
+
+  async.waterfall([
+    function(cb) {
+      productEntity.set('weixin_product_info', productInfo);
+      productEntity.save(cb);
+    }
+  ], function(err, result) {
+    if (err) {
+      utils.invokeCallback(callback, err);
+      return;
+    }
+    utils.invokeCallback(callback, null);
+  });
+};
+
+/**
+ * End B handler
+ *
+ * @param {Function} callback
+ * @param {Object} context
+ *
+ * @private
+ */
+var endBHandler = function(callback, context) {
+  var productInfo = context.productInfo;
+  var productEntity = context.productEntity;
+
+  async.waterfall([
+    function(cb) {
+      productEntity.set('weixin_product_info', productInfo);
+      productEntity.save(cb);
+    }
+  ], function(err, result) {
+    if (err) {
+      utils.invokeCallback(callback, err);
+      return;
+    }
+    utils.invokeCallback(callback, null);
   });
 };

@@ -100,7 +100,7 @@ var storeMsgHandlers = loadMsgHandlers([
  * @param {Object} msgHandlers
  * @param {Function} cb
  *
- * @public
+ * @private
  */
 var dispatch = function(req, res, msgHandlers, cb) {
   parseString(req.rawBody, { explicitArray: false }, function(err, msgParsed) {
