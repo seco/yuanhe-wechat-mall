@@ -32,9 +32,9 @@ exports.access = function(req, res) {
  * @public
  */
 exports.receive = function(req, res) {
-  if (req.route == '/weixin/message/mall') {
+  if (req.path == '/weixin/message/mall') {
     var msgHandlers = mallMsgHandlers;
-  } else if (req.route == '/weixin/message/store') {
+  } else if (req.path == '/weixin/message/store') {
     var msgHandlers = mallMsgHandlers;
   }
 
