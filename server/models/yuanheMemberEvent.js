@@ -13,13 +13,13 @@
  */
 
 var async = require('async');
-var dbProxy = require('../app').dbProxy;
+var dbProxy = require('../app').get('dbProxy');
 var utils = require('../lib/util/utils');
 var YuanheEntity = require('./yuanheEntity');
 
 // YuanheMemberEvent constructor
 YuanheMemberEvent = function() {
-  this.initializeAttributes();
+  initializeAttributes.apply(this);
 };
 
 // inherit from YuanheEntity
@@ -59,7 +59,7 @@ var pro = YuanheMemberEvent.prototype;
  *
  * @protected
  */
-pro.initializeAttributes = function() {
+var initializeAttributes = function() {
   YuanheEntity.prototype.initializeAttributes.apply(this);
 
   this.attributes['member_id'] = null;
@@ -80,14 +80,15 @@ pro.initializeAttributes = function() {
 pro.loadLastByOpts = function(opts, cb) {
   var col_name = this.constructor.col_name;
 
+  var self = this;
   async.waterfall([
     function(cb) {
       dbProxy.collection(col_name, cb);
     },
     function(collection, cb) {
-      collection.find(
+      collection.findOne(
         opts,
-        { 'limit': 1, 'sort': { 'time_created': -1 } },
+        { 'sort': { 'posted': -1 } },
         cb
       );
     }
@@ -96,7 +97,9 @@ pro.loadLastByOpts = function(opts, cb) {
       utils.invokeCallback(cb, err);
       return;
     }
-    this.drawAttrFromDoc(doc);
+    if (doc) {
+      self.drawAttrFromDoc(doc);
+    }
     utils.invokeCallback(cb, null);
   });
 };

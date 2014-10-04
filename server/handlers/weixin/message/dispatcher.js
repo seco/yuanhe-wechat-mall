@@ -30,7 +30,7 @@ module.exports.route = function(req, res, msg, msgHandlers, cb) {
     return;
   }
 
-  var namespace = (msgType == 'event' ? 'event' : 'common');
+  var namespace = (msgType == 'event' ? 'events' : 'common');
   var handler = (msgType == 'event' ? event : msgType);
 
   msgHandlers[namespace][handler].handle.call(null, req, res, msg, function(err) {
@@ -38,5 +38,6 @@ module.exports.route = function(req, res, msg, msgHandlers, cb) {
       utils.invokeCallback(cb, err);
       return;
     }
+    utils.invokeCallback(cb, null);
   });
 };

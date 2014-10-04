@@ -11,7 +11,7 @@
  */
 
 var async = require('async');
-var dbProxy = require('../app').dbProxy;
+var dbProxy = require('../app').get('dbProxy');
 var utils = require('../lib/util/utils');
 var YuanheEntity = require('./yuanheEntity');
 
@@ -136,7 +136,7 @@ pro.updateFollowingStoreId = function(store_id, cb) {
     },
     function(collection, cb) {
       collection.update(
-        { '_id': this.get('_id') },
+        { '_id': self.get('_id') },
         { '$set': { 'following_store_id': store_id } }, cb
       );
     }
@@ -145,7 +145,7 @@ pro.updateFollowingStoreId = function(store_id, cb) {
       utils.invokeCallback(cb, err);
       return;
     }
-    this.set('following_store_id', store_id);
+    self.set('following_store_id', store_id);
     utils.invokeCallback(cb, null);
   });
 };

@@ -149,7 +149,7 @@ var insertDocument = function(cb) {
       utils.invokeCallback(cb, err);
       return;
     }
-    self.set('_id', result._id);
+    self.set('_id', result[0]._id);
     utils.invokeCallback(cb, null, result);
   });
 };
