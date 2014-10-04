@@ -82,28 +82,20 @@ exports.update = function(req, res, next) {
     }, {
       $set: updAttr
     }, function(err, result) {
-      logger.info('store[id=' + id + '] has been updated, updated row number = ' + result);
+      logger.info('db.stores store[id=' + id + '] has been updated, updated row number = ' + result);
       dbProxy.collection('orders', function(err, col) {
         col.update({
-          'sales_store.id': new ObjectID(id)
+          'stores.id': new ObjectID(id)
         }, {
           $set: {
-            'sales_store.store_name': updAttr.store_name
+            'stores.$.store_name': updAttr.store_name
           }
+        }, {
+          multi: true
         }, function(err, result) {
-          logger.info('sales_store[id=' + id + ', store_name=' + updAttr.store_name + '] name has been updated, updated row number = ' + result);
+          logger.info('db.orders store[id=' + id + ', store_name=' + updAttr.store_name + '] name has been updated, updated row number = ' + result);
 
-          col.update({
-            'member_store.id': new ObjectID(id)
-          }, {
-            $set: {
-              'member_store.store_name': updAttr.store_name
-            }
-          }, function(err, result) {
-            logger.info('member_store[id=' + id + ', store_name=' + updAttr.store_name + '] name has been updated, updated row number = ' + result);
-
-            res.json(result);
-          });
+          res.json(result);
         });
       });
     });
