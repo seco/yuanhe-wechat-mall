@@ -7,6 +7,7 @@ define(['jquery',
     '../views/StoreEditView',
     '../views/OrderListView',
     '../views/SettlementListView',
+    '../views/ProductListView',
     'adminLTE' // adminLTE doesnot need to be exported, must add the end of define
   ],
   function($,
@@ -17,7 +18,8 @@ define(['jquery',
     StoreListView,
     StoreEditView,
     OrderListView,
-    SettlementListView
+    SettlementListView,
+    ProductListView
   ) {
 
     var MainRouter = Backbone.Router.extend({
@@ -28,6 +30,7 @@ define(['jquery',
         'stores/:id/edit': 'showStoreEdit',
         'orders': 'showOrderList',
         'settlements': 'showSettlementList',
+        'products': 'showProductList',
         '*action': 'showDashboard'
       }
     });
@@ -61,11 +64,15 @@ define(['jquery',
         },
         orderList: {
           'title': '查看订单',
-          'titlesmall': '订单信息'
+          'titlesmall': '订单列表'
         },
         settlementList: {
           'title': '佣金结算',
           'titlesmall': '结算信息'
+        },
+        productList: {
+          'title': '查看商品',
+          'titlesmall': '商品列表'
         }
       };
 
@@ -75,6 +82,7 @@ define(['jquery',
       var storeEditView = new StoreEditView();
       var orderListView = new OrderListView();
       var settlementListView = new SettlementListView();
+      var productListView = new ProductListView();
 
       router.on('route:showDashboard', function() {
         pageHeaderView.render(menu.dashboard);
@@ -105,6 +113,12 @@ define(['jquery',
       router.on('route:showSettlementList', function() {
         pageHeaderView.render(menu.settlementList);
         settlementListView.render();
+
+      });
+
+      router.on('route:showProductList', function() {
+        pageHeaderView.render(menu.productList);
+        productListView.render();
 
       });
 
