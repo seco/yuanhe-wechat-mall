@@ -105,7 +105,17 @@ var decisionAHandler = function(callback, context) {
 
   var openid = context.openid;
 
-  YuanheMember.getByOpenid(openid, function(err, memberEntity) {
+  async.waterfall([
+    function(cb) {
+      var eventEntity = new YuanheMemberEvent();
+      eventEntity.setViewType();
+      eventEntity.setMemberOpenid(openid);
+      eventEntity.save(cb);
+    },
+    function(result, cb) {
+      YuanheMember.getByOpenid(openid, cb);
+    }
+  ], function(err, memberEntity) {
     if (err) {
       utils.invokeCallback(callback, err);
       return;

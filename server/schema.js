@@ -35,6 +35,7 @@ var member_event = {
   member_openid: '',
   // be used as store open id if it's a view event
   store_id: ObjectId(''),
+  store_name: '',
   // be used as product id if it's a view event
   weixin_product_id: '',
   created_at: new Date(),
@@ -107,7 +108,6 @@ var product = {
       "delivery_type": 1,
       "template_id": 103312920
     }
-
   },
   redirect_url: '',
   created_at: new Date(),
