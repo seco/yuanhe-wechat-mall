@@ -161,6 +161,7 @@ var decisionAHandler = function(callback, context) {
 
       order.setWeixinOrderId(orderId);
       order.setWeixinOrderInfo(orderInfo);
+      order.setMember(openid, orderInfo.buyer_nick);
       order.save(cb);
     },
     // check member event
@@ -232,10 +233,9 @@ var endAHandler = function(callback, context) {
 
   async.waterfall([
     function(cb) {
-      order.setBothStores(
-        eventEntity.getStoreId(),
-        member.getChannelStore(), cb
-      );
+      order.setSalesStore(eventEntity.getStoreId());
+      order.setChannelStore(member.getChannelStore());
+      order.save(cb);
     }
   ], function(err, result) {
     if (err) {
@@ -262,15 +262,12 @@ var endBHandler = function(callback, context) {
 
   async.waterfall([
     function(cb) {
-      member.setChannelStore(
-        eventEntity.getStoreId(), cb
-      );
+      member.setChannelStore(eventEntity.getStoreId());
+      member.save(cb);
     },
     function(result, cb) {
-      order.setBothStores(
-        eventEntity.getStoreId(),
-        eventEntity.getStoreId(), cb
-      );
+      order.setBothStores(eventEntity.getStoreId());
+      order.save(cb);
     }
   ], function(err, result) {
     if (err) {
@@ -329,10 +326,9 @@ var endCHandler = function(callback, context) {
 
   async.waterfall([
     function(cb) {
-      order.setBothStores(
-        // TODO
-        member.getChannelStore(), cb
-      );
+      order.setSalesStore();
+      order.setChannelStore(member.getChannelStore());
+      order.save(cb);
     }
   ], function(err, result) {
     if (err) {
@@ -388,17 +384,12 @@ var endDHandler = function(callback, context) {
 
   async.waterfall([
     function(cb) {
-      member.setChannelStore(
-        // TODO
-        cb
-      );
+      member.setChannelStore();
+      member.save(cb);
     },
     function(result, cb) {
-      order.setBothStores(
-        // TODO
-        // TODO
-        cb
-      );
+      order.setBothStores();
+      order.save(cb);
     }
   ], function(err, result) {
     if (err) {
@@ -445,16 +436,13 @@ var endEHandler = function(callback, context) {
 
   async.waterfall([
     function(cb) {
-      member.setChannelStore(
-        eventEntity.getStoreId(), cb
-      );
+      member.setChannelStore(eventEntity.getStoreId());
+      member.save(cb);
     },
     function(result, cb) {
-      order.setBothStores(
-        eventEntity.getStoreId(),
-        // TODO
-        cb
-      );
+      order.setSalesStore(eventEntity.getStoreId());
+      order.setChannelStore();
+      order.save(cb);
     }
   ], function(err, result) {
     if (err) {
@@ -479,17 +467,12 @@ var endFHandler = function(callback, context) {
 
   async.waterfall([
     function(cb) {
-      member.setChannelStore(
-        // TODO
-        cb
-      );
+      member.setChannelStore();
+      member.save(cb);
     },
     function(result, cb) {
-      order.setBothStores(
-        // TODO
-        // TODO
-        cb
-      );
+      order.setBothStores();
+      order.save();
     }
   ], function(err, result) {
     if (err) {

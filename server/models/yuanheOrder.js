@@ -13,6 +13,8 @@
  */
 
 var async = require('async');
+var ObjectID = require('mongodb').ObjectID;
+var config = require('../app').get('yuanhe_config');
 var dbProxy = require('../app').get('dbProxy');
 var utils = require('../lib/util/utils');
 var YuanheEntity = require('./yuanheEntity');
@@ -64,7 +66,7 @@ var initializeAttributes = function() {
 
   this.attributes['weixin_order_id'] = null;
   this.attributes['weixin_order_info'] = null;
-  this.attributes['stores'] = null;
+  this.attributes['stores'] = [];
   this.attributes['member'] = null;
   this.attributes['state'] = 'created';
 };
@@ -92,15 +94,98 @@ pro.setWeixinOrderInfo = function(orderInfo) {
 };
 
 /**
- * Set both sales and member stores
+ * Set member
  *
- * @param {Object} sales_store
- * @param {Object} channel_store
- * @param {Function} cb
+ * @param {String} openid
+ * @param {String} name
  *
  * @public
  */
-pro.setBothStores = function(sales_store, channel_store, cb) {};
+pro.setMember = function(openid, name) {
+  this.set('member', {
+    'member_openid': openid,
+    'member_name': name
+  });
+};
+
+/**
+ * Set both sales and member stores
+ *
+ * @param {Null|Object} storeId
+ * @param {String} storeName
+ *
+ * @public
+ */
+pro.setBothStores = function(storeId, storeName) {
+  if (!storeId) {
+    storeId = new ObjectID(config['yuanhe_store_id']);
+    storeName = config['yuanhe_store_name'];
+  }
+
+  var salesStore = {
+    'store_id': storeId,
+    'store_name': storeName,
+    'store_type': 'sales',
+    'commission': 0
+  };
+  var channelStore = {
+    'store_id': storeId,
+    'store_name': storeName,
+    'store_type': 'channel',
+    'commission': 0
+  };
+
+  this.attributes['stores'][0] = salesStore;
+  this.attributes['stores'][1] = channelStore;
+};
+
+/**
+ * Set sales store
+ *
+ * @param {Null|Object} storeId
+ * @param {String} storeName
+ *
+ * @public
+ */
+pro.setSalesStore = function(storeId, storeName) {
+  if (!storeId) {
+    storeId = new ObjectID(config['yuanhe_store_id']);
+    storeName = config['yuanhe_store_name'];
+  }
+
+  var salesStore = {
+    'store_id': storeId,
+    'store_name': storeName,
+    'store_type': 'sales',
+    'commission': 0
+  };
+
+  this.attributes['stores'][0] = salesStore;
+};
+
+/**
+ * Set channel store
+ *
+ * @param {Null|Object} storeId
+ * @param {String} storeName
+ *
+ * @public
+ */
+pro.setChannelStore = function(storeId, storeName) {
+  if (!storeId) {
+    storeId = new ObjectID(config['yuanhe_store_id']);
+    storeName = config['yuanhe_store_name'];
+  }
+
+  var channelStore = {
+    'store_id': storeId,
+    'store_name': storeName,
+    'store_type': 'channel',
+    'commission': 0
+  };
+
+  this.attributes['stores'][1] = channelStore;
+};
 
 /**
  * export YuanheOrder

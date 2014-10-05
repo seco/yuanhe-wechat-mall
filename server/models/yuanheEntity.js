@@ -137,6 +137,35 @@ pro.save = function(cb) {
 };
 
 /**
+ * Update document
+ *
+ * @param {Function} cb
+ *
+ * @private
+ */
+var updateDocument = function(cb) {
+  var col_name = this.constructor.col_name;
+
+  this.set('updated_at', new Date());
+
+  var self = this;
+  async.waterfall([
+    function(cb) {
+      dbProxy.collection(col_name, cb);
+    },
+    function(collection, cb) {
+      collection.save(self.attributes, cb);
+    }
+  ], function(err, result) {
+    if (err) {
+      utils.invokeCallback(cb, err);
+      return;
+    }
+    utils.invokeCallback(cb, null, result);
+  });
+};
+
+/**
  * Insert document
  *
  * @param {Function} cb
@@ -162,39 +191,6 @@ var insertDocument = function(cb) {
       return;
     }
     self.set('_id', result[0]._id);
-    utils.invokeCallback(cb, null, result);
-  });
-};
-
-/**
- * Update document
- *
- * @param {Function} cb
- *
- * @private
- */
-var updateDocument = function(cb) {
-  var col_name = this.constructor.col_name;
-
-  this.set('updated_at', new Date());
-
-  var self = this;
-  async.waterfall([
-    function(cb) {
-      dbProxy.collection(col_name, cb);
-    },
-    function(collection, cb) {
-      collection.update(
-        { '_id': self.get('_id') },
-        { '$set': self.attributes },
-        cb
-      );
-    }
-  ], function(err, result) {
-    if (err) {
-      utils.invokeCallback(cb, err);
-      return;
-    }
     utils.invokeCallback(cb, null, result);
   });
 };

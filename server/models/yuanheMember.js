@@ -12,6 +12,7 @@
  */
 
 var async = require('async');
+var config = require('../app').get('yuanhe_config');
 var dbProxy = require('../app').get('dbProxy');
 var utils = require('../lib/util/utils');
 var YuanheEntity = require('./yuanheEntity');
@@ -134,33 +135,16 @@ pro.loadByOpenid = function(openid, cb) {
 /**
  * Set channel store of the member
  *
- * @param {Object} store_id
- * @param {Function} cb
+ * @param {Null|Object} storeId
  *
  * @public
  */
-pro.setChannelStore = function(store_id, cb) {
-  var col_name = this.constructor.col_name;
+pro.setChannelStore = function(storeId) {
+  if (!storeId) {
+    storeId = new ObjectID(config['yuanhe_store_id']);
+  }
 
-  var self = this;
-  async.waterfall([
-    function(cb) {
-      dbProxy.collection(col_name, cb);
-    },
-    function(collection, cb) {
-      collection.update(
-        { '_id': self.get('_id') },
-        { '$set': { 'channel_store_id': store_id } }, cb
-      );
-    }
-  ], function(err, result) {
-    if (err) {
-      utils.invokeCallback(cb, err);
-      return;
-    }
-    self.set('channel_store_id', store_id);
-    utils.invokeCallback(cb, null);
-  });
+  this.attributes['channel_store_id'] = storeId;
 };
 
 /**

@@ -121,6 +121,35 @@ var initializeAttributes = function() {
 };
 
 /**
+ * Set subscribe type
+ *
+ * @public
+ */
+pro.setSubscribeType = function() {
+  this.set('type', 'subscribe');
+};
+
+/**
+ * Set view type
+ *
+ * @public
+ */
+pro.setViewType = function() {
+  this.set('type', 'view');
+};
+
+/**
+ * Set member openid
+ *
+ * @param {String} openid
+ *
+ * @public
+ */
+pro.setMemberOpenid = function(openid) {
+  this.set('member_openid', openid);
+};
+
+/**
  * Get store id
  *
  * @public

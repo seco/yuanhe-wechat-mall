@@ -7,5 +7,8 @@
 
   "mongodburl": "mongodb://localhost:27017/yuanhe-wechat-mall?w=1",
   "username": "siteUserAdmin",
-  "password": "password"
+  "password": "password",
+
+  "yuanhe_store_id": "54317240074031000016bd43",
+  "yuanhe_store_name": "yuanhe"
 }
