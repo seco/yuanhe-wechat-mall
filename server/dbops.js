@@ -27,7 +27,8 @@ var initStores = function() {
       contact_name: 'bobby',
       unfollow: false,
       openid: '12345',
-      created_at: new Date()
+      created_at: new Date(),
+      updated_at: new Date()
     };
 
     store.store_name = store.store_name + ' ' + i;
@@ -67,28 +68,29 @@ function getNextSequence(name) {
 db.members.insert({
   openid: '',
   unfollow: true,
-  created_at: new Date()
+  created_at: new Date(),
+  updated_at: new Date()
 });
-db.viewevents.insert({
-  member_id: ObjectId(''),
+db.view_events.insert({
   member_openid: 'abc',
-  product_id: ObjectId(''),
   store_id: ObjectId(''),
-  viewed_at: new Date()
+  weixin_product_id: ObjectId(''),
+  created_at: new Date(),
+  updated_at: new Date()
 });
 
-db.viewevents.find({
+db.view_events.find({
   member_openid: 'abc'
 }).sort({
-  'viewed_at': -1
+  'created_at': -1
 }).limit(1); //return store_id that member visited recently
+
 db.members.update({
   _id: ObjectId('')
 }, {
   $set: {
     unfollow: false,
-    member_at: new Date(),
-    following_store_id: ObjectId(''),
+    channel_store_id: ObjectId(''),
     following_at: new Date()
   }
 });
@@ -105,33 +107,30 @@ db.members.update({
  *
  */
 
-db.viewevents.find({
+db.view_events.find({
   member_openid: ''
-}).sort(viewed_at: -1).limit(1); //return store_id that member visited recently
+}).sort(created_at: -1).limit(1); //return store_id that member visited recently
 db.members.findOne({
-  member_openid: ''
-}); //return member following_store_id
+  openid: ''
+}); //return member channel_store_id
 
 db.orders.insert({
-  order_status: 'create',
   weixin_order_id: '',
-  weixin_order_detail: {},
+  weixin_order_info: {},
   stores: [{
-    id: ObjectId('5423072cf13de9f92dc68dae'),
-    store_name: 'this is sales store name',
-    store_type: 'sales_store'
-  }, {
-    id: ObjectId('5423072cf13de9f92dc68daf'),
+    store_id: ObjectId('54313952b24fc5fa86c4c9b5'),
     store_name: 'this is member store name',
-    store_type: 'member_store'
+    store_type: 'channel',
+    commission: 122.90
+  }, {
+    store_id: ObjectId('54313952b24fc5fa86c4c9b6'),
+    store_name: 'this is sales store name',
+    store_type: 'sales',
+    commission: 12.50
   }],
-  payment: 19.98,
-  product: {
-    id: ObjectId(),
-    price: 9.99,
-    quantity: 2
-  },
-  created_at: new Date()
+  created_at: new Date(),
+  updated_at: new Date(),
+  state: 'created'
 });
 
 //syn
@@ -145,13 +144,13 @@ db.orders.update({
   "$push": {
     "stores": {
       "$each": [{
-        id: ObjectId('5423072cf13de9f92dc68dae'),
+        store_id: ObjectId('5423072cf13de9f92dc68dae'),
         store_name: 'this is sales store name',
-        store_type: 'sales_store'
+        store_type: 'sales'
       }, {
-        id: ObjectId('5423072cf13de9f92dc68daf'),
+        store_idd: ObjectId('5423072cf13de9f92dc68daf'),
         store_name: 'this is member store name',
-        store_type: 'member_store'
+        store_type: 'channel'
       }]
     }
   }
@@ -159,8 +158,8 @@ db.orders.update({
 //update commission
 db.orders.update({
   _id: ObjectId(''),
-  //'stores.id': ObjectId(''),
-  'stores.store_type': 'sales_store'
+  //'stores.store_id': ObjectId(''),
+  'stores.store_type': 'sales' // sales or channel
 }, {
   $set: {
     'stores.$.commission': 20.99
@@ -174,7 +173,7 @@ db.orders.aggregate([{
 }, {
   $group: {
     _id: {
-      store_id: "$stores.id",
+      store_id: "$stores.store_id",
       store_name: "$stores.store_name"
     },
     total_commission: {
@@ -197,7 +196,7 @@ db.orders.aggregate([{
 }, {
   $group: {
     _id: {
-      store_id: "$stores.id",
+      store_id: "$stores.store_id",
       store_name: "$stores.store_name"
     },
     total_commission: {

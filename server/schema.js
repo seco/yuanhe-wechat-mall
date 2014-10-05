@@ -27,7 +27,7 @@ var member = {
 };
 
 // db.member_events
-var memberEvent = {
+var member_event = {
   _id: ObjectId(''),
   // could be 'view', 'subscribe', etc.
   type: '',
@@ -38,7 +38,7 @@ var memberEvent = {
   // be used as product id if it's a view event
   weixin_product_id : '',
   created_at: new Date(),
-  updated_at: new Date(),
+  updated_at: new Date()
 };
 
 // db.products
@@ -46,7 +46,7 @@ var product = {
   _id: ObjectId(''),
   weixin_product_id: '',
   weixin_product_info: {
-    'product_id': ''
+    'product_id': '',
     'product_base': {
       // product name
       'name': '',
@@ -89,7 +89,7 @@ var order = {
 // scend id document used to generate QR code
 var counter = {
   _id: 'scene_id',
-  value: 0,
+  value: 0
 };
 
 //db.accounts
