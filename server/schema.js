@@ -80,7 +80,7 @@ var order = {
   },
   created_at: new Date(),
   updated_at: new Date(),
-  // could be 'settled' or 'unsettled'
+  // could be 'created' or 'settled'
   state: ''
 };
 
