@@ -165,9 +165,7 @@ var decisionAHandler = function(callback, context) {
     },
     // check member event
     function(result, cb) {
-      YuanheMemberEvent.getLastViewEventByProductId(
-        openid, productId, cb
-      );
+      YuanheMemberEvent.getLastViewEvent2(openid, productId, cb);
     }
   ], function(err, memberEvent) {
     if (err) {
@@ -176,7 +174,7 @@ var decisionAHandler = function(callback, context) {
     }
 
     if (memberEvent.exists()) {
-      if (utils.checkInPastDays(memberEvent.getPosted(), 30)) { cond = true; }
+      if (utils.checkInPastDays(memberEvent.createdTime(), 30)) { cond = true; }
     }
     handlerCtx.memberEvent = memberEvent;
 
@@ -235,7 +233,7 @@ var endAHandler = function(callback, context) {
   async.waterfall([
     function(cb) {
       order.setBothStores(
-        memberEvent.getObjectId(),
+        memberEvent.getStoreId(),
         member.getChannelStore(), cb
       );
     }
@@ -265,13 +263,13 @@ var endBHandler = function(callback, context) {
   async.waterfall([
     function(cb) {
       member.setChannelStore(
-        memberEvent.getObjectId(), cb
+        memberEvent.getStoreId(), cb
       );
     },
     function(result, cb) {
       order.setBothStores(
-        memberEvent.getObjectId(),
-        memberEvent.getObjectId(), cb
+        memberEvent.getStoreId(),
+        memberEvent.getStoreId(), cb
       );
     }
   ], function(err, result) {
@@ -370,7 +368,7 @@ var decisionDHandler = function(callback, context) {
       return;
     }
     if (memberEvent.exists()) {
-      if (utils.checkInPastDays(memberEvent.getPosted(), 30)) { cond = true; }
+      if (utils.checkInPastDays(memberEvent.createdTime(), 30)) { cond = true; }
     }
     utils.invokeCallback(callback, null, cond, handlerCtx);
   });
@@ -448,12 +446,12 @@ var endEHandler = function(callback, context) {
   async.waterfall([
     function(cb) {
       member.setChannelStore(
-        memberEvent.getObjectId(), cb
+        memberEvent.getStoreId(), cb
       );
     },
     function(result, cb) {
       order.setBothStores(
-        memberEvent.getObjectId(),
+        memberEvent.getStoreId(),
         // TODO
         cb
       );

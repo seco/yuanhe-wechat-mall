@@ -167,7 +167,7 @@ var decisionCHandler = function(callback, context) {
 
   async.waterfall([
     function(cb) {
-      YuanheMemberEvent.getLastViewEvent(openid, cb);
+      YuanheMemberEvent.getLastViewEvent1(openid, cb);
     }
   ], function(err, memberEvent) {
     if (err) {
@@ -176,7 +176,7 @@ var decisionCHandler = function(callback, context) {
     }
 
     if (memberEvent.exists()) {
-      if (utils.checkInPastDays(memberEvent.getPosted(), 30)) { cond = true; }
+      if (utils.checkInPastDays(memberEvent.createdTime(), 30)) { cond = true; }
     }
     handlerCtx = { 'memberEvent': memberEvent };
 
@@ -200,7 +200,7 @@ var endCHandler = function(callback, context) {
   async.waterfall([
     function(cb) {
       memberEntity.setChannelStore(
-        memberEvent.getObjectId(), cb
+        memberEvent.getStoreId(), cb
       );
     }
   ], function(err, result) {
@@ -259,7 +259,7 @@ var decisionEHandler = function(callback, context) {
 
   async.waterfall([
     function(cb) {
-      YuanheMemberEvent.getLastViewEvent(openid, cb);
+      YuanheMemberEvent.getLastViewEvent1(openid, cb);
     }
   ], function(err, memberEvent) {
     if (err) {
@@ -268,7 +268,7 @@ var decisionEHandler = function(callback, context) {
     }
 
     if (memberEvent.exists()) {
-      if (utils.checkInPastDays(memberEvent.getPosted(), 30)) { cond = true; }
+      if (utils.checkInPastDays(memberEvent.createdTime(), 30)) { cond = true; }
     }
     handlerCtx = { 'memberEvent': memberEvent };
 
@@ -292,7 +292,7 @@ var endEHandler = function(callback, context) {
   async.waterfall([
     function(cb) {
       memberEntity.setChannelStore(
-        memberEvent.getObjectId(), cb
+        memberEvent.getStoreId(), cb
       );
     }
   ], function(err, result) {

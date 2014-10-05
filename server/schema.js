@@ -11,6 +11,7 @@ var store = {
   contact_name: '',
   created_at: new Date(),
   updated_at: new Date(),
+  following_at: new Date(),
   unfollow: false
 };
 

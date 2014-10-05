@@ -3,6 +3,7 @@
  *
  * Class representing a container for yuanhe products
  *
+ * @property {String} weixin_product_id
  * @property {Object} weixin_product_info
  * @property {String} redirect_url
  *
@@ -38,14 +39,14 @@ YuanheProduct.col_name = 'products';
  * @public
  */
 YuanheProduct.getByProductId = function(productId, cb) {
-  var product = new YuanheProduct();
+  var productEntity = new YuanheProduct();
 
-  product.loadByProductId(productId, function(err) {
+  productEntity.loadByProductId(productId, function(err) {
     if (err) {
       utils.invokeCallback(cb, err);
       return;
     }
-    utils.invokeCallback(cb, null, product);
+    utils.invokeCallback(cb, null, productEntity);
   });
 };
 
@@ -61,8 +62,20 @@ var pro = YuanheProduct.prototype;
 var initializeAttributes = function() {
   YuanheEntity.prototype.initializeAttributes.apply(this);
 
+  this.attributes['weixin_product_id'] = null;
   this.attributes['weixin_product_info'] = null;
   this.attributes['redirect_url'] = null;
+};
+
+/**
+ * Set weixin product id
+ *
+ * @param {String} productId
+ *
+ * @public
+ */
+pro.setWeixinProductId = function(productId) {
+  this.set('weixin_product_id', productId);
 };
 
 /**
@@ -80,6 +93,7 @@ pro.setWeixinProductInfo = function(productInfo) {
  * Load product attributes by product id
  *
  * @param {String} productId
+ * @param {Function} cb
  *
  * @public
  */
