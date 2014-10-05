@@ -109,7 +109,7 @@ db.members.update({
 
 db.view_events.find({
   member_openid: ''
-}).sort(viewed_at: -1).limit(1); //return store_id that member visited recently
+}).sort(created_at: -1).limit(1); //return store_id that member visited recently
 db.members.findOne({
   openid: ''
 }); //return member channel_store_id
@@ -118,13 +118,15 @@ db.orders.insert({
   weixin_order_id: '',
   weixin_order_info: {},
   stores: [{
-    store_id: ObjectId('5423072cf13de9f92dc68dae'),
-    store_name: 'this is sales store name',
-    store_type: 'sales_store'
-  }, {
-    store_id: ObjectId('5423072cf13de9f92dc68daf'),
+    store_id: ObjectId('54313952b24fc5fa86c4c9b5'),
     store_name: 'this is member store name',
-    store_type: 'member_store'
+    store_type: 'channel',
+    commission: 122.90
+  }, {
+    store_id: ObjectId('54313952b24fc5fa86c4c9b6'),
+    store_name: 'this is sales store name',
+    store_type: 'sales',
+    commission: 12.50
   }],
   created_at: new Date(),
   updated_at: new Date(),
@@ -144,11 +146,11 @@ db.orders.update({
       "$each": [{
         store_id: ObjectId('5423072cf13de9f92dc68dae'),
         store_name: 'this is sales store name',
-        store_type: 'sales_store'
+        store_type: 'sales'
       }, {
         store_idd: ObjectId('5423072cf13de9f92dc68daf'),
         store_name: 'this is member store name',
-        store_type: 'member_store'
+        store_type: 'channel'
       }]
     }
   }
