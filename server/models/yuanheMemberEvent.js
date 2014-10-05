@@ -105,6 +105,39 @@ pro.loadLastByOpts = function(opts, cb) {
 };
 
 /**
+ * Get object id
+ *
+ * @public
+ *
+ * @return {null|String}
+ */
+pro.getObjectId = function() {
+  return this.get('object_id');
+};
+
+/**
+ * Get annotation id
+ *
+ * @public
+ *
+ * @return {null|String}
+ */
+pro.getAnnotationId = function() {
+  return this.get('annotation_id');
+};
+
+/**
+ * Get posted
+ *
+ * @public
+ *
+ * @return {null|String}
+ */
+pro.getPosted = function() {
+  return this.get('posted');
+};
+
+/**
  * export YuanheMemberEvent
  */
 module.exports = YuanheMemberEvent;

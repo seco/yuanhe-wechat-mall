@@ -97,14 +97,14 @@ var decisionAHandler = function(callback, context) {
     function(cb) {
       YuanheProduct.getByProductId(productId, cb);
     }
-  ], function(err, product) {
+  ], function(err, productEntity) {
     if (err) {
       utils.invokeCallback(callback, err);
       return;
     }
 
-    if (product.get('_id')) { cond = true; }
-    handlerCtx = { 'productEntity': product };
+    if (product.exists()) { cond = true; }
+    handlerCtx = { 'productEntity': productEntity };
 
     utils.invokeCallback(callback, null, cond, handlerCtx);
   });
@@ -124,7 +124,7 @@ var endAHandler = function(callback, context) {
 
   async.waterfall([
     function(cb) {
-      productEntity.set('weixin_product_info', productInfo);
+      productEntity.setWeixinProductInfo(productInfo);
       productEntity.save(cb);
     }
   ], function(err, result) {
@@ -150,7 +150,7 @@ var endBHandler = function(callback, context) {
 
   async.waterfall([
     function(cb) {
-      productEntity.set('weixin_product_info', productInfo);
+      productEntity.setWeixinProductInfo(productInfo);
       productEntity.save(cb);
     }
   ], function(err, result) {

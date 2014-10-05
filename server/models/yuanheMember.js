@@ -4,7 +4,7 @@
  * Class representing a container for yuanhe members
  *
  * @property {String} openid
- * @property {String} following_store_id
+ * @property {String} channel_store_id
  * @property {String} time_following
  *
  * @author Minix Li
@@ -83,7 +83,7 @@ var initializeAttributes = function() {
   YuanheEntity.prototype.initializeAttributes.apply(this);
 
   this.attributes['openid'] = null;
-  this.attributes['following_store_id'] = null;
+  this.attributes['channel_store_id'] = null;
   this.attributes['time_following'] = null;
 };
 
@@ -119,14 +119,25 @@ pro.loadByOpenid = function(openid, cb) {
 };
 
 /**
- * Update following store id of the member
+ * Set openid
+ *
+ * @param {String} openid
+ *
+ * @public
+ */
+pro.setOpenid = function(openid) {
+  this.set('openid', openid);
+};
+
+/**
+ * Update channel store of the member
  *
  * @param {String} store_id
  * @param {Function} cb
  *
  * @public
  */
-pro.updateFollowingStoreId = function(store_id, cb) {
+pro.updateChannelStore = function(store_id, cb) {
   var col_name = this.constructor.col_name;
 
   var self = this;
@@ -137,7 +148,7 @@ pro.updateFollowingStoreId = function(store_id, cb) {
     function(collection, cb) {
       collection.update(
         { '_id': self.get('_id') },
-        { '$set': { 'following_store_id': store_id } }, cb
+        { '$set': { 'channel_store_id': store_id } }, cb
       );
     }
   ], function(err, result) {
@@ -145,9 +156,44 @@ pro.updateFollowingStoreId = function(store_id, cb) {
       utils.invokeCallback(cb, err);
       return;
     }
-    self.set('following_store_id', store_id);
+    self.set('channel_store_id', store_id);
     utils.invokeCallback(cb, null);
   });
+};
+
+/**
+ * Check whether is set channel store
+ *
+ * @public
+ *
+ * @return {Boolean}
+ */
+pro.hasChannelStore = function() {
+  if (this.get('channel_store_id')) {
+    return true;
+  }
+  return false;
+};
+
+/**
+ * Get channel store id
+ *
+ * @public
+ *
+ * @return {null|String}
+ */
+pro.getChannelStore = function() {
+  return this.get('channel_store_id');
+}
+
+/**
+ * Set following
+ *
+ * @public
+ */
+pro.setFollowing = function() {
+  this.set('status', 'following');
+  this.set('time_following', new Date());
 };
 
 /**

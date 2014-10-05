@@ -56,6 +56,7 @@ MongoDBUtil.prototype.establishConnPool = function(cb) {
       utils.invokeCallback(cb, err);
       return;
     }
+
     db.authenticate(self.username, self.password, function(err, result) {
       if (err) {
         db.close();
@@ -119,18 +120,15 @@ var retryWithNewConnection = function(config, method, args, cb) {
       utils.invokeCallback(cb, err);
       return;
     }
-
     db.authenticate(config.username, config.password, function(err, result) {
       if (err) {
         db.close();
         utils.invokeCallback(cb, err);
         return;
       }
-
       args.push(function() {
         cb.apply(null, Array.prototype.slice.call(arguments, 0));
       });
-
       db[method].apply(db, args);
     });
   });

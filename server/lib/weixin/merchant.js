@@ -31,7 +31,7 @@ exp.getProductsByStatus = function(status, cb) {
       url: composeGetProductsByStatusUrl(access_token),
       method: 'POST',
       body: JSON.stringify({
-        "status": status
+        'status': status
       })
     }, function(err, resp, body) {
       if (err) {
@@ -72,7 +72,7 @@ exp.getOrderInfoById = function(order_id, cb) {
       url: composeGetOrderInfoByIdUrl(access_token),
       method: 'POST',
       body: JSON.stringify({
-        "order_id": order_id
+        'order_id': order_id
       })
     }, function(err, resp, body) {
       if (err) {

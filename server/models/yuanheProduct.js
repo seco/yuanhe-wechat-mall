@@ -98,6 +98,17 @@ pro.loadByProductId = function(productId, cb) {
 };
 
 /**
+ * Set weixin product info
+ *
+ * @param {Object} productInfo
+ *
+ * @public
+ */
+pro.setWeixinProductInfo = function(productInfo) {
+  this.set('weixin_product_info', productInfo);
+};
+
+/**
  * export YuanheProduct
  */
 module.exports = YuanheProduct;
