@@ -27,7 +27,13 @@ exports.index = function(req, res, next) {
   logger.info('recevie backgrid request, set filter[' + JSON.stringify(filter) + '], limit[' + limit + '],skip[' + skip + ']');
 
   dbProxy.collection('stores', function(err, col) {
+    if (err) {
+      logger.error(err);
+    }
     col.count(filter, function(err, count) {
+      if (err) {
+        logger.error(err);
+      }
       content.total_count = count;
       col.find(filter, {
         limit: limit,
@@ -36,6 +42,9 @@ exports.index = function(req, res, next) {
           created_at: -1
         }
       }).toArray(function(err, result) {
+        if (err) {
+          logger.error(err);
+        }
         content.items = result;
 
         res.json(content);
@@ -52,9 +61,15 @@ exports.show = function(req, res, next) {
   logger.info(id);
 
   dbProxy.collection('stores', function(err, col) {
+    if (err) {
+      logger.error(err);
+    }
     col.findOne({
       _id: new ObjectID(id)
     }, function(err, doc) {
+      if (err) {
+        logger.error(err);
+      }
       content = doc;
       res.json(content);
     });
@@ -77,13 +92,22 @@ exports.update = function(req, res, next) {
   delete updAttr._id;
 
   dbProxy.collection('stores', function(err, col) {
+    if (err) {
+      logger.error(err);
+    }
     col.update({
       _id: new ObjectID(id)
     }, {
       $set: updAttr
     }, function(err, result) {
+      if (err) {
+        logger.error(err);
+      }
       logger.info('db.stores store[id=' + id + '] has been updated, updated row number = ' + result);
       dbProxy.collection('orders', function(err, col) {
+        if (err) {
+          logger.error(err);
+        }
         col.update({
           'stores.id': new ObjectID(id)
         }, {
@@ -93,6 +117,9 @@ exports.update = function(req, res, next) {
         }, {
           multi: true
         }, function(err, result) {
+          if (err) {
+            logger.error(err);
+          }
           logger.info('db.orders store[id=' + id + ', store_name=' + updAttr.store_name + '] name has been updated, updated row number = ' + result);
 
           res.json(result);

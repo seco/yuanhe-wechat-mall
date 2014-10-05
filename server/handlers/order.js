@@ -29,15 +29,24 @@ exports.index = function(req, res, next) {
   };
 
   if (calendarKey && startDate && endDate) {
-    var toDate = new Date();
-    toDate.setDate(new Date(endDate).getDate() + 1);
-    filter[calendarKey] = {$gte: new Date(startDate), $lt: toDate};
+    var toDate = new Date(endDate);
+    toDate.setDate(toDate.getDate() + 1);
+    filter[calendarKey] = {
+      $gte: new Date(startDate),
+      $lt: toDate
+    };
   };
 
   logger.info('recevie backgrid request, set filter[' + JSON.stringify(filter) + '], limit[' + limit + '],skip[' + skip + ']');
 
   dbProxy.collection('orders', function(err, col) {
+    if (err) {
+      logger.error(err);
+    }
     col.count(filter, function(err, count) {
+      if (err) {
+        logger.error(err);
+      }
       content.total_count = count;
       col.find(filter, {
         limit: limit,
@@ -46,6 +55,9 @@ exports.index = function(req, res, next) {
           created_at: -1
         }
       }).toArray(function(err, result) {
+        if (err) {
+          logger.error(err);
+        }
         content.items = result;
 
         res.json(content);
