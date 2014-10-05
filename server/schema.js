@@ -57,25 +57,28 @@ var order = {
   },
   created_at: new Date()
 };
+
 //db.members
 var member = {
-  _id: ObjectId('5425316ca5ee873861df8c65'),
-  openid: 'abc',
-  unfollow: true,
-  created_at: new Date(),
-  member_at: new Date(),
-  following_store_id: ObjectId('542270a9f13de9f92dc68d92'),
-  following_at: new Date()
-};
-//db.viewevents
-var viewevent = {
   _id: ObjectId(''),
-  member_id: ObjectId('5425316ca5ee873861df8c65'),
-  member_openid: 'abc',
-  product_id: ObjectId(''),
-  store_id: ObjectId('542270a9f13de9f92dc68d92'),
-  viewed_at: new Date()
+  openid: '',
+  channel_store_id: ObjectId(''),
+  time_following: new Date(),
+  time_created: new Date(),
+  time_updated: new Date(),
+  status: 'following'
 };
+
+// db.member_events
+var memberEvent = {
+  _id: ObjectId(''),
+  type: '',
+  member_openid: '',
+  object_id: ObjectId(''),
+  annotation_id: ObjectId(''),
+  posted: new Date(),
+};
+
 //db.accounts
 var account = {
   _id: ObjectId('542a1ef1a5ee873861df8c6c'),
@@ -84,4 +87,95 @@ var account = {
   act_password: 'yuanhe_201410',
   role_name: 'superadmin',
   created_at: new Date()
+};
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+// db.stores
+var store = {
+  _id: ObjectId(''),
+  openid: '',
+  scene_id: 100000,
+  name: '',
+  alias: '',
+  type: '',
+  address: '',
+  telnum: '',
+  contact_name: '',
+  time_created: new Date(),
+  time_updated: new Date(),
+  // could be 'following' or 'unfollow'
+  status: ''
+};
+
+// db.members
+var member = {
+  _id: ObjectId(''),
+  openid: '',
+  channel_store_id: ObjectId(''),
+  time_created: new Date(),
+  time_updated: new Date(),
+  following_at: new Date(),
+  // could be 'following' or 'unfollow'
+  status: ''
+};
+
+// db.products
+var product = {
+  _id: ObjectId(''),
+  weixin_product_id: '',
+  weixin_product_info: {
+    'product_id': ''
+    'product_base': {
+      // product name
+      'name': '',
+      // url array
+      'img': ['', '']
+    }
+  },
+  redirect_url: ''
+};
+
+// db.member_events
+var memberEvent = {
+  _id: ObjectId(''),
+  // could be 'view', 'subscribe', etc.
+  type: '',
+  // member openid
+  member_openid: '',
+  // be used as store open id if it's a view event
+  store_id: ObjectId(''),
+  // be used as product id if it's a view event
+  weixin_product_id : '',
+  time_created: new Date(),
+  time_updated: new Date()
+};
+
+// db.orders
+var order = {
+  _id: ObjectId(''),
+  weixin_order_id: '',
+  weixin_order_info: {},
+  stores: [{
+    id: ObjectId(''),
+    name: '',
+    type: 'sales',
+    commission: 0.00
+  }, {
+    id: ObjectId(''),
+    name: '',
+    type: 'channel',
+    commission: 0.00
+  }],
+  time_created: new Date(),
+  time_updated: new Date(),
+  // could be 'settled' or 'unsettled'
+  status: ''
+};
+
+// db.global_counters
+// scend id document used to generate QR code
+var global_counter = {
+  _id: 'scene_id',
+  value: 0,
 };
