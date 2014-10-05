@@ -2,6 +2,7 @@ define(['jquery',
     'underscore',
     'backbone',
     'hbs!../../templates/storeListTmpl',
+    'hbs!../../templates/qrcodeTmpl',
     '../collections/StoreCollection',
     'backgrid',
     'backgridpaginator',
@@ -9,7 +10,7 @@ define(['jquery',
     'backgridselectall',
     'jqueryext'
   ],
-  function($, _, Backbone, storeListTmpl, StoreCollection, Backgrid) {
+  function($, _, Backbone, storeListTmpl, qrcodeTmpl, StoreCollection, Backgrid) {
 
     var StoreView = Backbone.View.extend({
       el: '.content',
@@ -71,10 +72,21 @@ define(['jquery',
             label: '联系人',
             cell: 'string'
           }, {
+            label: '二维码',
+            cell: Backgrid.UriCell.extend({
+              render: function() {
+                var scene_id = this.model.get('scene_id');
+                if (scene_id) {
+                  this.$el.html(qrcodeTmpl(this.model.attributes));
+                }
+                return this;
+              }
+            })
+          }, {
             name: 'created_at',
             label: '关注时间',
             cell: Backgrid.DatetimeCell.extend({
-              includeMilli: true
+              includeMilli: false
             })
           }], {
             model: MyColumn
