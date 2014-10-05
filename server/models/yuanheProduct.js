@@ -66,6 +66,17 @@ var initializeAttributes = function() {
 };
 
 /**
+ * Set weixin product info
+ *
+ * @param {Object} productInfo
+ *
+ * @public
+ */
+pro.setWeixinProductInfo = function(productInfo) {
+  this.set('weixin_product_info', productInfo);
+};
+
+/**
  * Load product attributes by product id
  *
  * @param {String} productId
@@ -95,17 +106,6 @@ pro.loadByProductId = function(productId, cb) {
     }
     utils.invokeCallback(cb, null);
   });
-};
-
-/**
- * Set weixin product info
- *
- * @param {Object} productInfo
- *
- * @public
- */
-pro.setWeixinProductInfo = function(productInfo) {
-  this.set('weixin_product_info', productInfo);
 };
 
 /**

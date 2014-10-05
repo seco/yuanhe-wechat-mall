@@ -167,10 +167,7 @@ var decisionCHandler = function(callback, context) {
 
   async.waterfall([
     function(cb) {
-      YuanheMemberEvent.getLastByOpts({
-        'member_openid': openid,
-        'type': 'view'
-      }, cb);
+      YuanheMemberEvent.getLastViewEvent(openid, cb);
     }
   ], function(err, memberEvent) {
     if (err) {
@@ -202,7 +199,7 @@ var endCHandler = function(callback, context) {
 
   async.waterfall([
     function(cb) {
-      memberEntity.updateChannelStore(
+      memberEntity.setChannelStore(
         memberEvent.getObjectId(), cb
       );
     }
@@ -262,10 +259,7 @@ var decisionEHandler = function(callback, context) {
 
   async.waterfall([
     function(cb) {
-      YuanheMemberEvent.getLastByOpts({
-        'member_openid': openid,
-        'type': 'view'
-      }, cb);
+      YuanheMemberEvent.getLastViewEvent(openid, cb);
     }
   ], function(err, memberEvent) {
     if (err) {
@@ -297,7 +291,7 @@ var endEHandler = function(callback, context) {
 
   async.waterfall([
     function(cb) {
-      memberEntity.updateChannelStore(
+      memberEntity.setChannelStore(
         memberEvent.getObjectId(), cb
       );
     }

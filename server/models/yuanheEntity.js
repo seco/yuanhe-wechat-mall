@@ -43,37 +43,6 @@ pro.initializeAttributes = function() {
 };
 
 /**
- * Load attributes from the entity collection into the object
- *
- * @param {String} id
- * @param {Function} cb
- *
- * @public
- */
-pro.load = function(id, cb) {
-  var col_name = this.constructor.col_name;
-
-  var self = this;
-  async.waterfall([
-    function(cb) {
-      dbProxy.collection(col_name, cb);
-    },
-    function(collection, cb) {
-      collection.findOne({ '_id': id }, cb);
-    }
-  ], function(err, doc) {
-    if (err) {
-      utils.invokeCallback(cb, err);
-      return;
-    }
-    if (doc) {
-      self.drawAttrFromDoc(doc);
-    }
-    utils.invokeCallback(cb, null);
-  });
-};
-
-/**
  * Return the value of a property
  *
  * @param {String} name
@@ -109,6 +78,37 @@ pro.exists = function() {
 };
 
 /**
+ * Load attributes from the entity collection into the object
+ *
+ * @param {String} id
+ * @param {Function} cb
+ *
+ * @public
+ */
+pro.load = function(id, cb) {
+  var col_name = this.constructor.col_name;
+
+  var self = this;
+  async.waterfall([
+    function(cb) {
+      dbProxy.collection(col_name, cb);
+    },
+    function(collection, cb) {
+      collection.findOne({ '_id': id }, cb);
+    }
+  ], function(err, doc) {
+    if (err) {
+      utils.invokeCallback(cb, err);
+      return;
+    }
+    if (doc) {
+      self.drawAttrFromDoc(doc);
+    }
+    utils.invokeCallback(cb, null);
+  });
+};
+
+/**
  * Draw attributes from entity document
  *
  * @param {Object} doc
@@ -121,7 +121,7 @@ pro.drawAttrFromDoc = function(doc) {
       this.attributes[key] = doc[key];
     }
   }
-}
+};
 
 /**
  * Save an entity

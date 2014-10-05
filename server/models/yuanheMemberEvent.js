@@ -33,20 +33,73 @@ YuanheEntity.extend(YuanheMemberEvent);
 YuanheMemberEvent.col_name = 'member_events';
 
 /**
- * Get the last member event by openid
+ * Get the last member subscribe event by openid
  *
- * @param {Object} opts
+ * @param {String} openid
  * @param {Function} cb
+ *
+ * @public
  */
-YuanheMemberEvent.getLastByOpts = function(opts, cb) {
-  var event = new YuanheMemberEvent();
-
-  event.loadLastByOpts(opts, function(err) {
+YuanheMemberEvent.getLastSubscribeEvent = function(openid, cb) {
+  var memberEvent = new YuanheMemberEvent();
+  var opts = {
+    'member_openid': openid,
+    'type': 'subscribe'
+  };
+  memberEvent.loadLastByOpts(opts, function(err) {
     if (err) {
       utils.invokeCallback(cb, err);
       return;
     }
-    utils.invokeCallback(cb, null, event);
+    utils.invokeCallback(cb, null, memberEvent);
+  });
+};
+
+/**
+ * Get the last member view event by openid
+ *
+ * @param {String} openid
+ * @param {Function} cb
+ *
+ * @public
+ */
+YuanheMemberEvent.getLastViewEvent = function(openid, cb) {
+  var memberEvent = new YuanheMemberEvent();
+  var opts = {
+    'member_openid': openid,
+    'type': 'view'
+  };
+  memberEvent.loadLastByOpts(opts, function(err) {
+    if (err) {
+      utils.invokeCallback(cb, err);
+      return;
+    }
+    utils.invokeCallback(cb, null, memberEvent);
+  });
+};
+
+/**
+ * Get the last member view event by openid and product id
+ *
+ * @param {String} openid
+ * @param {String} productId
+ * @param {Function} cb
+ *
+ * @public
+ */
+YuanheMemberEvent.getLastViewEventByProductId = function(openid, productId, cb) {
+  var memberEvent = new YuanheMemberEvent();
+  var opts = {
+    'member_openid': openid,
+    'annotation_id': productId,
+    'type': 'view'
+  };
+  memberEvent.loadLastByOpts(opts, function(err) {
+    if (err) {
+      utils.invokeCallback(cb, err);
+      return;
+    }
+    utils.invokeCallback(cb, null, memberEvent);
   });
 };
 
@@ -67,41 +120,6 @@ var initializeAttributes = function() {
   this.attributes['object_id'] = null;
   this.attributes['annotation_id'] = null;
   this.attributes['posted'] = null;
-};
-
-/**
- * Load the last event attributes by opts
- *
- * @param {Object} opts
- * @param {Function} cb
- *
- * @public
- */
-pro.loadLastByOpts = function(opts, cb) {
-  var col_name = this.constructor.col_name;
-
-  var self = this;
-  async.waterfall([
-    function(cb) {
-      dbProxy.collection(col_name, cb);
-    },
-    function(collection, cb) {
-      collection.findOne(
-        opts,
-        { 'sort': { 'posted': -1 } },
-        cb
-      );
-    }
-  ], function(err, doc) {
-    if (err) {
-      utils.invokeCallback(cb, err);
-      return;
-    }
-    if (doc) {
-      self.drawAttrFromDoc(doc);
-    }
-    utils.invokeCallback(cb, null);
-  });
 };
 
 /**
@@ -135,6 +153,39 @@ pro.getAnnotationId = function() {
  */
 pro.getPosted = function() {
   return this.get('posted');
+};
+
+/**
+ * Load the last event attributes by opts
+ *
+ * @param {Object} opts
+ * @param {Function} cb
+ *
+ * @public
+ */
+pro.loadLastByOpts = function(opts, cb) {
+  var col_name = this.constructor.col_name;
+
+  var self = this;
+  async.waterfall([
+    function(cb) {
+      dbProxy.collection(col_name, cb);
+    },
+    function(collection, cb) {
+      collection.findOne(
+        opts, { 'sort': { 'posted': -1 } }, cb
+      );
+    }
+  ], function(err, doc) {
+    if (err) {
+      utils.invokeCallback(cb, err);
+      return;
+    }
+    if (doc) {
+      self.drawAttrFromDoc(doc);
+    }
+    utils.invokeCallback(cb, null);
+  });
 };
 
 /**

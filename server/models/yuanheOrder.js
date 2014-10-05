@@ -68,7 +68,29 @@ pro.initializeAttributes = function() {
 };
 
 /**
- * Update both sales and member stores
+ * Set weixin order id
+ *
+ * @param {Object} orderId
+ *
+ * @public
+ */
+pro.setWeixinOrderId = function(orderId) {
+  this.set('weixin_order_id', orderId);
+};
+
+/**
+ * Set weixin order info
+ *
+ * @param {Object} orderInfo
+ *
+ * @public
+ */
+pro.setWeixinOrderInfo = function(orderInfo) {
+  this.set('weixin_order_info', orderInfo);
+};
+
+/**
+ * Set both sales and member stores
  *
  * @param {String} sales_store_id
  * @param {String} member_store_id
@@ -76,7 +98,7 @@ pro.initializeAttributes = function() {
  *
  * @public
  */
-pro.updateStores = function(sales_store_id, member_store_id, cb) {
+pro.setBothStores = function(sales_store_id, member_store_id, cb) {
   var sales_store_value = { "id": sales_store_id };
   var member_store_value = { "id": member_store_id };
 
@@ -108,14 +130,14 @@ pro.updateStores = function(sales_store_id, member_store_id, cb) {
 };
 
 /**
- * Update sales store in the order
+ * Set sales store of the order
  *
  * @param {String} sales_store_id
  * @param {Function} cb
  *
  * @public
  */
-pro.updateSalesStore = function(sales_store_id) {
+pro.setSalesStore = function(sales_store_id) {
   var sales_store_value = { "id": sales_store_id };
 
   async.waterfall([
@@ -141,14 +163,14 @@ pro.updateSalesStore = function(sales_store_id) {
 };
 
 /**
- * Update member store of the order
+ * Set member store of the order
  *
  * @param {String} member_store_id
  * @param {Function} cb
  *
  * @public
  */
-pro.updateMemberStore = function(member_store_id) {
+pro.setMemberStore = function(member_store_id) {
   var member_store_value = { "id": member_store_id };
 
   async.waterfall([

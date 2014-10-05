@@ -130,14 +130,14 @@ pro.setOpenid = function(openid) {
 };
 
 /**
- * Update channel store of the member
+ * Set channel store of the member
  *
  * @param {String} store_id
  * @param {Function} cb
  *
  * @public
  */
-pro.updateChannelStore = function(store_id, cb) {
+pro.setChannelStore = function(store_id, cb) {
   var col_name = this.constructor.col_name;
 
   var self = this;
@@ -184,7 +184,7 @@ pro.hasChannelStore = function() {
  */
 pro.getChannelStore = function() {
   return this.get('channel_store_id');
-}
+};
 
 /**
  * Set following

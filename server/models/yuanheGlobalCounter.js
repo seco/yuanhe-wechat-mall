@@ -31,7 +31,9 @@ YuanheGlobalCounter.yieldSceneId = function(cb) {
       dbProxy.collection(col_name, cb);
     },
     function(collection, cb) {
-      collection.findAndModify({ '_id': 'scene_id' }, [], { $inc: { value: 1 } }, { new: true }, cb);
+      collection.findAndModify(
+        { '_id': 'scene_id' }, [], { $inc: { value: 1 } }, { new: true }, cb
+      );
     }
   ], function(err, result) {
     if (err) {

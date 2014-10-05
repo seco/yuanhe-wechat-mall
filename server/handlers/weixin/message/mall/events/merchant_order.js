@@ -5,26 +5,26 @@
  * ***************************************** DECISION TREE *****************************************
  *
  *
- *     start ---------- decision A ---------- decision C ---------- decision D ---------- end F
+ *     start ---------- decision A ---------- decision C ---------- decision D ---------- end D
  *                           |                     |                     |
  *                           |                     |                     |
  *                           |                     |                     |
- *     end A ---------- decision B               end C              decision E ---------- end D
+ *     end A ---------- decision B               end C              decision E ---------- end F
  *                           |                                           |
  *                           |                                           |
  *                           |                                           |
  *                         end B                                       end E
  *
  *
- *   Decision A check whether a member has viewed the product promotion page in the past 30 days.
+ *   Decision A check whether the member has viewed the product promotion page in the past 30 days.
  *
- *   Decision B check whether this member exists and  has been marked a channel source.
+ *   Decision B check whether the member exists and has been marked a channel source.
  *
- *   Decision C check whether a client has been marked a channel source.
+ *   Decision C check whether the member exists and has been marked a channel source.
  *
- *   Decision D check whether a client has subscribed yuanhe in the past 30 days.
+ *   Decision D check whether the member has subscribed yuanhe in the past 30 days.
  *
- *   Decision E check whether a client has viewed the product promotion page in the past.
+ *   Decision E check whether the member has viewed the product promotion page in the past.
  *
  * *************************************************************************************************
  *
@@ -83,43 +83,51 @@ MsgHandler.prototype.handle = function(req, res, msg, cb) {
     decisionB: ['decisionA', true, function(cb, context) {
       decisionBHandler(cb, context);
     }],
-    // set this order's sales store and member store
+    // then set this order's sales store and member store
     endA: ['decisionB', true, function(cb, context) {
       endAHandler(cb, context);
     }],
-    // set this order's sales store and member store
+    // then set this order's sales store and member store
     endB: ['decisionB', false, function(cb, context) {
       endBHandler(cb, context);
     }],
-
+    // Check whether this member exists and has been marked a
+    // channel source.
     decisionC: ['decisionA', false, function(cb, context) {
       decisionCHandler(cb, context);
     }],
-
+    // then set this order's sales store and member store
     endC: ['decisionC', true, function(cb, context) {
       endCHandler(cb, context);
     }],
-
+    // Check whether the member has subscribed yuanhe in the past
+    // 30 days.
     decisionD: ['decisionC', false, function(cb, context) {
       decisionDHandler(cb, context);
     }],
-
-    endD: ['decisionD', true, function(cb, context) {
+    // then set this order's sales store and member store
+    endD: ['decisionD', false, function(cb, context) {
       endDHandler(cb, context);
     }],
-
-    decisionE: ['decisionD', false, function(cb, context) {
+    // Check whether the member has viewed the product promotion page
+    // in the past.
+    decisionE: ['decisionD', true, function(cb, context) {
       decisionEHandler(cb, context);
     }],
-
+    // then set this order's sales store and member store
     endE: ['decisionE', true, function(cb, context) {
       endEHandler(cb, context);
     }],
-
+    // then set this order's sales store and member store
     endF: ['decisionE', false, function(cb, context) {
       endFHandler(cb, context);
     }]
   }, function(err, context) {
+    if (err) {
+      utils.invokeCallback(cb, err);
+      return;
+    }
+    utils.invokeCallback(cb, null);
   });
 };
 
@@ -151,17 +159,15 @@ var decisionAHandler = function(callback, context) {
       // put order into context
       handlerCtx.order = order;
 
-      order.set('weixin_order_id', orderId);
-      order.set('weixin_order_info', orderInfo);
+      order.setWeixinOrderId(orderId);
+      order.setWeixinOrderInfo(orderInfo);
       order.save(cb);
     },
     // check member event
     function(result, cb) {
-      YuanheMemberEvent.getLastByOpts({
-        'member_openid': openid,
-        'annotation_id': productId,
-        'type': 'view'
-      }, cb);
+      YuanheMemberEvent.getLastViewEventByProductId(
+        openid, productId, cb
+      );
     }
   ], function(err, memberEvent) {
     if (err) {
@@ -170,7 +176,7 @@ var decisionAHandler = function(callback, context) {
     }
 
     if (memberEvent.exists()) {
-      if (utils.checkInPastDays(memberEvent.get('posted'), 30)) { cond = true; }
+      if (utils.checkInPastDays(memberEvent.getPosted(), 30)) { cond = true; }
     }
     handlerCtx.memberEvent = memberEvent;
 
@@ -228,9 +234,9 @@ var endAHandler = function(callback, context) {
 
   async.waterfall([
     function(cb) {
-      order.updateStores(
+      order.setBothStores(
         memberEvent.getObjectId(),
-        member.get('channel_store_id'), cb
+        member.getChannelStore(), cb
       );
     }
   ], function(err, result) {
@@ -258,12 +264,12 @@ var endBHandler = function(callback, context) {
 
   async.waterfall([
     function(cb) {
-      member.updateChannelStore(
+      member.setChannelStore(
         memberEvent.getObjectId(), cb
       );
     },
     function(result, cb) {
-      order.updateStores(
+      order.setBothStores(
         memberEvent.getObjectId(),
         memberEvent.getObjectId(), cb
       );
@@ -278,7 +284,8 @@ var endBHandler = function(callback, context) {
 };
 
 /**
- * Decision C handler
+ * Check whether this member exists and has been marked a
+ * channel source.
  *
  * @param {Function} callback
  * @param {Object} context
@@ -289,14 +296,29 @@ var decisionCHandler = function(callback, context) {
   var cond = false;
   var handlerCtx = {};
 
-  var member = context.member;
+  var openid = context.openid;
 
-  if (member.get('following_store_id')) { cond = true; }
-  utils.invokeCallback(callback, null, cond, handlerCtx);
+  async.waterfall([
+    function(cb) {
+      YuanheMember.getByOpenid(openid, cb);
+    }
+  ], function(err, member) {
+    if (err) {
+      utils.invokeCallback(callback, err);
+      return;
+    }
+
+    if (member.exists()) {
+      if (member.hasChannelStore()) { cond = true; }
+    }
+    handlerCtx = { 'member': member };
+
+    utils.invokeCallback(callback, null, cond, handlerCtx);
+  });
 };
 
 /**
- * End C handler
+ * Set this order's sales store and member store
  *
  * @param {Function} callback
  * @param {Object} context
@@ -309,9 +331,9 @@ var endCHandler = function(callback, context) {
 
   async.waterfall([
     function(cb) {
-      order.updateStores(
+      order.setBothStores(
         // TODO
-        member.get('following_store_id'), cb
+        member.getChannelStore(), cb
       );
     }
   ], function(err, result) {
@@ -324,7 +346,8 @@ var endCHandler = function(callback, context) {
 };
 
 /**
- * Decision D handler
+ * Check whether the member has subscribed yuanhe in the past
+ * 30 days.
  *
  * @param {Function} callback
  * @param {Object} context
@@ -339,25 +362,113 @@ var decisionDHandler = function(callback, context) {
 
   async.waterfall([
     function(cb) {
-      YuanheMemberEvent.getLastByOpts({
-        'openid': openid,
-        'type': 'subscribe'
-      }, cb);
+      YuanheMemberEvent.getLastSubscribeEvent(openid, cb);
+    }
+  ], function(err, memberEvent) {
+    if (err) {
+      utils.invokeCallback(callback, err);
+      return;
+    }
+    if (memberEvent.exists()) {
+      if (utils.checkInPastDays(memberEvent.getPosted(), 30)) { cond = true; }
+    }
+    utils.invokeCallback(callback, null, cond, handlerCtx);
+  });
+};
+
+/**
+ * Set this order's sales store and member store
+ *
+ * @param {Function} callback
+ * @param {Object} context
+ *
+ * @private
+ */
+var endDHandler = function(callback, context) {
+  var order = context.order;
+  var member = context.member;
+
+  async.waterfall([
+    function(cb) {
+      member.setChannelStore(
+        // TODO
+        cb
+      );
+    },
+    function(result, cb) {
+      order.setBothStores(
+        // TODO
+        // TODO
+        cb
+      );
     }
   ], function(err, result) {
     if (err) {
       utils.invokeCallback(callback, err);
       return;
     }
-
-    // TODO
-    if (false) { cond = true; }
-    utils.invokeCallback(callback, null, cond, handlerCtx);
+    utils.invokeCallback(callback, null);
   });
 };
 
 /**
- * End F handler
+ * Check whether the member has viewed the product promotion page
+ * in the past.
+ *
+ * @param {Function} callback
+ * @param {Object} context
+ *
+ * @private
+ */
+var decisionEHandler = function(callback, context) {
+  var cond = false;
+  var handlerCtx = {};
+
+  var memberEvent = context.memberEvent;
+  if (memberEvent.exists()) {
+     cond = true;
+  }
+
+  utils.invokeCallback(callback, null, cond, handlerCtx);
+};
+
+/**
+ * Set this order's sales store and member store
+ *
+ * @param {Function} callback
+ * @param {Object} context
+ *
+ * @private
+ */
+var endEHandler = function(callback, context) {
+  var order = context.order;
+  var member = context.member;
+  var memberEvent = context.memberEvent;
+
+  async.waterfall([
+    function(cb) {
+      member.setChannelStore(
+        memberEvent.getObjectId(), cb
+      );
+    },
+    function(result, cb) {
+      order.setBothStores(
+        memberEvent.getObjectId(),
+        // TODO
+        cb
+      );
+    }
+  ], function(err, result) {
+    if (err) {
+      utils.invokeCallback(callback, err);
+      return;
+    }
+    utils.invokeCallback(callback, null);
+  });
+};
+
+/**
+ * Set this order's sales store and member store
  *
  * @param {Function} callback
  * @param {Object} context
@@ -370,13 +481,13 @@ var endFHandler = function(callback, context) {
 
   async.waterfall([
     function(cb) {
-      member.updateFollowingStoreId(
+      member.setChannelStore(
         // TODO
         cb
       );
     },
     function(result, cb) {
-      order.updateStores(
+      order.setBothStores(
         // TODO
         // TODO
         cb
@@ -389,93 +500,6 @@ var endFHandler = function(callback, context) {
     }
     utils.invokeCallback(callback, null);
   });
-};
-
-/**
- * Decision E handler
- *
- * @param {Function} callback
- * @param {Object} context
- *
- * @private
- */
-var decisionEHandler = function(callback, context) {
-  var cond = false;
-  var handlerCtx = {};
-
-  if (context.memberEvent) { cond = true; }
-  utils.invokeCallback(callback, null, cond, handlerCtx);
-};
-
-/**
- * End D handler
- *
- * @param {Function} callback
- * @param {Object} context
- *
- * @private
- */
-var endDHandler = function(callback, context) {
-  var order = context.order;
-  var member = context.member;
-  var memberEvent = context.memberEvent;
-
-  async.waterfall([
-    function(cb) {
-      member.updateFollowingStoreId(
-        memberEvent.get('store_id'), cb
-      );
-    },
-    function(result, cb) {
-      order.updateStores(
-        memberEvent.get('store_id'),
-        // TODO
-        cb
-      );
-    }
-  ], function(err, result) {
-    if (err) {
-      utils.invokeCallback(callback, err);
-      return;
-    }
-    utils.invokeCallback(callback, null);
-  });
-};
-
-/**
- * End E handler
- *
- * @param {Function} callback
- * @param {Object} context
- *
- * @private
- */
-var endEHandler = function(callback, context) {
-  var order = context.order;
-  var member = context.member;
-
-  async.waterfall([
-    function(cb) {
-      member.updateFollowingStoreId(
-        // TODO
-        cb
-      );
-    },
-    function(result, cb) {
-      order.updateStores(
-        // TODO
-        // TODO
-        cb
-      );
-    }
-  ], function(err, result) {
-    if (err) {
-      utils.invokeCallback(callback, err);
-      return;
-    }
-    utils.invokeCallback(callback, null);
-  });
-
 };
 
 /**
