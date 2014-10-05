@@ -3,11 +3,10 @@
  *
  * Class representing a container for yuanhe member events
  *
- * @property {Object} member_id
+ * @property {String} type
  * @property {String} member_openid
- * @property {Object} object_id
- * @property {Object} annotation_id
- * @property {Date} posted
+ * @property {Object} store_id
+ * @property {String} weixin_product_id
  *
  * @author Minix Li
  */
@@ -41,17 +40,17 @@ YuanheMemberEvent.col_name = 'member_events';
  * @public
  */
 YuanheMemberEvent.getLastSubscribeEvent = function(openid, cb) {
-  var memberEvent = new YuanheMemberEvent();
+  var eventEntity = new YuanheMemberEvent();
   var opts = {
-    'member_openid': openid,
-    'type': 'subscribe'
+    'type': 'subscribe',
+    'member_openid': openid
   };
-  memberEvent.loadLastByOpts(opts, function(err) {
+  eventEntity.loadLastByOpts(opts, function(err) {
     if (err) {
       utils.invokeCallback(cb, err);
       return;
     }
-    utils.invokeCallback(cb, null, memberEvent);
+    utils.invokeCallback(cb, null, eventEntity);
   });
 };
 
@@ -63,18 +62,18 @@ YuanheMemberEvent.getLastSubscribeEvent = function(openid, cb) {
  *
  * @public
  */
-YuanheMemberEvent.getLastViewEvent = function(openid, cb) {
-  var memberEvent = new YuanheMemberEvent();
+YuanheMemberEvent.getLastViewEvent1 = function(openid, cb) {
+  var eventEntity = new YuanheMemberEvent();
   var opts = {
-    'member_openid': openid,
-    'type': 'view'
+    'type': 'view',
+    'member_openid': openid
   };
-  memberEvent.loadLastByOpts(opts, function(err) {
+  eventEntity.loadLastByOpts(opts, function(err) {
     if (err) {
       utils.invokeCallback(cb, err);
       return;
     }
-    utils.invokeCallback(cb, null, memberEvent);
+    utils.invokeCallback(cb, null, eventEntity);
   });
 };
 
@@ -82,24 +81,24 @@ YuanheMemberEvent.getLastViewEvent = function(openid, cb) {
  * Get the last member view event by openid and product id
  *
  * @param {String} openid
- * @param {Object} productId
+ * @param {String} productId
  * @param {Function} cb
  *
  * @public
  */
-YuanheMemberEvent.getLastViewEventByProductId = function(openid, productId, cb) {
-  var memberEvent = new YuanheMemberEvent();
+YuanheMemberEvent.getLastViewEvent2 = function(openid, productId, cb) {
+  var eventEntity = new YuanheMemberEvent();
   var opts = {
+    'type': 'view',
     'member_openid': openid,
-    'annotation_id': productId,
-    'type': 'view'
+    'weixin_product_id': productId
   };
-  memberEvent.loadLastByOpts(opts, function(err) {
+  eventEntity.loadLastByOpts(opts, function(err) {
     if (err) {
       utils.invokeCallback(cb, err);
       return;
     }
-    utils.invokeCallback(cb, null, memberEvent);
+    utils.invokeCallback(cb, null, eventEntity);
   });
 };
 
@@ -115,44 +114,32 @@ var pro = YuanheMemberEvent.prototype;
 var initializeAttributes = function() {
   YuanheEntity.prototype.initializeAttributes.apply(this);
 
-  this.attributes['member_id'] = null;
+  this.attributes['type'] = null;
   this.attributes['member_openid'] = null;
-  this.attributes['object_id'] = null;
-  this.attributes['annotation_id'] = null;
-  this.attributes['posted'] = null;
+  this.attributes['store_id'] = null;
+  this.attributes['weixin_product_id'] = null;
 };
 
 /**
- * Get object id
+ * Get store id
  *
  * @public
  *
  * @return {Object}
  */
-pro.getObjectId = function() {
-  return this.get('object_id');
+pro.getStoreId = function() {
+  return this.get('store_id');
 };
 
 /**
- * Get annotation id
+ * Get weixin product id
  *
  * @public
  *
- * @return {Object}
+ * @return {String}
  */
-pro.getAnnotationId = function() {
-  return this.get('annotation_id');
-};
-
-/**
- * Get posted
- *
- * @public
- *
- * @return {Date}
- */
-pro.getPosted = function() {
-  return this.get('posted');
+pro.getWeixinProductId = function() {
+  return this.get('weixin_product_id');
 };
 
 /**

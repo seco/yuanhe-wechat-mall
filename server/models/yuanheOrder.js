@@ -3,15 +3,17 @@
  *
  * Class representing a container for yuanhe orders
  *
+ * @property {String} weixin_order_id
  * @property {Object} weixin_order_info
+ * @property {Array}  stores
  * @property {Object} member
- * @property {Array} stores
+ * @property {String} state
  *
  * @author Minix Li
  */
 
 var async = require('async');
-var dbProxy = require('../app').dbProxy;
+var dbProxy = require('../app').get('dbProxy');
 var utils = require('../lib/util/utils');
 var YuanheEntity = require('./yuanheEntity');
 
@@ -37,14 +39,14 @@ YuanheOrder.col_name = 'orders';
  * @param {Function} cb
  */
 YuanheOrder.getById = function(_id, cb) {
-  var order = new YuanheOrder();
+  var orderEntity = new YuanheOrder();
 
-  order.load(id, function(err) {
+  orderEntity.load(id, function(err) {
     if (err) {
       utils.invokeCallback(cb, err);
       return;
     }
-    utils.invokeCallback(cb, null, order);
+    utils.invokeCallback(cb, null, orderEntity);
   });
 };
 
@@ -60,16 +62,17 @@ var pro = YuanheOrder.prototype;
 var initializeAttributes = function() {
   YuanheEntity.prototype.initializeAttributes.apply(this);
 
-  this.attributes['weixin_order_info'] = {};
-  this.attributes['member'] = {};
-  this.attributes['sales_store'] = {};
-  this.attributes['member_store'] = {};
+  this.attributes['weixin_order_id'] = null;
+  this.attributes['weixin_order_info'] = null;
+  this.attributes['stores'] = null;
+  this.attributes['member'] = null;
+  this.attributes['state'] = 'created';
 };
 
 /**
  * Set weixin order id
  *
- * @param {Object} orderId
+ * @param {String} orderId
  *
  * @public
  */
@@ -91,42 +94,13 @@ pro.setWeixinOrderInfo = function(orderInfo) {
 /**
  * Set both sales and member stores
  *
- * @param {Object} sales_store_id
- * @param {Object} member_store_id
+ * @param {Object} sales_store
+ * @param {Object} channel_store
  * @param {Function} cb
  *
  * @public
  */
-pro.setBothStores = function(sales_store_id, member_store_id, cb) {
-  var sales_store_value = { "id": sales_store_id };
-  var member_store_value = { "id": member_store_id };
-
-  async.waterfall([
-    function(cb) {
-      dbProxy.collection(this.name, cb);
-    },
-    function(collection, cb) {
-      collection.update(
-        { "_id": this.get('_id') },
-        { "$set": {
-          "sales_store": sales_store_value,
-          "member_store": member_store_value
-        } },
-        cb
-      );
-    }
-  ], function(err, result) {
-    if (err) {
-      utils.invokeCallback(cb, err);
-      return;
-    }
-
-    this.set('sales_store', sales_store_value);
-    this.set('member_store', member_store_value);
-
-    utils.invokeCallback(cb, null);
-  });
-};
+pro.setBothStores = function(sales_store, channel_store, cb) {};
 
 /**
  * export YuanheOrder

@@ -3,12 +3,16 @@
  *
  * Class representing a container for yuanhe stores
  *
- * @property {String} openid
- * @property {Number} scene_id
- * @property {String} name
- * @property {String} type
- * @property {String} address
- * @property {String} telnum
+ * @property {String}  openid
+ * @property {Number}  scene_id
+ * @property {String}  store_name
+ * @property {String}  store_type
+ * @property {String}  store_address
+ * @property {String}  telnum
+ * @property {String}  alias
+ * @property {String}  contact_name
+ * @property {Date}    following_at
+ * @property {Boolean} unfollow
  *
  * @author Minix Li
  */
@@ -42,32 +46,32 @@ YuanheStore.col_name = 'stores';
  * @public
  */
 YuanheStore.getByOpenid = function(openid, cb) {
-  var store = new YuanheStore();
+  var storeEntity = new YuanheStore();
 
-  store.loadByOpenid(openid, function(err) {
+  storeEntity.loadByOpenid(openid, function(err) {
     if (err) {
       utils.invokeCallback(cb, err);
       return;
     }
-    utils.invokeCallback(cb, null, store);
+    utils.invokeCallback(cb, null, storeEntity);
   });
 };
 
 /**
  * Get store by scene id
  *
- * @param {String} sceneId
+ * @param {Number} sceneId
  * @param {Function} cb
  */
 YuanheStore.getBySceneId = function(sceneId, cb) {
-  var store = new YuanheStore();
+  var storeEntity = new YuanheStore();
 
-  store.loadBySceneId(sceneId, function(err) {
+  storeEntity.loadBySceneId(sceneId, function(err) {
     if (err) {
       utils.invokeCallback(cb, err);
       return;
     }
-    utils.invokeCallback(cb, null, store);
+    utils.invokeCallback(cb, null, storeEntity);
   });
 };
 
@@ -85,10 +89,14 @@ var initializeAttributes = function() {
 
   this.attributes['openid'] = null;
   this.attributes['scene_id'] = 0;
-  this.attributes['name'] = null;
-  this.attributes['type'] = null;
-  this.attributes['address'] = null;
+  this.attributes['store_name'] = null;
+  this.attributes['store_type'] = null;
+  this.attributes['store_address'] = null;
   this.attributes['telnum'] = null;
+  this.attributes['alias'] = null;
+  this.attributes['contact_name'] = null;
+  this.attributes['following_at'] = null;
+  this.attributes['unfollow'] = true;
 };
 
 /**
@@ -105,7 +113,7 @@ pro.setOpenid = function(openid) {
 /**
  * Set scene id
  *
- * @param {String} sceneId
+ * @param {Number} sceneId
  *
  * @public
  */
@@ -119,8 +127,8 @@ pro.setSceneId = function(sceneId) {
  * @public
  */
 pro.setFollowing = function() {
-  this.set('status', 'following');
-  this.set('time_following', new Date());
+  this.set('unfollow', false);
+  this.set('following_at', new Date());
 };
 
 /**
@@ -157,7 +165,7 @@ pro.loadByOpenid = function(openid, cb) {
 /**
  * Load store attributes by scene id
  *
- * @param {String} sceneId
+ * @param {Number} sceneId
  * @param {Function} cb
  *
  * @public

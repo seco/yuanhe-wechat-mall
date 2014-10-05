@@ -14,7 +14,7 @@ YuanheGlobalCounter = function() {};
 /**
  * Put collection name into class properties
  */
-YuanheGlobalCounter.col_name = 'global_counters';
+YuanheGlobalCounter.col_name = 'counters';
 
 /**
  * Yield scene id

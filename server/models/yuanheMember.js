@@ -5,7 +5,8 @@
  *
  * @property {String} openid
  * @property {Object} channel_store_id
- * @property {Date} time_following
+ * @property {Date}   following_at
+ * @property {Boolean} unfollow
  *
  * @author Minix Li
  */
@@ -39,14 +40,14 @@ YuanheMember.col_name = 'members';
  * @public
  */
 YuanheMember.getById = function(_id, cb) {
-  var member = new YuanheMember();
+  var memberEntity = new YuanheMember();
 
-  member.load(_id, function(err) {
+  memberEntity.load(_id, function(err) {
     if (err) {
       utils.invokeCallback(cb, err);
       return;
     }
-    utils.invokeCallback(cb, null, member);
+    utils.invokeCallback(cb, null, memberEntity);
   });
 };
 
@@ -59,14 +60,14 @@ YuanheMember.getById = function(_id, cb) {
  * @public
  */
 YuanheMember.getByOpenid = function(openid, cb) {
-  var member = new YuanheMember();
+  var memberEntity = new YuanheMember();
 
-  member.loadByOpenid(openid, function(err) {
+  memberEntity.loadByOpenid(openid, function(err) {
     if (err) {
       utils.invokeCallback(cb, err);
       return;
     }
-    utils.invokeCallback(cb, null, member);
+    utils.invokeCallback(cb, null, memberEntity);
   });
 };
 
@@ -84,7 +85,19 @@ var initializeAttributes = function() {
 
   this.attributes['openid'] = null;
   this.attributes['channel_store_id'] = null;
-  this.attributes['time_following'] = null;
+  this.attributes['following_at'] = null;
+  this.attributes['unfollow'] = true;
+};
+
+/**
+ * Set openid
+ *
+ * @param {String} openid
+ *
+ * @public
+ */
+pro.setOpenid = function(openid) {
+  this.set('openid', openid);
 };
 
 /**
@@ -116,17 +129,6 @@ pro.loadByOpenid = function(openid, cb) {
     }
     utils.invokeCallback(cb, null);
   });
-};
-
-/**
- * Set openid
- *
- * @param {String} openid
- *
- * @public
- */
-pro.setOpenid = function(openid) {
-  this.set('openid', openid);
 };
 
 /**
@@ -162,7 +164,7 @@ pro.setChannelStore = function(store_id, cb) {
 };
 
 /**
- * Check whether set channel store
+ * Check whether channel store is set
  *
  * @public
  *
@@ -192,8 +194,8 @@ pro.getChannelStore = function() {
  * @public
  */
 pro.setFollowing = function() {
-  this.set('status', 'following');
-  this.set('time_following', new Date());
+  this.set('unfollow', true);
+  this.set('following_at', new Date());
 };
 
 /**

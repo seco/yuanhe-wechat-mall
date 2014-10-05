@@ -2,9 +2,8 @@
  * The parent class for all Yuanhe Entities.
  *
  * @property {Object} _id
- * @property {Date} time_created
- * @property {Date} time_updated
- * @property {String} enabled
+ * @property {Date} created_at
+ * @property {Date} updated_at
  *
  * @author Minix Li
  */
@@ -37,9 +36,8 @@ pro.initializeAttributes = function() {
   YuanheData.prototype.initializeAttributes.apply(this);
 
   this.attributes['_id'] = null;
-  this.attributes['time_created'] = null;
-  this.attributes['time_updated'] = null;
-  this.attributes['enabled'] = 'yes';
+  this.attributes['created_at'] = null;
+  this.attributes['updated_at'] = null;
 };
 
 /**
@@ -109,7 +107,7 @@ pro.load = function(_id, cb) {
 };
 
 /**
- * Draw attributes from entity document
+ * Draw attributes from the entity document
  *
  * @param {Object} doc
  *
@@ -131,7 +129,7 @@ pro.drawAttrFromDoc = function(doc) {
  * @public
  */
 pro.save = function(cb) {
-  if (this.get('_id')) {
+  if (this.exists()) {
     updateDocument.apply(this, [cb]);
   } else {
     insertDocument.apply(this, [cb]);
@@ -147,6 +145,8 @@ pro.save = function(cb) {
  */
 var insertDocument = function(cb) {
   var col_name = this.constructor.col_name;
+
+  this.set('created_at', new Date());
 
   var self = this;
   async.waterfall([
@@ -176,6 +176,8 @@ var insertDocument = function(cb) {
 var updateDocument = function(cb) {
   var col_name = this.constructor.col_name;
 
+  this.set('updated_at', new Date());
+
   var self = this;
   async.waterfall([
     function(cb) {
@@ -195,6 +197,28 @@ var updateDocument = function(cb) {
     }
     utils.invokeCallback(cb, null, result);
   });
+};
+
+/**
+ * Get created time
+ *
+ * @public
+ *
+ * @return {Date}
+ */
+pro.createdTime = function() {
+  return this.get('created_at');
+};
+
+/**
+ * Get updated time
+ *
+ * @public
+ *
+ * @return {Date}
+ */
+pro.updatedTime = function() {
+  return this.get('updated_at');
 };
 
 /**
