@@ -15,6 +15,7 @@ var adminProduct = require('./handlers/admin/product');
 var store = require('./handlers/store');
 var order = require('./handlers/order');
 var settlement = require('./handlers/settlement');
+var product = require('./handlers/product');
 var sign = require('./handlers/sign');
 
 module.exports = function(app) {
@@ -68,4 +69,5 @@ module.exports = function(app) {
 
   app.get('/orders', order.index);
   app.get('/settlements', settlement.index);
+  app.get('/products', product.index);
 };
