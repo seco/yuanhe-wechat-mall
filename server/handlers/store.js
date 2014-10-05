@@ -89,6 +89,7 @@ exports.update = function(req, res, next) {
   var content = {};
   var id = req.params.id || '';
   var updAttr = req.body;
+  updAttr.updated_at = new Date();
   delete updAttr._id;
 
   dbProxy.collection('stores', function(err, col) {
@@ -109,7 +110,7 @@ exports.update = function(req, res, next) {
           logger.error(err);
         }
         col.update({
-          'stores.id': new ObjectID(id)
+          'stores.store_id': new ObjectID(id)
         }, {
           $set: {
             'stores.$.store_name': updAttr.store_name
@@ -120,7 +121,7 @@ exports.update = function(req, res, next) {
           if (err) {
             logger.error(err);
           }
-          logger.info('db.orders store[id=' + id + ', store_name=' + updAttr.store_name + '] name has been updated, updated row number = ' + result);
+          logger.info('db.orders store[store_id=' + id + ', store_name=' + updAttr.store_name + '] name has been updated, updated row number = ' + result);
 
           res.json(result);
         });

@@ -47,7 +47,7 @@ exports.index = function(req, res, next) {
     }, {
       $group: {
         _id: {
-          store_id: "$stores.id",
+          store_id: "$stores.store_id",
           store_name: "$stores.store_name"
         },
         total_commission: {
@@ -77,7 +77,7 @@ exports.index = function(req, res, next) {
       }, {
         $group: {
           _id: {
-            store_id: "$stores.id",
+            store_id: "$stores.store_id",
             store_name: "$stores.store_name"
           },
           total_commission: {

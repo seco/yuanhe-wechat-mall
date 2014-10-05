@@ -40,25 +40,9 @@ define(['jquery',
             label: '订单商品',
             cell: 'string'
           }, {
-            name: 'payment',
+            name: 'weixin_order_info.order_total_price',
             label: '订单金额',
             cell: 'number'
-          }, {
-            name: 'order_status',
-            label: '订单状态',
-            cell: Backgrid.Cell.extend({
-              render: function() {
-                var val = '';
-                var modelVal = this.model.get('order_status');
-                if (modelVal === 'created') {
-                  val = '已创建';
-                } else if (modelVal === 'settled') {
-                  val = '已结算';
-                }
-                this.$el.text(val);
-                return this;
-              }
-            })
           }, {
             label: '店铺名称（销售）',
             cell: Backgrid.Cell.extend({
@@ -68,7 +52,7 @@ define(['jquery',
                 if (storesAry) {
                   storesAry.forEach(
                     function(store) {
-                      if (store.store_type && store.store_type === 'sales_store') {
+                      if (store.store_type && store.store_type === 'sales') {
                         self.$el.text(store.store_name);
                       }
                     }
@@ -86,7 +70,7 @@ define(['jquery',
                 if (storesAry) {
                   storesAry.forEach(
                     function(store) {
-                      if (store.store_type && store.store_type === 'member_store') {
+                      if (store.store_type && store.store_type === 'channel') {
                         self.$el.text(store.store_name);
                       }
                     }
@@ -104,7 +88,7 @@ define(['jquery',
                 if (storesAry) {
                   storesAry.forEach(
                     function(store) {
-                      if (store.store_type && store.store_type === 'sales_store') {
+                      if (store.store_type && store.store_type === 'sales') {
                         self.$el.text(store.commission);
                       }
                     }
@@ -122,7 +106,7 @@ define(['jquery',
                 if (storesAry) {
                   storesAry.forEach(
                     function(store) {
-                      if (store.store_type && store.store_type === 'member_store') {
+                      if (store.store_type && store.store_type === 'channel') {
                         self.$el.text(store.commission);
                       }
                     }
