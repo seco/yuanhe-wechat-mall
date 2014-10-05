@@ -5,20 +5,20 @@
  * ***************************************** DECISION TREE *****************************************
  *
  *
- *               start ----- decision A ----- decision C ----- decision D ----- end F
- *                                |                |                |
- *                                |                |                |
- *                                |                |                |
- *               end A ----- decision B          end C         decision E ----- end D
- *                                |                                 |
- *                                |                                 |
- *                                |                                 |
- *                              end B                             end E
+ *     start ---------- decision A ---------- decision C ---------- decision D ---------- end F
+ *                           |                     |                     |
+ *                           |                     |                     |
+ *                           |                     |                     |
+ *     end A ---------- decision B               end C              decision E ---------- end D
+ *                           |                                           |
+ *                           |                                           |
+ *                           |                                           |
+ *                         end B                                       end E
  *
  *
- *   Decision A check whether a client has viewed the product promotion page in the past 30 days.
+ *   Decision A check whether a member has viewed the product promotion page in the past 30 days.
  *
- *   Decision B check whether a client has been marked a channel source.
+ *   Decision B check whether this member exists and  has been marked a channel source.
  *
  *   Decision C check whether a client has been marked a channel source.
  *
@@ -63,28 +63,31 @@ MsgHandler.prototype.handle = function(req, res, msg, cb) {
     return;
   }
 
-  var startCtx = {
-    'orderId': orderId,
-    'productId': productId,
-    'openid': openid
-  };
-  decisiontree.auto({
-    start: function(cb, context) {
-      utils.invokeCallback(cb, null, true, startCtx);
-    },
+  var openid = msg['xml']['FromUserName'];
+  var orderId = msg['xml']['OrderId'];
+  var productId = msg['xml']['ProductId'];
 
+  decisiontree.auto({
+    // put openid into context and start decision A
+    start: function(cb, context) {
+      utils.invokeCallback(cb, null, true, {
+        'orderId': orderId, 'productId': productId, 'openid': openid
+      });
+    },
+    // check whether exists member view event in the past 30 days
     decisionA: ['start', true, function(cb, context) {
       decisionAHandler(cb, context);
     }],
-
+    // Check whether this member exists and has been marked a
+    // channel source.
     decisionB: ['decisionA', true, function(cb, context) {
       decisionBHandler(cb, context);
     }],
-
+    // set this order's sales store and member store
     endA: ['decisionB', true, function(cb, context) {
       endAHandler(cb, context);
     }],
-
+    // set this order's sales store and member store
     endB: ['decisionB', false, function(cb, context) {
       endBHandler(cb, context);
     }],
@@ -121,7 +124,7 @@ MsgHandler.prototype.handle = function(req, res, msg, cb) {
 };
 
 /**
- * Decision A handler
+ * Check whether exists member view event in the past 30 days
  *
  * @param {Function} callback
  * @param {Object} context
@@ -129,49 +132,55 @@ MsgHandler.prototype.handle = function(req, res, msg, cb) {
  * @private
  */
 var decisionAHandler = function(callback, context) {
+  var cond = false;
+  var handlerCtx = {};
+
   var orderId = context.orderId;
   var productId = context.productId;
   var openid = context.openid;
 
-  var cond = false;
-  var handlerCtx = {};
-
-  async.auto({
-    fetch_order: function(cb) {
+  async.waterfall([
+    // get order info from weixin
+    function(cb) {
       merchant.getOrderInfoById(orderId, cb);
     },
-    save_order: ['fetch_order', function(cb, results) {
+    // save new order
+    function(orderInfo, cb) {
       var order = new YuanheOrder();
+
+      // put order into context
+      handlerCtx.order = order;
+
       order.set('weixin_order_id', orderId);
-      order.set('weixin_order_info', results.fetch_order);
+      order.set('weixin_order_info', orderInfo);
       order.save(cb);
-    }],
-    get_member_event: ['save_order', function(cb, results) {
+    },
+    // check member event
+    function(result, cb) {
       YuanheMemberEvent.getLastByOpts({
-        'openid': openid,
-        'type': 'view',
-        'product_id': productId
+        'member_openid': openid,
+        'annotation_id': productId,
+        'type': 'view'
       }, cb);
-    }],
-  }, function(err, results) {
+    }
+  ], function(err, memberEvent) {
     if (err) {
       utils.invokeCallback(callback, err);
       return;
     }
 
-    // TODO
-    if (false) { cond = true; }
-    handlerCtx = {
-      'order': results.save_order,
-      'memberEvent': results.get_member_event
-    };
+    if (memberEvent.exists()) {
+      if (utils.checkInPastDays(memberEvent.get('posted'), 30)) { cond = true; }
+    }
+    handlerCtx.memberEvent = memberEvent;
 
     utils.invokeCallback(callback, null, cond, handlerCtx);
   });
 };
 
 /**
- * Decision B handler
+ * Check whether this member exists and has been marked a
+ * channel source.
  *
  * @param {Function} callback
  * @param {Object} context
@@ -194,7 +203,9 @@ var decisionBHandler = function(callback, context) {
       return;
     }
 
-    if (member.get('following_store_id')) { cond = true; }
+    if (member.exists()) {
+      if (member.hasChannelStore()) { cond = true; }
+    }
     handlerCtx = { 'member': member };
 
     utils.invokeCallback(callback, null, cond, handlerCtx);
@@ -202,7 +213,7 @@ var decisionBHandler = function(callback, context) {
 };
 
 /**
- * End A handler
+ * Set this order's sales store and member store
  *
  * @param {Function} callback
  * @param {Object} context
@@ -211,14 +222,15 @@ var decisionBHandler = function(callback, context) {
  */
 var endAHandler = function(callback, context) {
   var order = context.order;
+
   var member = context.member;
   var memberEvent = context.memberEvent;
 
   async.waterfall([
     function(cb) {
       order.updateStores(
-        memberEvent.get('store_id'),
-        member.get('following_store_id'), cb
+        memberEvent.getObjectId(),
+        member.get('channel_store_id'), cb
       );
     }
   ], function(err, result) {
@@ -231,7 +243,7 @@ var endAHandler = function(callback, context) {
 };
 
 /**
- * End B handler
+ * Set this order's sales store and member store
  *
  * @param {Function} callback
  * @param {Object} context
@@ -240,19 +252,20 @@ var endAHandler = function(callback, context) {
  */
 var endBHandler = function(callback, context) {
   var order = context.order;
+
   var member = context.member;
   var memberEvent = context.memberEvent;
 
   async.waterfall([
     function(cb) {
-      member.updateFollowingStoreId(
-        memberEvent.get('store_id'), cb
+      member.updateChannelStore(
+        memberEvent.getObjectId(), cb
       );
     },
     function(result, cb) {
       order.updateStores(
-        memberEvent.get('store_id'),
-        memberEvent.get('store_id'), cb
+        memberEvent.getObjectId(),
+        memberEvent.getObjectId(), cb
       );
     }
   ], function(err, result) {

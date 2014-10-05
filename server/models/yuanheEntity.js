@@ -97,6 +97,18 @@ pro.set = function(name, value) {
 };
 
 /**
+ * Check whether an entity exists
+ *
+ * @public
+ */
+pro.exists = function() {
+  if (this.attributes['_id']) {
+    return true;
+  }
+  return false;
+};
+
+/**
  * Draw attributes from entity document
  *
  * @param {Object} doc

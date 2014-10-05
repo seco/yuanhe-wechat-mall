@@ -30,7 +30,6 @@ exp.getAccessToken = function(cb) {
   }
 
   var config = app.get('yuanhe_config');
-
   var appid = config.appid;
   var secret = config.secret;
 

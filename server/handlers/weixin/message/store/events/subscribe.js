@@ -75,14 +75,14 @@ var decisionAHandler = function(callback, context) {
 
   var openid = context.openid;
 
-  YuanheStore.getByOpenid(openid, function(err, store) {
+  YuanheStore.getByOpenid(openid, function(err, storeEntity) {
     if (err) {
       utils.invokeCallback(callback, err);
       return;
     }
 
-    if (store.get('_id')) { cond = true; }
-    handlerCtx = { 'storeEntity': store };
+    if (storeEntity.exists()) { cond = true; }
+    handlerCtx = { 'storeEntity': storeEntity };
 
     utils.invokeCallback(callback, null, cond, handlerCtx);
   });
@@ -101,8 +101,7 @@ var endAHandler = function(callback, context) {
 
   async.waterfall([
     function(cb) {
-      storeEntity.set('status', 'following');
-      storeEntity.set('time_following', new Date());
+      storeEntity.setFollowing();
       storeEntity.save(cb);
     }
   ], function(err, result) {
@@ -131,10 +130,9 @@ var endBHandler = function(callback, context) {
       YuanheGlobalCounter.yieldSceneId(cb);
     },
     function(sceneId, cb) {
-      storeEntity.set('openid', openid);
-      storeEntity.set('scene_id', sceneId);
-      storeEntity.set('status', 'following');
-      storeEntity.set('time_following', new Date());
+      storeEntity.setOpenid(openid);
+      storeEntity.setScendId(sceneId);
+      storeEntity.setFollowing();
       storeEntity.save(cb);
     }
   ], function(err, result) {

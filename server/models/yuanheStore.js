@@ -123,6 +123,17 @@ pro.loadBySceneId = function(sceneId, cb) {
 };
 
 /**
+ * Set openid
+ *
+ * @param {String} openid
+ *
+ * @public
+ */
+pro.setOpenid = function(openid) {
+  this.set('openid', openid);
+};
+
+/**
  * Load store attributes by openid
  *
  * @param {String} openid
@@ -151,6 +162,28 @@ pro.loadByOpenid = function(openid, cb) {
     }
     utils.invokeCallback(cb, null);
   });
+};
+
+/**
+ * Set scene id
+ *
+ * @param {String} sceneId
+ *
+ * @public
+ */
+pro.setSceneId = function(sceneId) {
+  this.set('scene_id', sceneId);
+};
+
+
+/**
+ * Set following
+ *
+ * @public
+ */
+pro.setFollowing = function() {
+  this.set('status', 'following');
+  this.set('time_following', new Date());
 };
 
 /**
