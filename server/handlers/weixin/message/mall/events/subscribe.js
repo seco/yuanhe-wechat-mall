@@ -11,6 +11,7 @@ var dbProxy = require(appPath).get('dbProxy');
 var decisiontree = require(appPath + '/../lib/util/decisionTree');
 var utils = require(appPath + '/../lib/util/utils');
 var YuanheMember = require(appPath + '/../models/yuanheMember');
+var YuanheMemberEvent = require(appPath + '/../models/yuanheMemberEvent');
 
 var MsgHandler = function() {};
 
@@ -169,16 +170,16 @@ var decisionCHandler = function(callback, context) {
     function(cb) {
       YuanheMemberEvent.getLastViewEvent1(openid, cb);
     }
-  ], function(err, memberEvent) {
+  ], function(err, eventEntity) {
     if (err) {
       utils.invokeCallback(callback, err);
       return;
     }
 
-    if (memberEvent.exists()) {
-      if (utils.checkInPastDays(memberEvent.createdTime(), 30)) { cond = true; }
+    if (eventEntity.exists()) {
+      if (utils.checkInPastDays(eventEntity.createdTime(), 30)) { cond = true; }
     }
-    handlerCtx = { 'memberEvent': memberEvent };
+    handlerCtx = { 'eventEntity': eventEntity };
 
     utils.invokeCallback(callback, null, cond, handlerCtx);
   });
@@ -195,12 +196,12 @@ var decisionCHandler = function(callback, context) {
  */
 var endCHandler = function(callback, context) {
   var memberEntity = context.memberEntity;
-  var memberEvent = context.memberEvent;
+  var eventEntity = context.eventEntity;
 
   async.waterfall([
     function(cb) {
       memberEntity.setChannelStore(
-        memberEvent.getStoreId(), cb
+        eventEntity.getStoreId(), cb
       );
     }
   ], function(err, result) {
@@ -261,16 +262,16 @@ var decisionEHandler = function(callback, context) {
     function(cb) {
       YuanheMemberEvent.getLastViewEvent1(openid, cb);
     }
-  ], function(err, memberEvent) {
+  ], function(err, eventEntity) {
     if (err) {
       utils.invokeCallback(callback, err);
       return;
     }
 
-    if (memberEvent.exists()) {
-      if (utils.checkInPastDays(memberEvent.createdTime(), 30)) { cond = true; }
+    if (eventEntity.exists()) {
+      if (utils.checkInPastDays(eventEntity.createdTime(), 30)) { cond = true; }
     }
-    handlerCtx = { 'memberEvent': memberEvent };
+    handlerCtx = { 'eventEntity': eventEntity };
 
     utils.invokeCallback(callback, null, cond, handlerCtx);
   });
@@ -287,12 +288,12 @@ var decisionEHandler = function(callback, context) {
  */
 var endEHandler = function(callback, context) {
   var memberEntity = context.memberEntity;
-  var memberEvent = context.memberEvent;
+  var eventEntity = context.eventEntity;
 
   async.waterfall([
     function(cb) {
       memberEntity.setChannelStore(
-        memberEvent.getStoreId(), cb
+        eventEntity.getStoreId(), cb
       );
     }
   ], function(err, result) {

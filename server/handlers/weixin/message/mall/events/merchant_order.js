@@ -167,16 +167,16 @@ var decisionAHandler = function(callback, context) {
     function(result, cb) {
       YuanheMemberEvent.getLastViewEvent2(openid, productId, cb);
     }
-  ], function(err, memberEvent) {
+  ], function(err, eventEntity) {
     if (err) {
       utils.invokeCallback(callback, err);
       return;
     }
 
-    if (memberEvent.exists()) {
-      if (utils.checkInPastDays(memberEvent.createdTime(), 30)) { cond = true; }
+    if (eventEntity.exists()) {
+      if (utils.checkInPastDays(eventEntity.createdTime(), 30)) { cond = true; }
     }
-    handlerCtx.memberEvent = memberEvent;
+    handlerCtx.eventEntity = eventEntity;
 
     utils.invokeCallback(callback, null, cond, handlerCtx);
   });
@@ -228,12 +228,12 @@ var endAHandler = function(callback, context) {
   var order = context.order;
 
   var member = context.member;
-  var memberEvent = context.memberEvent;
+  var eventEntity = context.eventEntity;
 
   async.waterfall([
     function(cb) {
       order.setBothStores(
-        memberEvent.getStoreId(),
+        eventEntity.getStoreId(),
         member.getChannelStore(), cb
       );
     }
@@ -258,18 +258,18 @@ var endBHandler = function(callback, context) {
   var order = context.order;
 
   var member = context.member;
-  var memberEvent = context.memberEvent;
+  var eventEntity = context.eventEntity;
 
   async.waterfall([
     function(cb) {
       member.setChannelStore(
-        memberEvent.getStoreId(), cb
+        eventEntity.getStoreId(), cb
       );
     },
     function(result, cb) {
       order.setBothStores(
-        memberEvent.getStoreId(),
-        memberEvent.getStoreId(), cb
+        eventEntity.getStoreId(),
+        eventEntity.getStoreId(), cb
       );
     }
   ], function(err, result) {
@@ -362,13 +362,13 @@ var decisionDHandler = function(callback, context) {
     function(cb) {
       YuanheMemberEvent.getLastSubscribeEvent(openid, cb);
     }
-  ], function(err, memberEvent) {
+  ], function(err, eventEntity) {
     if (err) {
       utils.invokeCallback(callback, err);
       return;
     }
-    if (memberEvent.exists()) {
-      if (utils.checkInPastDays(memberEvent.createdTime(), 30)) { cond = true; }
+    if (eventEntity.exists()) {
+      if (utils.checkInPastDays(eventEntity.createdTime(), 30)) { cond = true; }
     }
     utils.invokeCallback(callback, null, cond, handlerCtx);
   });
@@ -422,8 +422,8 @@ var decisionEHandler = function(callback, context) {
   var cond = false;
   var handlerCtx = {};
 
-  var memberEvent = context.memberEvent;
-  if (memberEvent.exists()) {
+  var eventEntity = context.eventEntity;
+  if (eventEntity.exists()) {
      cond = true;
   }
 
@@ -441,17 +441,17 @@ var decisionEHandler = function(callback, context) {
 var endEHandler = function(callback, context) {
   var order = context.order;
   var member = context.member;
-  var memberEvent = context.memberEvent;
+  var eventEntity = context.eventEntity;
 
   async.waterfall([
     function(cb) {
       member.setChannelStore(
-        memberEvent.getStoreId(), cb
+        eventEntity.getStoreId(), cb
       );
     },
     function(result, cb) {
       order.setBothStores(
-        memberEvent.getStoreId(),
+        eventEntity.getStoreId(),
         // TODO
         cb
       );
