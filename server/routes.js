@@ -14,6 +14,7 @@ var adminProduct = require('./handlers/admin/product');
 
 var store = require('./handlers/store');
 var order = require('./handlers/order');
+var settlement = require('./handlers/settlement');
 var sign = require('./handlers/sign');
 
 module.exports = function(app) {
@@ -22,7 +23,7 @@ module.exports = function(app) {
   app.get('/login', sign.login);
   app.post('/signin', sign.signin);
   app.get('/signout', sign.signout);
-  //app.all('*', sign.checkAuth);
+  app.all('*', sign.checkAuth);
 
   // manager
   app.get('/', routes.index);
@@ -65,6 +66,6 @@ module.exports = function(app) {
   app.put('/stores/:id', store.update); // Backbone.Model.save()
   app.delete('/stores/:id', store.destroy);
 
-
   app.get('/orders', order.index);
+  app.get('/settlements', settlement.index);
 };

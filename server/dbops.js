@@ -166,4 +166,30 @@ db.orders.aggregate([{
   $sort: {
     "_id.store_id": 1
   }
+}, {
+  $skip: 0
+}, {
+  $limit: 25
+}]);
+
+//calculate count of commission
+db.orders.aggregate([{
+  $unwind: "$stores"
+}, {
+  $group: {
+    _id: {
+      store_id: "$stores.id",
+      store_name: "$stores.store_name"
+    },
+    total_commission: {
+      $sum: "$stores.commission"
+    }
+  }
+}, {
+  $group: {
+    _id: null,
+    count: {
+      $sum: 1
+    }
+  }
 }]);
