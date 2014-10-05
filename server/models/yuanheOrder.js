@@ -5,8 +5,7 @@
  *
  * @property {Object} weixin_order_info
  * @property {Object} member
- * @property {Object} sales_store
- * @property {Object} member_store
+ * @property {Array} stores
  *
  * @author Minix Li
  */
@@ -18,7 +17,7 @@ var YuanheEntity = require('./yuanheEntity');
 
 // YuanheOrder constructor
 YuanheOrder = function() {
-  this.initializeAttributes();
+  initializeAttributes.apply(this);
 };
 
 // inherit from YuanheEntity
@@ -32,12 +31,12 @@ YuanheEntity.extend(YuanheOrder);
 YuanheOrder.col_name = 'orders';
 
 /**
- * Get order by id
+ * Get order by _id
  *
- * @param {String} id
+ * @param {Object} _id
  * @param {Function} cb
  */
-YuanheOrder.getById = function(id, cb) {
+YuanheOrder.getById = function(_id, cb) {
   var order = new YuanheOrder();
 
   order.load(id, function(err) {
@@ -58,7 +57,7 @@ var pro = YuanheOrder.prototype;
  *
  * @protected
  */
-pro.initializeAttributes = function() {
+var initializeAttributes = function() {
   YuanheEntity.prototype.initializeAttributes.apply(this);
 
   this.attributes['weixin_order_info'] = {};
@@ -92,8 +91,8 @@ pro.setWeixinOrderInfo = function(orderInfo) {
 /**
  * Set both sales and member stores
  *
- * @param {String} sales_store_id
- * @param {String} member_store_id
+ * @param {Object} sales_store_id
+ * @param {Object} member_store_id
  * @param {Function} cb
  *
  * @public
@@ -125,72 +124,6 @@ pro.setBothStores = function(sales_store_id, member_store_id, cb) {
     this.set('sales_store', sales_store_value);
     this.set('member_store', member_store_value);
 
-    utils.invokeCallback(cb, null);
-  });
-};
-
-/**
- * Set sales store of the order
- *
- * @param {String} sales_store_id
- * @param {Function} cb
- *
- * @public
- */
-pro.setSalesStore = function(sales_store_id) {
-  var sales_store_value = { "id": sales_store_id };
-
-  async.waterfall([
-    function(cb) {
-      dbProxy.collection(this.name, cb);
-    },
-    function(collection, cb) {
-      collection.update(
-        { "_id": this.get('_id') },
-        { "$set": { "sales_store": sales_store_value } },
-        cb
-      );
-    }
-  ], function(err, result) {
-    if (err) {
-      utils.invokeCallback(cb, err);
-      return;
-    }
-
-    this.set('sales_store', sales_store_value);
-    utils.invokeCallback(cb, null);
-  });
-};
-
-/**
- * Set member store of the order
- *
- * @param {String} member_store_id
- * @param {Function} cb
- *
- * @public
- */
-pro.setMemberStore = function(member_store_id) {
-  var member_store_value = { "id": member_store_id };
-
-  async.waterfall([
-    function(cb) {
-      dbProxy.collection(this.name, cb);
-    },
-    function(collection, cb) {
-      collection.update(
-        { "_id": this.get('_id') },
-        { "$set": { "member_store": member_store_value } },
-        cb
-      );
-    }
-  ], function(err, result) {
-    if (err) {
-      utils.invokeCallback(cb, err);
-      return;
-    }
-
-    this.set('member_store', member_store_value);
     utils.invokeCallback(cb, null);
   });
 };

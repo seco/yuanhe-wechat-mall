@@ -1,9 +1,9 @@
 /**
  * The parent class for all Yuanhe Entities.
  *
- * @property {String} _id
- * @property {String} time_created
- * @property {String} time_updated
+ * @property {Object} _id
+ * @property {Date} time_created
+ * @property {Date} time_updated
  * @property {String} enabled
  *
  * @author Minix Li
@@ -80,12 +80,12 @@ pro.exists = function() {
 /**
  * Load attributes from the entity collection into the object
  *
- * @param {String} id
+ * @param {Object} _id
  * @param {Function} cb
  *
  * @public
  */
-pro.load = function(id, cb) {
+pro.load = function(_id, cb) {
   var col_name = this.constructor.col_name;
 
   var self = this;
@@ -94,7 +94,7 @@ pro.load = function(id, cb) {
       dbProxy.collection(col_name, cb);
     },
     function(collection, cb) {
-      collection.findOne({ '_id': id }, cb);
+      collection.findOne({ '_id': _id }, cb);
     }
   ], function(err, doc) {
     if (err) {

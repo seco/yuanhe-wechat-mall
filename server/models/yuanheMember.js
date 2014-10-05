@@ -4,8 +4,8 @@
  * Class representing a container for yuanhe members
  *
  * @property {String} openid
- * @property {String} channel_store_id
- * @property {String} time_following
+ * @property {Object} channel_store_id
+ * @property {Date} time_following
  *
  * @author Minix Li
  */
@@ -31,17 +31,17 @@ YuanheEntity.extend(YuanheMember);
 YuanheMember.col_name = 'members';
 
 /**
- * Get member by id
+ * Get member by _id
  *
- * @param {String} id
+ * @param {Object} _id
  * @param {Function} cb
  *
  * @public
  */
-YuanheMember.getById = function(id, cb) {
+YuanheMember.getById = function(_id, cb) {
   var member = new YuanheMember();
 
-  member.load(id, function(err) {
+  member.load(_id, function(err) {
     if (err) {
       utils.invokeCallback(cb, err);
       return;
@@ -132,7 +132,7 @@ pro.setOpenid = function(openid) {
 /**
  * Set channel store of the member
  *
- * @param {String} store_id
+ * @param {Object} store_id
  * @param {Function} cb
  *
  * @public
@@ -162,7 +162,7 @@ pro.setChannelStore = function(store_id, cb) {
 };
 
 /**
- * Check whether is set channel store
+ * Check whether set channel store
  *
  * @public
  *
@@ -180,7 +180,7 @@ pro.hasChannelStore = function() {
  *
  * @public
  *
- * @return {null|String}
+ * @return {Object}
  */
 pro.getChannelStore = function() {
   return this.get('channel_store_id');

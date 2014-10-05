@@ -3,7 +3,7 @@
  *
  * Class representing a container for yuanhe products
  *
- * @property {String} weixin_product_info
+ * @property {Object} weixin_product_info
  * @property {String} redirect_url
  *
  * @author Minix Li

@@ -3,11 +3,11 @@
  *
  * Class representing a container for yuanhe member events
  *
- * @property {String} member_id
+ * @property {Object} member_id
  * @property {String} member_openid
- * @property {String} object_id
- * @property {String} annotation_id
- * @property {String} posted
+ * @property {Object} object_id
+ * @property {Object} annotation_id
+ * @property {Date} posted
  *
  * @author Minix Li
  */
@@ -82,7 +82,7 @@ YuanheMemberEvent.getLastViewEvent = function(openid, cb) {
  * Get the last member view event by openid and product id
  *
  * @param {String} openid
- * @param {String} productId
+ * @param {Object} productId
  * @param {Function} cb
  *
  * @public
@@ -127,7 +127,7 @@ var initializeAttributes = function() {
  *
  * @public
  *
- * @return {null|String}
+ * @return {Object}
  */
 pro.getObjectId = function() {
   return this.get('object_id');
@@ -138,7 +138,7 @@ pro.getObjectId = function() {
  *
  * @public
  *
- * @return {null|String}
+ * @return {Object}
  */
 pro.getAnnotationId = function() {
   return this.get('annotation_id');
@@ -149,7 +149,7 @@ pro.getAnnotationId = function() {
  *
  * @public
  *
- * @return {null|String}
+ * @return {Date}
  */
 pro.getPosted = function() {
   return this.get('posted');
