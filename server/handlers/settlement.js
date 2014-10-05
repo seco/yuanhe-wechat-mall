@@ -1,5 +1,5 @@
 /**
- * This is order action handler module.
+ * This is settlement action handler module.
  *
  * @author Bobby Tang
  */
