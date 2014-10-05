@@ -29,8 +29,8 @@ exports.index = function(req, res, next) {
   };
 
   if (calendarKey && startDate && endDate) {
-    var toDate = new Date();
-    toDate.setDate(new Date(endDate).getDate() + 1);
+    var toDate = new Date(endDate);
+    toDate.setDate(toDate.getDate() + 1);
     filter[calendarKey] = {
       $gte: new Date(startDate),
       $lt: toDate
@@ -100,7 +100,8 @@ exports.index = function(req, res, next) {
 
         result.forEach(function(i){
           var item = {};
-          item._id = i._id.store_id;
+          //fix the issue while duplicate store_id, only display one
+          //item._id = i._id.store_id;
           item.store_name = i._id.store_name;
           item.commission = i.total_commission;
           content.items.push(item);

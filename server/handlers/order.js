@@ -29,8 +29,8 @@ exports.index = function(req, res, next) {
   };
 
   if (calendarKey && startDate && endDate) {
-    var toDate = new Date();
-    toDate.setDate(new Date(endDate).getDate() + 1);
+    var toDate = new Date(endDate);
+    toDate.setDate(toDate.getDate() + 1);
     filter[calendarKey] = {
       $gte: new Date(startDate),
       $lt: toDate
