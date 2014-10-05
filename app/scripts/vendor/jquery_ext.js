@@ -36,6 +36,5 @@ function generate(type) {
       speed: 500
     }
   });
-  console.log('html: ' + n.options.id);
   return n;
 }
