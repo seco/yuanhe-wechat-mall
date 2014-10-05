@@ -102,37 +102,6 @@ pro.setOpenid = function(openid) {
 };
 
 /**
- * Load member attributes by openid
- *
- * @param {String} openid
- * @param {Function} cb
- *
- * @public
- */
-pro.loadByOpenid = function(openid, cb) {
-  var col_name = this.constructor.col_name;
-
-  var self = this;
-  async.waterfall([
-    function(cb) {
-      dbProxy.collection(col_name, cb);
-    },
-    function(collection, cb) {
-      collection.findOne({ 'openid': openid }, cb);
-    }
-  ], function(err, doc) {
-    if (err) {
-      utils.invokeCallback(cb, err);
-      return;
-    }
-    if (doc) {
-      self.drawAttrFromDoc(doc);
-    }
-    utils.invokeCallback(cb, null);
-  });
-};
-
-/**
  * Set channel store of the member
  *
  * @param {Null|Object} storeId
@@ -180,6 +149,37 @@ pro.getChannelStore = function() {
 pro.setFollowing = function() {
   this.set('unfollow', true);
   this.set('following_at', new Date());
+};
+
+/**
+ * Load member attributes by openid
+ *
+ * @param {String} openid
+ * @param {Function} cb
+ *
+ * @public
+ */
+pro.loadByOpenid = function(openid, cb) {
+  var col_name = this.constructor.col_name;
+
+  var self = this;
+  async.waterfall([
+    function(cb) {
+      dbProxy.collection(col_name, cb);
+    },
+    function(collection, cb) {
+      collection.findOne({ 'openid': openid }, cb);
+    }
+  ], function(err, doc) {
+    if (err) {
+      utils.invokeCallback(cb, err);
+      return;
+    }
+    if (doc) {
+      self.drawAttrFromDoc(doc);
+    }
+    utils.invokeCallback(cb, null);
+  });
 };
 
 /**

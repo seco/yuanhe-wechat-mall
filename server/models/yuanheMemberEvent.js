@@ -6,6 +6,7 @@
  * @property {String} type
  * @property {String} member_openid
  * @property {Object} store_id
+ * @property {String} store_name
  * @property {String} weixin_product_id
  *
  * @author Minix Li
@@ -40,11 +41,12 @@ YuanheMemberEvent.col_name = 'member_events';
  * @public
  */
 YuanheMemberEvent.getLastSubscribeEvent = function(openid, cb) {
-  var eventEntity = new YuanheMemberEvent();
   var opts = {
     'type': 'subscribe',
     'member_openid': openid
   };
+  var eventEntity = new YuanheMemberEvent();
+
   eventEntity.loadLastByOpts(opts, function(err) {
     if (err) {
       utils.invokeCallback(cb, err);
@@ -63,11 +65,12 @@ YuanheMemberEvent.getLastSubscribeEvent = function(openid, cb) {
  * @public
  */
 YuanheMemberEvent.getLastViewEvent1 = function(openid, cb) {
-  var eventEntity = new YuanheMemberEvent();
   var opts = {
     'type': 'view',
     'member_openid': openid
   };
+  var eventEntity = new YuanheMemberEvent();
+
   eventEntity.loadLastByOpts(opts, function(err) {
     if (err) {
       utils.invokeCallback(cb, err);
@@ -87,12 +90,13 @@ YuanheMemberEvent.getLastViewEvent1 = function(openid, cb) {
  * @public
  */
 YuanheMemberEvent.getLastViewEvent2 = function(openid, productId, cb) {
-  var eventEntity = new YuanheMemberEvent();
   var opts = {
     'type': 'view',
     'member_openid': openid,
     'weixin_product_id': productId
   };
+  var eventEntity = new YuanheMemberEvent();
+
   eventEntity.loadLastByOpts(opts, function(err) {
     if (err) {
       utils.invokeCallback(cb, err);

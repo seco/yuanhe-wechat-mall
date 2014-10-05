@@ -41,6 +41,18 @@ pro.initializeAttributes = function() {
 };
 
 /**
+ * Check whether an entity exists
+ *
+ * @public
+ */
+pro.exists = function() {
+  if (this.attributes['_id']) {
+    return true;
+  }
+  return false;
+};
+
+/**
  * Return the value of a property
  *
  * @param {String} name
@@ -61,18 +73,6 @@ pro.get = function(name) {
  */
 pro.set = function(name, value) {
   this.attributes[name] = value;
-};
-
-/**
- * Check whether an entity exists
- *
- * @public
- */
-pro.exists = function() {
-  if (this.attributes['_id']) {
-    return true;
-  }
-  return false;
 };
 
 /**

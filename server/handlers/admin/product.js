@@ -103,7 +103,7 @@ var decisionAHandler = function(callback, context) {
       return;
     }
 
-    if (product.exists()) { cond = true; }
+    if (productEntity.exists()) { cond = true; }
     handlerCtx = { 'productEntity': productEntity };
 
     utils.invokeCallback(callback, null, cond, handlerCtx);
