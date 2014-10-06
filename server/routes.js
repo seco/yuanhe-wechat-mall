@@ -8,7 +8,7 @@
 var routes = require('./handlers');
 
 var gateway = require('./handlers/weixin/message/gateway');
-var oauth = require('./handlers/weixin/oauth');
+var product = require('./handlers/weixin/oauth');
 var qrcode = require('./handlers/qrcode');
 var adminOrder = require('./handlers/admin/order');
 var adminProduct = require('./handlers/admin/product');
@@ -34,15 +34,15 @@ module.exports = function(app) {
   app.get('/products/:store_openid/:product_openid/promotion', product.promotion);
 
   // brand list page
-  app.get('/brands', brand.index);
-  // brand show page
-  app.get('/brands/:id', brand.show);
-  // brand promotion page
-  app.get('/brands/:id/promotion', brand.promotion);
+  //app.get('/brands', brand.index);
+  //// brand show page
+  //app.get('/brands/:id', brand.show);
+  //// brand promotion page
+  //app.get('/brands/:id/promotion', brand.promotion);
 
   // qrcode show pages
-  app.get('/qrcode/scene_id/:scene_id', qrcode.withSceneId);
-  app.get('/qrcode/url/:url', qrcode.withUrl);
+  //app.get('/qrcode/scene_id/:scene_id', qrcode.withSceneId);
+  //app.get('/qrcode/url/:url', qrcode.withUrl);
 
   // admin auth (order sensitive)
   app.get('/admin/login', adminSign.login);

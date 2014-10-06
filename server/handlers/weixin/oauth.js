@@ -13,6 +13,14 @@ var utils = require(appPath + '/../lib/util/utils');
 var YuanheMemberEvent = require(appPath + '/../models/yuanheMemberEvent');
 var YuanheStore = require(appPath + '/../models/yuanheStore');
 
+exports.index = function(req, res) {
+
+};
+
+exports.show = function(req, res) {
+
+};
+
 /**
  * Product promotion handler
  *
