@@ -36,7 +36,7 @@ define(['jquery',
             label: '会员昵称',
             cell: 'string'
           }, {
-            name: 'product.name',
+            name: 'weixin_order_info.product_name',
             label: '订单商品',
             cell: 'string'
           }, {
@@ -119,7 +119,7 @@ define(['jquery',
             name: 'created_at',
             label: '订单创建时间',
             cell: Backgrid.DatetimeCell.extend({
-              includeMilli: true
+              includeMilli: false
             })
           }], {
             model: MyColumn

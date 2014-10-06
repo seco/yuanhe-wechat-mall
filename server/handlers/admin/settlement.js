@@ -4,11 +4,11 @@
  * @author Bobby Tang
  */
 
-var app = require('../app');
+var app = require('../../app');
 var db = app.get('db');
 var dbProxy = app.get('dbProxy');
 var ObjectID = require('mongodb').ObjectID;
-var logger = require('../lib/util/log').getLogger(__filename);
+var logger = require('../../lib/util/log').getLogger(__filename);
 
 exports.index = function(req, res, next) {
   var content = {};

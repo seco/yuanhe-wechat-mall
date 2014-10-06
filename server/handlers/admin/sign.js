@@ -3,10 +3,10 @@
  *
  * @author Bobby Tang
  */
-var app = require('../app');
+var app = require('../../app');
 var dbProxy = app.get('dbProxy');
 var ObjectID = require('mongodb').ObjectID;
-var logger = require('../lib/util/log').getLogger(__filename);
+var logger = require('../../lib/util/log').getLogger(__filename);
 
 exports.checkAuth = function(req, res, next) {
   if (req.session && req.session.role_name) {

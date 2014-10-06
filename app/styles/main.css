@@ -1,3 +1,7 @@
+.backgrid th, .backgrid td {
+  overflow: auto;
+  text-overflow: clip;
+}
 .backgrid th.renderable,
 .backgrid td.renderable {
   display: table-cell;
