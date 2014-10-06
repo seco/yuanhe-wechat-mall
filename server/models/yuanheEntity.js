@@ -41,18 +41,6 @@ pro.initializeAttributes = function() {
 };
 
 /**
- * Check whether an entity exists
- *
- * @public
- */
-pro.exists = function() {
-  if (this.attributes['_id']) {
-    return true;
-  }
-  return false;
-};
-
-/**
  * Return the value of a property
  *
  * @param {String} name
@@ -73,6 +61,51 @@ pro.get = function(name) {
  */
 pro.set = function(name, value) {
   this.attributes[name] = value;
+};
+
+/**
+ * Get object id
+ *
+ * @public
+ *
+ * @return {Object}
+ */
+pro.getId = function() {
+  return this.get('_id');
+};
+
+/**
+ * Check whether an entity exists
+ *
+ * @public
+ */
+pro.exists = function() {
+  if (this.get('_id')) {
+    return true;
+  }
+  return false;
+};
+
+/**
+ * Get created time
+ *
+ * @public
+ *
+ * @return {Date}
+ */
+pro.createdTime = function() {
+  return this.get('created_at');
+};
+
+/**
+ * Get updated time
+ *
+ * @public
+ *
+ * @return {Date}
+ */
+pro.updatedTime = function() {
+  return this.get('updated_at');
 };
 
 /**
@@ -193,28 +226,6 @@ var insertDocument = function(cb) {
     self.set('_id', result[0]._id);
     utils.invokeCallback(cb, null, result);
   });
-};
-
-/**
- * Get created time
- *
- * @public
- *
- * @return {Date}
- */
-pro.createdTime = function() {
-  return this.get('created_at');
-};
-
-/**
- * Get updated time
- *
- * @public
- *
- * @return {Date}
- */
-pro.updatedTime = function() {
-  return this.get('updated_at');
 };
 
 /**

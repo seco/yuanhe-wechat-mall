@@ -154,6 +154,17 @@ pro.setMemberOpenid = function(openid) {
 };
 
 /**
+ * Set store id
+ *
+ * @param {Object} storeId
+ *
+ * @public
+ */
+pro.setStoreId = function(storeId) {
+  this.set('store_id', storeId);
+};
+
+/**
  * Get store id
  *
  * @public
@@ -162,6 +173,28 @@ pro.setMemberOpenid = function(openid) {
  */
 pro.getStoreId = function() {
   return this.get('store_id');
+};
+
+/**
+ * Set store name
+ *
+ * @param {String} storeName
+ *
+ * @public
+ */
+pro.setStoreName = function(storeName) {
+  this.set('store_name', storeName);
+};
+
+/**
+ * Set weixin product id
+ *
+ * @param {String} productId
+ *
+ * @public
+ */
+pro.setWeixinProductId = function(productId) {
+  this.set('weixin_product_id', productId);
 };
 
 /**

@@ -183,7 +183,7 @@ var decisionAHandler = function(callback, context) {
 };
 
 /**
- * Check whether this member exists and has been marked a channel source.
+ * Check whether this member exists and has been marked a channel store.
  *
  * @param {Function} callback
  * @param {Object} context

@@ -122,6 +122,17 @@ pro.setSceneId = function(sceneId) {
 };
 
 /**
+ * Get store name
+ *
+ * @public
+ *
+ * @return {String}
+ */
+pro.getStoreName = function() {
+  return this.get('store_name');
+};
+
+/**
  * Set following
  *
  * @public

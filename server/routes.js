@@ -32,8 +32,8 @@ module.exports = function(app) {
   app.get('/weixin/message/store', gateway.access);
   app.post('/weixin/message/store', gateway.receive);
 
-  // weixin OAuth
-  app.get('/oauth_response/product/:store_id/:product_id', oauth.product);
+  // product promotion page
+  app.get('/product/promotion/:store_openid/:product_openid', product.promotion);
 
   // QR code
   app.get('/qrcode/scene_id/:scene_id', qrcode.showWithSceneId);
