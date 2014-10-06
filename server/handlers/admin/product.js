@@ -23,7 +23,6 @@ var ALL = 0;
 var ONSHELF = 1;
 var OFFSHELF = 2;
 
-
 /**
  * show product list page
  *
@@ -66,7 +65,6 @@ exports.index = function(req, res, next) {
     });
   });
 };
-
 
 /**
  * Refresh products
@@ -117,13 +115,13 @@ var refreshHandler = function(productInfo, cb) {
         decisionAHandler(cb, context);
       }
     ],
-    // update product's weixin product info field
+    // then set the product's weixin product info
     endA: ['decisionA', true,
       function(cb, context) {
         endAHandler(cb, context);
       }
     ],
-    // save new product
+    // save a new product
     endB: ['decisionA', false,
       function(cb, context) {
         endBHandler(cb, context);
@@ -154,7 +152,6 @@ var decisionAHandler = function(callback, context) {
   var productId = productInfo.product_id;
 
   async.waterfall([
-
     function(cb) {
       YuanheProduct.getByProductId(productId, cb);
     }
@@ -188,7 +185,6 @@ var endAHandler = function(callback, context) {
   var productId = productInfo['product_id'];
 
   async.waterfall([
-
     function(cb) {
       productEntity.setWeixinProductId(productId);
       productEntity.setWeixinProductInfo(productInfo);
@@ -218,7 +214,6 @@ var endBHandler = function(callback, context) {
   var productId = productInfo['product_id'];
 
   async.waterfall([
-
     function(cb) {
       productEntity.setWeixinProductId(productId);
       productEntity.setWeixinProductInfo(productInfo);

@@ -5,7 +5,7 @@ define([
 ], function($, _, Backbone) {
 
   var StoreModel = Backbone.Model.extend({
-    urlRoot: '/stores',
+    urlRoot: '/admin/stores',
     idAttribute: "_id"
   });
 

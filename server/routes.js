@@ -1,81 +1,90 @@
 /**
- * routes
+ * Routes
  *
  * @author Bobby Tang, Minix Li
  */
 
-// Load the route handlers
+// load the route handlers
 var routes = require('./handlers');
 
 var gateway = require('./handlers/weixin/message/gateway');
 var oauth = require('./handlers/weixin/oauth');
 var qrcode = require('./handlers/qrcode');
-var adminProduct = require('./handlers/admin/product');
-
-var adminStore = require('./handlers/admin/store');
 var adminOrder = require('./handlers/admin/order');
+var adminProduct = require('./handlers/admin/product');
 var adminSettlement = require('./handlers/admin/settlement');
 var adminSign = require('./handlers/admin/sign');
+var adminStore = require('./handlers/admin/store');
 
 module.exports = function(app) {
-
-  // auth(order sensitive)
-  app.get('/login', adminSign.login);
-  app.post('/signin', adminSign.signin);
-  app.get('/signout', adminSign.signout);
 
   // message from weixin mall public number
   app.get('/weixin/message/mall', gateway.access);
   app.post('/weixin/message/mall', gateway.receive);
+
   // message from store weixin public number
   app.get('/weixin/message/store', gateway.access);
   app.post('/weixin/message/store', gateway.receive);
 
+  // product list page
+  app.get('/products', product.index);
+  // product show page
+  app.get('/products/:store_openid/:product_openid', product.show);
   // product promotion page
-  app.get('/product/promotion/:store_openid/:product_openid', product.promotion);
+  app.get('/products/:store_openid/:product_openid/promotion', product.promotion);
 
-  // QR code
-  app.get('/qrcode/scene_id/:scene_id', qrcode.showWithSceneId);
-  app.get('/qrcode/url/:url', qrcode.showWithUrl);
+  // brand list page
+  app.get('/brands', brand.index);
+  // brand show page
+  app.get('/brands/:id', brand.show);
+  // brand promotion page
+  app.get('/brands/:id/promotion', brand.promotion);
 
-  // product
-  // app.get('/products/:store_id/:product_id', product.show);
+  // qrcode show pages
+  app.get('/qrcode/scene_id/:scene_id', qrcode.withSceneId);
+  app.get('/qrcode/url/:url', qrcode.withUrl);
+
+  // admin auth (order sensitive)
+  app.get('/admin/login', adminSign.login);
+  app.post('/admin/signin', adminSign.signin);
+  app.get('/admin/signout', adminSign.signout);
+
+  // routes below need auth
+  app.all('*', adminSign.checkAuth);
+
+  // manage page
+  app.get('/admin', routes.index);
+
+  /**
+   * RESTful API usage
+   *
+   * GET        /forums              ->  index
+   * GET        /forums/new          ->  new
+   * POST       /forums              ->  create
+   * GET        /forums/:id          ->  show
+   * GET        /forums/:id/edit     ->  edit
+   * PUT        /forums/:id          ->  update
+   * DELETE     /forums/:id          ->  destroy
+   */
+
+  // admin stores
+  app.get('/admin/stores', adminStore.index);         // Backbone.Collection.fetch()
+  app.get('/admin/stores/:id', adminStore.show);      // Backbone.Model.fetch()
+  app.get('/admin/stores/:id/edit', adminStore.edit); // seems useless
+  app.get('/admin/stores/new', adminStore.new);       // seems useless
+  app.post('/admin/stores', adminStore.create);
+  app.put('/admin/stores/:id', adminStore.update);    // Backbone.Model.save()
+  app.delete('/admin/stores/:id', adminStore.destroy);
+
+  // admin products
+  app.get('/admin/products', adminProduct.index);
+  // refresh products
   app.post('/admin/products/refresh', adminProduct.refresh);
 
-  app.get('/linked_items', function(req, res, next){
-    res.render('linked_items');
-  });
-  app.get('/view_items', function(req, res, next){
-    res.render('linked_items');
-  });
-  /**
-   * enable auth
-   * below url need auth
-   */
-  app.all('*', adminSign.checkAuth);
-  // manager
-  app.get('/', routes.index);
+  // admin orders
+  app.get('/admin/orders', adminOrder.index);
 
-  /*
-   *GET     /forums              ->  index
-   *GET     /forums/new          ->  new
-   *POST    /forums              ->  create
-   *GET     /forums/:id          ->  show
-   *GET     /forums/:id/edit     ->  edit
-   *PUT     /forums/:id          ->  update
-   *DELETE  /forums/:id          ->  destroy
-   */
+  // admin settlements
+  app.get('/admin/settlements', adminSettlement.index);
 
-  // stores api
-  app.get('/stores', adminStore.index); // Backbone.Collection.fetch()
-  app.get('/stores/:id', adminStore.show); // Backbone.Model.fetch()
-  app.get('/stores/:id/edit', adminStore.edit); // looks useless
-  app.get('/stores/new', adminStore.new); // looks useless
-  app.post('/stores', adminStore.create);
-  app.put('/stores/:id', adminStore.update); // Backbone.Model.save()
-  app.delete('/stores/:id', adminStore.destroy);
-
-  app.get('/orders', adminOrder.index);
-  app.get('/settlements', adminSettlement.index);
-  app.get('/products', adminProduct.index);
 };

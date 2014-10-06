@@ -7,7 +7,7 @@ define([
 ], function($, _, Backbone, SettlementModel) {
   var SettlementCollection = Backbone.PageableCollection.extend({
     model: SettlementModel,
-    url: "/settlements",
+    url: "/admin/settlements",
 
     // Initial pagination states
     state: {

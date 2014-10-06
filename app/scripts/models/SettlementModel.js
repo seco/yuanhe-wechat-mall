@@ -5,7 +5,7 @@ define([
 ], function($, _, Backbone) {
 
   var SettlementModel = Backbone.Model.extend({
-    urlRoot: '/settlements',
+    urlRoot: '/admin/settlements',
     idAttribute: "_id"
   });
 

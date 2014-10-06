@@ -7,7 +7,7 @@ define([
 ], function($, _, Backbone, ProductModel) {
   var ProductCollection = Backbone.PageableCollection.extend({
     model: ProductModel,
-    url: "/products",
+    url: "/admin/products",
 
     // Initial pagination states
     state: {

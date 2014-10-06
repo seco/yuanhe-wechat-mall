@@ -6,7 +6,7 @@ define([
 ], function($, _, Backbone) {
 
   var OrderModel = Backbone.DeepModel.extend({
-    urlRoot: '/orders',
+    urlRoot: '/admin/orders',
     idAttribute: "_id"
   });
 
