@@ -1,7 +1,7 @@
 /**
  * Administrate products
  *
- * @author Minix Li
+ * @author Minix Li, Bobby Tang
  */
 
 var appPath = process.argv[1];
@@ -12,10 +12,61 @@ var merchantUtil = require(appPath + '/../lib/weixin/merchant');
 var utils = require(appPath + '/../lib/util/utils');
 var YuanheProduct = require(appPath + '/../models/yuanheProduct');
 
+var app = require('../../app');
+var db = app.get('db');
+var dbProxy = app.get('dbProxy');
+var ObjectID = require('mongodb').ObjectID;
+var logger = require('../../lib/util/log').getLogger(__filename);
+
 // product status
 var ALL = 0;
 var ONSHELF = 1;
 var OFFSHELF = 2;
+
+
+/**
+ * show product list page
+ *
+ * @param {Object} req
+ * @param {Object} res
+ *
+ * @public
+ */
+exports.index = function(req, res, next) {
+  var content = {};
+  var limit = req.query.per_page;
+  var skip = (req.query.page - 1) * req.query.per_page;
+  var filter = {};
+
+  logger.info('recevie backgrid request, set filter[' + JSON.stringify(filter) + '], limit[' + limit + '],skip[' + skip + ']');
+
+  dbProxy.collection('products', function(err, col) {
+    if (err) {
+      logger.error(err);
+    }
+    col.count(filter, function(err, count) {
+      if (err) {
+        logger.error(err);
+      }
+      content.total_count = count;
+      col.find(filter, {
+        limit: limit,
+        skip: skip,
+        sort: {
+          created_at: -1
+        }
+      }).toArray(function(err, result) {
+        if (err) {
+          logger.error(err);
+        }
+        content.items = result;
+
+        res.json(content);
+      });
+    });
+  });
+};
+
 
 /**
  * Refresh products
@@ -56,20 +107,28 @@ var refreshHandler = function(productInfo, cb) {
   decisiontree.auto({
     // put product info into context and start decision A
     start: function(cb, context) {
-      utils.invokeCallback(cb, null, true, { 'productInfo': productInfo });
+      utils.invokeCallback(cb, null, true, {
+        'productInfo': productInfo
+      });
     },
     // check whether exists a product with the product id
-    decisionA: ['start', true, function(cb, context) {
-      decisionAHandler(cb, context);
-    }],
+    decisionA: ['start', true,
+      function(cb, context) {
+        decisionAHandler(cb, context);
+      }
+    ],
     // update product's weixin product info field
-    endA: ['decisionA', true, function(cb, context) {
-      endAHandler(cb, context);
-    }],
+    endA: ['decisionA', true,
+      function(cb, context) {
+        endAHandler(cb, context);
+      }
+    ],
     // save new product
-    endB: ['decisionA', false, function(cb, context) {
-      endBHandler(cb, context);
-    }],
+    endB: ['decisionA', false,
+      function(cb, context) {
+        endBHandler(cb, context);
+      }
+    ],
   }, function(err, context) {
     if (err) {
       utils.invokeCallback(cb, err);
@@ -95,6 +154,7 @@ var decisionAHandler = function(callback, context) {
   var productId = productInfo.product_id;
 
   async.waterfall([
+
     function(cb) {
       YuanheProduct.getByProductId(productId, cb);
     }
@@ -104,7 +164,9 @@ var decisionAHandler = function(callback, context) {
       return;
     }
 
-    if (productEntity.exists()) { cond = true; }
+    if (productEntity.exists()) {
+      cond = true;
+    }
     handlerCtx.productEntity = productEntity;
 
     utils.invokeCallback(callback, null, cond, handlerCtx);
@@ -126,6 +188,7 @@ var endAHandler = function(callback, context) {
   var productId = productInfo['product_id'];
 
   async.waterfall([
+
     function(cb) {
       productEntity.setWeixinProductId(productId);
       productEntity.setWeixinProductInfo(productInfo);
@@ -155,6 +218,7 @@ var endBHandler = function(callback, context) {
   var productId = productInfo['product_id'];
 
   async.waterfall([
+
     function(cb) {
       productEntity.setWeixinProductId(productId);
       productEntity.setWeixinProductInfo(productInfo);
