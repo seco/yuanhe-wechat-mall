@@ -24,10 +24,6 @@ module.exports = function(app) {
   app.get('/login', sign.login);
   app.post('/signin', sign.signin);
   app.get('/signout', sign.signout);
-  //app.all('*', sign.checkAuth);
-
-  // manager
-  app.get('/', routes.index);
 
   // message from weixin mall public number
   app.get('/weixin/message/mall', gateway.access);
@@ -47,6 +43,18 @@ module.exports = function(app) {
   // app.get('/products/:store_id/:product_id', product.show);
   app.post('/admin/products/refresh', adminProduct.refresh);
 
+  app.get('/linked_items', function(req, res, next){
+    res.render('linked_items');
+  });
+  app.get('/view_items', function(req, res, next){
+    res.render('view_items');
+  });
+  /**
+   * enable auth
+   */
+  app.all('*', sign.checkAuth);
+  // manager
+  app.get('/', routes.index);
 
   /*
    *GET     /forums              ->  index
