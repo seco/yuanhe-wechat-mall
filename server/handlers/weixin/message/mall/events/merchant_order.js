@@ -67,10 +67,11 @@ MsgHandler.prototype.handle = function(req, res, msg, cb) {
   var orderId = msg['xml']['OrderId'];
   var productId = msg['xml']['ProductId'];
 
+  // put openid, order id and product id into context
+  var startCtx = { 'openid': openid, 'orderId': orderId, 'productId': productId };
+
   decisiontree.auto({
-    // put openid, order id and product id into context
-    var startCtx = {'openid': openid, 'orderId': orderId, 'productId': productId };
-    // and and start decision A
+    // and then start decision A
     start: function(cb, context) {
       utils.invokeCallback(cb, null, true, startCtx);
     },
