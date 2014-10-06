@@ -17,12 +17,12 @@ exports.checkAuth = function(req, res, next) {
     next();
   } else {
     logger.warn('fail to login due to lack of auth');
-    res.render('login');
+    res.render('admin/login');
   }
 };
 
 exports.login = function(req, res, next) {
-  res.render('login');
+  res.render('admin/login');
 };
 
 exports.signin = function(req, res, next) {
@@ -45,10 +45,10 @@ exports.signin = function(req, res, next) {
           req.session.act_displayname = doc.act_displayname;
 
           logger.info('account[_id=' + doc._id + ', act_name=' + doc.act_name + '] has signed in successfully, then render to index page.');
-          res.render('index', doc);
+          res.render('admin/index', doc);
         } else {
           logger.info('no act_name[' + act_name + '] has been found, render to login page.');
-          res.render('login', {
+          res.render('admin/login', {
             status: 'error',
             errMsg: '用户名或者密码不正确，请重新输入。'
           });
@@ -66,5 +66,5 @@ exports.signout = function(req, res, next) {
     if (err)
       logger.error(err);
   });
-  res.redirect('/login');
+  res.redirect('/admin/login');
 };

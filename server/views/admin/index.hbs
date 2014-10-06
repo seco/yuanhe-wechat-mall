@@ -70,7 +70,7 @@
                 </div>
                 -->
                 <div class="pull-right">
-                  <a href="/signout" class="btn btn-default btn-flat">注销</a>
+                  <a href="/admin/signout" class="btn btn-default btn-flat">注销</a>
                 </div>
               </li>
             </ul>
@@ -108,7 +108,7 @@
         <!-- sidebar menu: : style can be found in sidebar.less -->
         <ul class="sidebar-menu">
           <li class="active">
-            <a href="/#dashboard">
+            <a href="/admin/#dashboard">
               <i class="fa fa-dashboard"></i>  <span>后台面板</span>
             </a>
           </li>
@@ -119,7 +119,7 @@
               <i class="fa fa-angle-left pull-right"></i>
             </a>
             <ul class="treeview-menu">
-              <li><a href="/#products"><i class="fa fa-angle-double-right"></i> 查看商品</a>
+              <li><a href="/admin/#products"><i class="fa fa-angle-double-right"></i> 查看商品</a>
               </li>
             </ul>
           </li>
@@ -130,7 +130,7 @@
               <i class="fa fa-angle-left pull-right"></i>
             </a>
             <ul class="treeview-menu">
-              <li><a href="/#stores"><i class="fa fa-angle-double-right"></i> 查看店铺</a>
+              <li><a href="/admin/#stores"><i class="fa fa-angle-double-right"></i> 查看店铺</a>
               </li>
             </ul>
           </li>
@@ -141,9 +141,9 @@
               <i class="fa fa-angle-left pull-right"></i>
             </a>
             <ul class="treeview-menu">
-              <li><a href="/#orders"><i class="fa fa-angle-double-right"></i> 查看订单</a>
+              <li><a href="/admin/#orders"><i class="fa fa-angle-double-right"></i> 查看订单</a>
               </li>
-              <li><a href="/#settlements"><i class="fa fa-angle-double-right"></i> 佣金结算</a>
+              <li><a href="/admin/#settlements"><i class="fa fa-angle-double-right"></i> 佣金结算</a>
               </li>
             </ul>
           </li>
@@ -153,9 +153,6 @@
               <span>品牌动态界面</span>
               <i class="fa fa-angle-left pull-right"></i>
             </a>
-            <ul class="treeview-menu">
-              <li><a href="#"><i class="fa fa-angle-double-right"></i> Morris</a>
-              </li>
           </li>
           </ul>
           </li>
@@ -182,7 +179,7 @@
 
   <script src="/bower_components/requirejs/require.js"></script>
   <script>
-    require(['./scripts/init'], function(init) {
+    require(['../scripts/init'], function(init) {
       require(['./main']);
     });
   </script>

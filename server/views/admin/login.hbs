@@ -24,7 +24,7 @@
 
   <div class="form-box" id="login-box">
     <div class="header">元合服饰微信商城登录</div>
-    <form action="/signin" method="post">
+    <form action="/admin/signin" method="post">
       <div class="body bg-gray">
         <div class="form-group">
           <input type="text" name="act_name" class="form-control" placeholder="用户名" />
@@ -59,7 +59,7 @@
 
   <script src="/bower_components/requirejs/require.js"></script>
   <script>
-    require(['./scripts/init'], function(init) {
+    require(['../scripts/init'], function(init) {
       require(['./login']);
     });
   </script>
