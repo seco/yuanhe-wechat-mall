@@ -117,7 +117,7 @@ pro.setChannelStore = function(storeId) {
 };
 
 /**
- * Check whether channel store is set
+ * Check whether channel store id is set
  *
  * @public
  *

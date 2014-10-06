@@ -44,41 +44,39 @@ MsgHandler.prototype.handle = function(req, res, msg, cb) {
     decisionA: ['start', true, function(cb, context) {
       decisionAHandler(cb, context);
     }],
-    // check whether this member has been set a channel store id
+    // check whether this member has been marked a channel store
     decisionB: ['decisionA', true, function(cb, context) {
       decisionBHandler(cb, context);
     }],
-    // return if this member has been set a channel store id
+    // then return if this member has been marked a channel store
     endA: ['decisionB', true, function(cb, context) {
       utils.invokeCallback(cb, null);
     }],
-    // Check whether exists member view event in the past 30 days if
-    // channel store id not set.
+    // check whether exists member view event in the past 30 days
     decisionC: ['decisionB', false, function(cb, context) {
       decisionCHandler(cb, context);
     }],
-    // return if member view event not exists
+    // then return if member view event not exists
     endB: ['decisionC', false, function(cb, context) {
       utils.invokeCallback(cb, null);
     }],
-    // update member's channel store id if member view event exists
+    // then set this member's channel store if member view event exists
     endC: ['decisionC', true, function(cb, context) {
       endCHandler(cb, context);
     }],
-    // save new member
+    // then save a new member
     decisionD: ['decisionA', false, function(cb, context) {
       decisionDHandler(cb, context);
     }],
-    // Check whether exists member view event in the past 30 days if
-    // channel store id not set.
+    // check whether exists any member view event in the past 30 days
     decisionE: ['decisionD', true, function(cb, context) {
       decisionEHandler(cb, context);
     }],
-    // return if member view event not exists
+    // then return if member view event not exists
     endD: ['decisionE', false, function(cb, context) {
       utils.invokeCallback(cb, null);
     }],
-    // update member's channel store id if member view event exists
+    // then set this member's channel store if member view event exists
     endE: ['decisionE', true, function(cb, context) {
       endEHandler(cb, context);
     }]
@@ -108,7 +106,7 @@ var decisionAHandler = function(callback, context) {
   async.waterfall([
     function(cb) {
       var eventEntity = new YuanheMemberEvent();
-      eventEntity.setViewType();
+      eventEntity.setSubscribeType();
       eventEntity.setMemberOpenid(openid);
       eventEntity.save(cb);
     },
@@ -122,14 +120,14 @@ var decisionAHandler = function(callback, context) {
     }
 
     if (memberEntity.exists()) { cond = true; }
-    handlerCtx = { 'memberEntity': memberEntity };
+    handlerCtx.memberEntity =  memberEntity;
 
     utils.invokeCallback(callback, null, cond, handlerCtx);
   });
 };
 
 /**
- * Check whether this member has been set a channel store id
+ * Check whether this member has been marked a channel store
  *
  * @param {Function} callback
  * @param {Object} context
@@ -153,17 +151,14 @@ var decisionBHandler = function(callback, context) {
       return;
     }
 
-    if (memberEntity.hasChannelStore()) {
-      cond = true;
-    }
+    if (memberEntity.hasChannelStore()) { cond = true; }
 
     utils.invokeCallback(callback, null, cond, handlerCtx);
   });
 };
 
 /**
- * Check whether exists member view event in the past 30 days if
- * channel store id not set.
+ * Check whether exists member view event in the past 30 days
  *
  * @param {Function} callback
  * @param {Object} context
@@ -187,17 +182,18 @@ var decisionCHandler = function(callback, context) {
     }
 
     if (eventEntity.exists()) {
-      if (utils.checkInPastDays(eventEntity.createdTime(), 30)) { cond = true; }
+      if (utils.checkInPastDays(eventEntity.createdTime(), 30)) {
+        cond = true;
+      }
     }
-    handlerCtx = { 'eventEntity': eventEntity };
+    handlerCtx.eventEntity = eventEntity;
 
     utils.invokeCallback(callback, null, cond, handlerCtx);
   });
 };
 
 /**
- * Update member's channel store if member view event
- * exists.
+ * Set member's channel store if member view event exists
  *
  * @param {Function} callback
  * @param {Object} context
@@ -210,9 +206,8 @@ var endCHandler = function(callback, context) {
 
   async.waterfall([
     function(cb) {
-      memberEntity.setChannelStore(
-        eventEntity.getStoreId(), cb
-      );
+      memberEntity.setChannelStore(eventEntity.getStoreId());
+      memberEntity.save(cb);
     }
   ], function(err, result) {
     if (err) {
@@ -224,7 +219,7 @@ var endCHandler = function(callback, context) {
 };
 
 /**
- * Save new member
+ * Save a new member
  *
  * @param {Function} callback
  * @param {Object} context
@@ -254,8 +249,7 @@ var decisionDHandler = function(callback, context) {
 };
 
 /**
- * Check whether exists member view event in the past 30 days if
- * channel store id not set.
+ * Check whether exists member view event in the past 30 days
  *
  * @param {Function} callback
  * @param {Object} context
@@ -279,17 +273,18 @@ var decisionEHandler = function(callback, context) {
     }
 
     if (eventEntity.exists()) {
-      if (utils.checkInPastDays(eventEntity.createdTime(), 30)) { cond = true; }
+      if (utils.checkInPastDays(eventEntity.createdTime(), 30)) {
+        cond = true;
+      }
     }
-    handlerCtx = { 'eventEntity': eventEntity };
+    handlerCtx.eventEntity = eventEntity;
 
     utils.invokeCallback(callback, null, cond, handlerCtx);
   });
 };
 
 /**
- * Update member's channel store if member view event
- * exists.
+ * Set this member's channel store if member view event exists
  *
  * @param {Function} callback
  * @param {Object} context
@@ -302,9 +297,8 @@ var endEHandler = function(callback, context) {
 
   async.waterfall([
     function(cb) {
-      memberEntity.setChannelStore(
-        eventEntity.getStoreId(), cb
-      );
+      memberEntity.setChannelStore(eventEntity.getStoreId());
+      memberEntity.save(cb);
     }
   ], function(err, result) {
     if (err) {

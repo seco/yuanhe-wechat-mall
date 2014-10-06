@@ -18,11 +18,11 @@
  *
  *   Decision A check whether the member has viewed the product promotion page in the past 30 days.
  *
- *   Decision B check whether the member exists and has been marked a channel source.
+ *   Decision B check whether the member exists and has been marked a channel store.
  *
- *   Decision C check whether the member exists and has been marked a channel source.
+ *   Decision C check whether the member exists and has been marked a channel store.
  *
- *   Decision D check whether the member has subscribed yuanhe in the past 30 days.
+ *   Decision D check whether the member has subscribed yuanhe mall in the past 30 days.
  *
  *   Decision E check whether the member has viewed the product promotion page in the past.
  *
@@ -68,18 +68,17 @@ MsgHandler.prototype.handle = function(req, res, msg, cb) {
   var productId = msg['xml']['ProductId'];
 
   decisiontree.auto({
-    // put openid into context and start decision A
+    // put openid, order id and product id into context
+    var startCtx = {'openid': openid, 'orderId': orderId, 'productId': productId };
+    // and and start decision A
     start: function(cb, context) {
-      utils.invokeCallback(cb, null, true, {
-        'orderId': orderId, 'productId': productId, 'openid': openid
-      });
+      utils.invokeCallback(cb, null, true, startCtx);
     },
-    // check whether exists member view event in the past 30 days
+    // Check whether exists member view event in the past 30 days.
     decisionA: ['start', true, function(cb, context) {
       decisionAHandler(cb, context);
     }],
-    // Check whether this member exists and has been marked a
-    // channel source.
+    // Check whether this member exists and has been marked a channel store.
     decisionB: ['decisionA', true, function(cb, context) {
       decisionBHandler(cb, context);
     }],
@@ -91,8 +90,7 @@ MsgHandler.prototype.handle = function(req, res, msg, cb) {
     endB: ['decisionB', false, function(cb, context) {
       endBHandler(cb, context);
     }],
-    // Check whether this member exists and has been marked a
-    // channel source.
+    // Check whether this member exists and has been marked a channel store.
     decisionC: ['decisionA', false, function(cb, context) {
       decisionCHandler(cb, context);
     }],
@@ -100,8 +98,7 @@ MsgHandler.prototype.handle = function(req, res, msg, cb) {
     endC: ['decisionC', true, function(cb, context) {
       endCHandler(cb, context);
     }],
-    // Check whether the member has subscribed yuanhe in the past
-    // 30 days.
+    // Check whether the member has subscribed yuanhe mall in the past 30 days.
     decisionD: ['decisionC', false, function(cb, context) {
       decisionDHandler(cb, context);
     }],
@@ -109,8 +106,7 @@ MsgHandler.prototype.handle = function(req, res, msg, cb) {
     endD: ['decisionD', false, function(cb, context) {
       endDHandler(cb, context);
     }],
-    // Check whether the member has viewed the product promotion page
-    // in the past.
+    // Check whether the member has viewed the product promotion page in the past.
     decisionE: ['decisionD', true, function(cb, context) {
       decisionEHandler(cb, context);
     }],
@@ -132,7 +128,7 @@ MsgHandler.prototype.handle = function(req, res, msg, cb) {
 };
 
 /**
- * Check whether exists member view event in the past 30 days
+ * Check whether exists member view event in the past 30 days.
  *
  * @param {Function} callback
  * @param {Object} context
@@ -143,28 +139,28 @@ var decisionAHandler = function(callback, context) {
   var cond = false;
   var handlerCtx = {};
 
+  var openid = context.openid;
   var orderId = context.orderId;
   var productId = context.productId;
-  var openid = context.openid;
 
   async.waterfall([
     // get order info from weixin
     function(cb) {
       merchant.getOrderInfoById(orderId, cb);
     },
-    // save new order
+    // and save a new order
     function(orderInfo, cb) {
-      var order = new YuanheOrder();
+      var orderEntity = new YuanheOrder();
 
-      // put order into context
-      handlerCtx.order = order;
+      // put the new order entity into context
+      handlerCtx.orderEntity = orderEntity;
 
-      order.setWeixinOrderId(orderId);
-      order.setWeixinOrderInfo(orderInfo);
-      order.setMember(openid, orderInfo.buyer_nick);
-      order.save(cb);
+      orderEntity.setWeixinOrderId(orderId);
+      orderEntity.setWeixinOrderInfo(orderInfo);
+      orderEntity.setMember(openid, orderInfo.buyer_nick);
+      orderEntity.save(cb);
     },
-    // check member event
+    // and then check whether exists member view event
     function(result, cb) {
       YuanheMemberEvent.getLastViewEvent2(openid, productId, cb);
     }
@@ -175,7 +171,9 @@ var decisionAHandler = function(callback, context) {
     }
 
     if (eventEntity.exists()) {
-      if (utils.checkInPastDays(eventEntity.createdTime(), 30)) { cond = true; }
+      if (utils.checkInPastDays(eventEntity.createdTime(), 30)) {
+        cond = true;
+      }
     }
     handlerCtx.eventEntity = eventEntity;
 
@@ -184,8 +182,7 @@ var decisionAHandler = function(callback, context) {
 };
 
 /**
- * Check whether this member exists and has been marked a
- * channel source.
+ * Check whether this member exists and has been marked a channel source.
  *
  * @param {Function} callback
  * @param {Object} context
@@ -202,16 +199,18 @@ var decisionBHandler = function(callback, context) {
     function(cb) {
       YuanheMember.getByOpenid(openid, cb);
     }
-  ], function(err, member) {
+  ], function(err, memberEntity) {
     if (err) {
       utils.invokeCallback(callback, err);
       return;
     }
 
-    if (member.exists()) {
-      if (member.hasChannelStore()) { cond = true; }
+    if (memberEntity.exists()) {
+      if (memberEntity.hasChannelStore()) {
+        cond = true;
+      }
     }
-    handlerCtx = { 'member': member };
+    handlerCtx.memberEntity = memberEntity;
 
     utils.invokeCallback(callback, null, cond, handlerCtx);
   });
@@ -226,16 +225,16 @@ var decisionBHandler = function(callback, context) {
  * @private
  */
 var endAHandler = function(callback, context) {
-  var order = context.order;
+  var orderEntity = context.orderEntity;
 
-  var member = context.member;
+  var memberEntity = context.memberEntity;
   var eventEntity = context.eventEntity;
 
   async.waterfall([
     function(cb) {
-      order.setSalesStore(eventEntity.getStoreId());
-      order.setChannelStore(member.getChannelStore());
-      order.save(cb);
+      orderEntity.setSalesStore(eventEntity.getStoreId());
+      orderEntity.setChannelStore(memberEntity.getChannelStore());
+      orderEntity.save(cb);
     }
   ], function(err, result) {
     if (err) {
@@ -255,19 +254,22 @@ var endAHandler = function(callback, context) {
  * @private
  */
 var endBHandler = function(callback, context) {
-  var order = context.order;
+  var orderEntity = context.orderEntity;
 
-  var member = context.member;
+  var memberEntity = context.memberEntity;
   var eventEntity = context.eventEntity;
 
   async.waterfall([
     function(cb) {
-      member.setChannelStore(eventEntity.getStoreId());
-      member.save(cb);
+      if (!memberEntity.exists()) {
+        memberEntity.setOpenid(context.openid);
+      }
+      memberEntity.setChannelStore(eventEntity.getStoreId());
+      memberEntity.save(cb);
     },
     function(result, cb) {
-      order.setBothStores(eventEntity.getStoreId());
-      order.save(cb);
+      orderEntity.setBothStores(eventEntity.getStoreId());
+      orderEntity.save(cb);
     }
   ], function(err, result) {
     if (err) {
@@ -279,8 +281,7 @@ var endBHandler = function(callback, context) {
 };
 
 /**
- * Check whether this member exists and has been marked a
- * channel source.
+ * Check whether this member exists and has been marked a channel store.
  *
  * @param {Function} callback
  * @param {Object} context
@@ -297,16 +298,18 @@ var decisionCHandler = function(callback, context) {
     function(cb) {
       YuanheMember.getByOpenid(openid, cb);
     }
-  ], function(err, member) {
+  ], function(err, memberEntity) {
     if (err) {
       utils.invokeCallback(callback, err);
       return;
     }
 
-    if (member.exists()) {
-      if (member.hasChannelStore()) { cond = true; }
+    if (memberEntity.exists()) {
+      if (memberEntity.hasChannelStore()) {
+        cond = true;
+      }
     }
-    handlerCtx = { 'member': member };
+    handlerCtx.memberEntity = memberEntity;
 
     utils.invokeCallback(callback, null, cond, handlerCtx);
   });
@@ -321,14 +324,14 @@ var decisionCHandler = function(callback, context) {
  * @private
  */
 var endCHandler = function(callback, context) {
-  var order = context.order;
-  var member = context.member;
+  var orderEntity = context.orderEntity;
+  var memberEntity = context.memberEntity;
 
   async.waterfall([
     function(cb) {
-      order.setSalesStore();
-      order.setChannelStore(member.getChannelStore());
-      order.save(cb);
+      orderEntity.setSalesStore();
+      orderEntity.setChannelStore(memberEntity.getChannelStore());
+      orderEntity.save(cb);
     }
   ], function(err, result) {
     if (err) {
@@ -340,8 +343,7 @@ var endCHandler = function(callback, context) {
 };
 
 /**
- * Check whether the member has subscribed yuanhe in the past
- * 30 days.
+ * Check whether the member has subscribed yuanhe mall in the past 30 days.
  *
  * @param {Function} callback
  * @param {Object} context
@@ -363,9 +365,13 @@ var decisionDHandler = function(callback, context) {
       utils.invokeCallback(callback, err);
       return;
     }
+
     if (eventEntity.exists()) {
-      if (utils.checkInPastDays(eventEntity.createdTime(), 30)) { cond = true; }
+      if (utils.checkInPastDays(eventEntity.createdTime(), 30)) {
+        cond = true;
+      }
     }
+
     utils.invokeCallback(callback, null, cond, handlerCtx);
   });
 };
@@ -379,17 +385,20 @@ var decisionDHandler = function(callback, context) {
  * @private
  */
 var endDHandler = function(callback, context) {
-  var order = context.order;
-  var member = context.member;
+  var orderEntity = context.orderEntity;
+  var memberEntity = context.memberEntity;
 
   async.waterfall([
     function(cb) {
-      member.setChannelStore();
-      member.save(cb);
+      if (!memberEntity.exists()) {
+        memberEntity.setOpenid(context.openid);
+      }
+      memberEntity.setChannelStore();
+      memberEntity.save(cb);
     },
     function(result, cb) {
-      order.setBothStores();
-      order.save(cb);
+      orderEntity.setBothStores();
+      orderEntity.save(cb);
     }
   ], function(err, result) {
     if (err) {
@@ -430,19 +439,20 @@ var decisionEHandler = function(callback, context) {
  * @private
  */
 var endEHandler = function(callback, context) {
-  var order = context.order;
-  var member = context.member;
+  var orderEntity = context.orderEntity;
+
+  var memberEntity = context.memberEntity;
   var eventEntity = context.eventEntity;
 
   async.waterfall([
     function(cb) {
-      member.setChannelStore(eventEntity.getStoreId());
-      member.save(cb);
+      memberEntity.setChannelStore(eventEntity.getStoreId());
+      memberEntity.save(cb);
     },
     function(result, cb) {
-      order.setSalesStore(eventEntity.getStoreId());
-      order.setChannelStore();
-      order.save(cb);
+      orderEntity.setSalesStore(eventEntity.getStoreId());
+      orderEntity.setChannelStore();
+      orderEntity.save(cb);
     }
   ], function(err, result) {
     if (err) {
@@ -462,17 +472,17 @@ var endEHandler = function(callback, context) {
  * @private
  */
 var endFHandler = function(callback, context) {
-  var order = context.order;
-  var member = context.member;
+  var orderEntity = context.orderEntity;
+  var memberEntity = context.memberEntity;
 
   async.waterfall([
     function(cb) {
-      member.setChannelStore();
-      member.save(cb);
+      memberEntity.setChannelStore();
+      memberEntity.save(cb);
     },
     function(result, cb) {
-      order.setBothStores();
-      order.save();
+      orderEntity.setBothStores();
+      orderEntity.save();
     }
   ], function(err, result) {
     if (err) {

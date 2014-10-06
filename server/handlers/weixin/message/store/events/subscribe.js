@@ -44,11 +44,11 @@ MsgHandler.prototype.handle = function(req, res, msg, cb) {
     decisionA: ['start', true, function(cb, context) {
       decisionAHandler(cb, context);
     }],
-    // update store's status
+    // then update the store's status
     endA: ['decisionA', true, function(cb, context) {
       endAHandler(cb, context);
     }],
-    // save new store
+    // or save a new store
     endB: ['decisionA', false, function(cb, context) {
       endBHandler(cb, context);
     }]
@@ -62,7 +62,7 @@ MsgHandler.prototype.handle = function(req, res, msg, cb) {
 };
 
 /**
- * Check whether exists a store with the openid
+ * Check whether exists a store with the given openid
  *
  * @param {Function} callback
  * @param {Object} context
@@ -82,14 +82,14 @@ var decisionAHandler = function(callback, context) {
     }
 
     if (storeEntity.exists()) { cond = true; }
-    handlerCtx = { 'storeEntity': storeEntity };
+    handlerCtx.toreEntity = storeEntity;
 
     utils.invokeCallback(callback, null, cond, handlerCtx);
   });
 };
 
 /**
- * Update store's status
+ * Update the store's status
  *
  * @param {Function} callback
  * @param {Object} context
@@ -114,7 +114,7 @@ var endAHandler = function(callback, context) {
 };
 
 /**
- * Save new store
+ * Save a new store
  *
  * @param {Function} callback
  * @param {Object} context

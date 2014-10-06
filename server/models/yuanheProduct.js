@@ -107,7 +107,7 @@ pro.loadByProductId = function(productId, cb) {
     },
     function(collection, cb) {
       collection.findOne(
-        { 'weixin_product_info.product_id': productId }, cb
+        { weixin_product_id: productId }, cb
       );
     }
   ], function(err, doc) {

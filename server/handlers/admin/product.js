@@ -8,7 +8,7 @@ var appPath = process.argv[1];
 
 var async = require('async');
 var decisiontree = require(appPath + '/../lib/util/decisionTree');
-var merchant = require(appPath + '/../lib/weixin/merchant');
+var merchantUtil = require(appPath + '/../lib/weixin/merchant');
 var utils = require(appPath + '/../lib/util/utils');
 var YuanheProduct = require(appPath + '/../models/yuanheProduct');
 
@@ -26,7 +26,8 @@ var OFFSHELF = 2;
  * @public
  */
 exports.refresh = function(req, res) {
-  merchant.getProductsByStatus(ONSHELF, function(err, productsInfo) {
+  // refresh product one by one
+  merchantUtil.getProductsByStatus(ONSHELF, function(err, productsInfo) {
     var index = 0;
     var next = function(err) {
       if (err) {
@@ -104,7 +105,7 @@ var decisionAHandler = function(callback, context) {
     }
 
     if (productEntity.exists()) { cond = true; }
-    handlerCtx = { 'productEntity': productEntity };
+    handlerCtx.productEntity = productEntity;
 
     utils.invokeCallback(callback, null, cond, handlerCtx);
   });
@@ -122,8 +123,11 @@ var endAHandler = function(callback, context) {
   var productInfo = context.productInfo;
   var productEntity = context.productEntity;
 
+  var productId = productInfo['product_id'];
+
   async.waterfall([
     function(cb) {
+      productEntity.setWeixinProductId(productId);
       productEntity.setWeixinProductInfo(productInfo);
       productEntity.save(cb);
     }
@@ -148,8 +152,11 @@ var endBHandler = function(callback, context) {
   var productInfo = context.productInfo;
   var productEntity = context.productEntity;
 
+  var productId = productInfo['product_id'];
+
   async.waterfall([
     function(cb) {
+      productEntity.setWeixinProductId(productId);
       productEntity.setWeixinProductInfo(productInfo);
       productEntity.save(cb);
     }
