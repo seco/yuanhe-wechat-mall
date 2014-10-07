@@ -10,5 +10,7 @@
   "password": "password",
 
   "yuanhe_store_id": "54317240074031000016bd43",
-  "yuanhe_store_name": "yuanhe"
+  "yuanhe_store_name": "yuanhe",
+
+  "site_url": "http://yuanhe.duapp.com"
 }

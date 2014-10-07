@@ -15,9 +15,18 @@ var dbProxy = require('../app').get('dbProxy');
 var utils = require('../lib/util/utils');
 var YuanheEntity = require('./yuanheEntity');
 
-// YuanheProduct constructor
-YuanheProduct = function() {
+/**
+ * YuanheProduct constructor
+ *
+ * @param {Null|Object} doc
+ *
+ * @public
+ */
+YuanheProduct = function(doc) {
   initializeAttributes.apply(this);
+  if (doc) {
+    this.drawAttrFromDoc(doc);
+  }
 };
 
 // inherit from YuanheEntity
@@ -50,6 +59,27 @@ YuanheProduct.getByProductId = function(productId, cb) {
   });
 };
 
+/**
+ * Get all products
+ *
+ * @param {Function} cb
+ *
+ * @public
+ */
+YuanheProduct.getAllProducts = function(cb) {
+  var result = [];
+  YuanheEntity.getAllEntities.apply(this, [function(err, docs) {
+    if (err) {
+      utils.invokeCallback(cb, err);
+      return;
+    }
+    for (var key in docs) {
+      result.push(new YuanheProduct(docs[key]));
+    }
+    utils.invokeCallback(cb, null, result);
+  }]);
+};
+
 // INSTANCE METHODS //////////////////////////////////////////////////////////
 
 var pro = YuanheProduct.prototype;
@@ -57,9 +87,11 @@ var pro = YuanheProduct.prototype;
 /**
  * Initialize the attributes array
  *
+ * @param {Object} doc
+ *
  * @private
  */
-var initializeAttributes = function() {
+var initializeAttributes = function(doc) {
   YuanheEntity.prototype.initializeAttributes.apply(this);
 
   this.attributes['weixin_product_id'] = null;
@@ -76,6 +108,17 @@ var initializeAttributes = function() {
  */
 pro.setWeixinProductId = function(productId) {
   this.set('weixin_product_id', productId);
+};
+
+/**
+ * Get weixin product id
+ *
+ * @public
+ *
+ * @return {String}
+ */
+pro.getWeixinProductId = function() {
+  return this.get('weixin_product_id');
 };
 
 /**

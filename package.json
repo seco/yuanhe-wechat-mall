@@ -61,7 +61,6 @@
   "scripts": {
     "start": "node server/app.js",
     "preinstall": "npm install tmp@0.0.23",
-    "postinstall": "./node_modules/bower/bin/bower install --config.interactive=false",
-    "test": "./node_modules/.bin/mocha"
+    "postinstall" : "./node_modules/bower/bin/bower install --config.interactive=false"
   }
 }

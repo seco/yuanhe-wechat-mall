@@ -11,6 +11,7 @@ var dbProxy = require(appPath).get('dbProxy');
 var oauthUtil = require(appPath + '/../lib/weixin/oauth');
 var utils = require(appPath + '/../lib/util/utils');
 var YuanheMemberEvent = require(appPath + '/../models/yuanheMemberEvent');
+var YuanheProduct = require(appPath + '/../models/YuanheProduct');
 var YuanheStore = require(appPath + '/../models/yuanheStore');
 
 /**
@@ -20,7 +21,22 @@ var YuanheStore = require(appPath + '/../models/yuanheStore');
  * @param {Object} res
  */
 exports.index = function(req, res) {
+  var storeOpenid = req.params.store_openid;
 
+  async.waterfall([
+    function(cb) {
+      YuanheProduct.getAllProducts(cb);
+    }
+  ], function(err, products) {
+    if (err) {
+      res.status(500).end();
+      return;
+    }
+    for (var key in products) {
+      var product = products[key];
+      var productId = product.getWeixinProductId();
+    }
+  });
 };
 
 /**
@@ -30,7 +46,8 @@ exports.index = function(req, res) {
  * @param {Object} res
  */
 exports.show = function(req, res) {
-
+  var storeOpenid = req.params.store_openid;
+  var weixinProductId = req.params.product_id;
 };
 
 /**
@@ -41,7 +58,7 @@ exports.show = function(req, res) {
  */
 exports.promotion = function(req, res) {
   var storeOpenid = req.params.store_openid;
-  var weixinProductId = req.params.weixin_product_id;
+  var weixinProductId = req.params.product_id;
 
   var eventEntity = new YuanheMemberEvent();
 

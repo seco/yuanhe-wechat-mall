@@ -23,6 +23,32 @@ YuanheEntity = function() {
 // inherit from YuanheData
 YuanheData.extend(YuanheEntity);
 
+/**
+ * Get all entities
+ *
+ * @param {Function} cb
+ *
+ * @protected
+ */
+YuanheEntity.getAllEntities = function(cb) {
+  var col_name = this.col_name;
+
+  async.waterfall([
+    function(cb) {
+      dbProxy.collection(col_name, cb);
+    },
+    function(collection, cb) {
+      collection.find().toArray(cb);
+    }
+  ], function(err, docs) {
+    if (err) {
+      utils.invokeCallback(cb, err);
+      return;
+    }
+    utils.invokeCallback(cb, null, docs);
+  });
+};
+
 // INSTANCE METHODS //////////////////////////////////////////////////////////
 
 var pro = YuanheEntity.prototype;
@@ -148,9 +174,7 @@ pro.load = function(_id, cb) {
  */
 pro.drawAttrFromDoc = function(doc) {
   for (var key in doc) {
-    if (key in this.attributes) {
-      this.attributes[key] = doc[key];
-    }
+    this.attributes[key] = doc[key];
   }
 };
 

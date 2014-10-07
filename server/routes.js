@@ -28,11 +28,11 @@ module.exports = function(app) {
   app.post('/weixin/message/store', gateway.receive);
 
   // product list page
-  app.get('/products', product.index);
+  app.get('/products/:store_openid', product.index);
   // product show page
-  app.get('/products/:store_openid/:product_openid', product.show);
+  app.get('/products/:store_openid/:product_id', product.show);
   // product promotion page
-  app.get('/products/:store_openid/:product_openid/promotion', product.promotion);
+  app.get('/products/:store_openid/:product_id/promotion', product.promotion);
 
   // brand list page
   app.get('/brands', brand.index);
