@@ -3,7 +3,7 @@
 
 <head>
   <meta charset="UTF-8">
-  <title>元合服饰| 微信商城</title>
+  <title>元合服饰 | 微信商城</title>
   <meta content='width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no' name='viewport'>
   <!-- bootstrap 3.2.0 -->
   <link href="/bower_components/bootstrap/dist/css/bootstrap.css" rel="stylesheet" type="text/css" />
@@ -25,25 +25,35 @@
     <li class="active">
       <a href="#picture" role="tab" data-toggle="tab">商品简介</a>
     </li>
-    <li><a href="#qrcode" role="tab" data-toggle="tab">二维码</a>
+    <li>
+      <a href="#qrcode" role="tab" data-toggle="tab">二维码</a>
     </li>
   </ul>
 
   <!-- Tab panes -->
   <div class="tab-content">
+
     <div class="tab-pane active" id="picture">
       <div class="thumbnail" style="border: 0px">
-        <img src="/images/yuanhe_favicon.png" height="300" width="300">
+        <img src="{{productImgUrl}}" height="400" width="250">
         <div class="caption" style="text-align: center">
-          <p>这是一段文字</p>
+          <p>{{productName}}</p>
           <p><a href="#" class="btn bg-light-blue" style="width:300px;" role="button">查看详情</a>
           </p>
         </div>
       </div>
     </div>
+
     <div class="tab-pane" id="qrcode">
-      aaaa
+      <div class="thumbnail" style="border: 0px">
+        <img src="{{}}" height="400" width="250">
+        <div class="caption" style="text-align: center">
+          <p><a href="#" class="btn bg-light-blue" style="width:300px;" role="button">查看详情</a>
+          </p>
+        </div>
+      </div>
     </div>
+
   </div>
 
 </body>

@@ -147,7 +147,28 @@ pro.getWeixinProductInfo = function() {
  * @public
  */
 pro.getProductName = function() {
-  return this.getWeixinProductInfo().name;
+  var productInfo = this.getWeixinProductInfo();
+  if (productInfo && 'product_base' in productInfo) {
+    if ('name' in productInfo['product_base']) {
+      return productInfo['product_base']['name']
+    }
+  }
+  return '';
+};
+
+/**
+ * Get weixin product image url
+ *
+ * @public
+ */
+pro.getProductImgUrl = function() {
+  var productInfo = this.getWeixinProductInfo();
+  if (productInfo && 'product_base' in productInfo) {
+    if ('main_img' in productInfo['product_base']) {
+      return productInfo['product_base']['main_img']
+    }
+  }
+  return '';
 };
 
 /**

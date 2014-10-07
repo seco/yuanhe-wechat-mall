@@ -46,6 +46,8 @@ exports.list = function(req, res) {
  *
  * @param {Object} opts
  *
+ * @return {Object}
+ *
  * @private
  */
 var getlistViewOpts = function(opts) {
@@ -79,17 +81,66 @@ var getlistViewOpts = function(opts) {
  *
  * @param {Object} req
  * @param {Object} res
+ *
+ * @public
  */
 exports.show = function(req, res) {
   var storeOpenid = req.params.store_openid;
   var weixinProductId = req.params.product_id;
+
+  async.waterfall([
+    function(cb) {
+      YuanheProduct.getByProductId(weixinProductId, cb)
+    }
+  ], function(err, productEntity) {
+    if (err) {
+      res.status(500).end();
+      return;
+    }
+    res.render('product/show1', getShowViewOpts({
+      'storeOpenid': storeOpenid,
+      'productEntity': productEntity
+    }));
+  });
 };
+
+/**
+ * Get list view options
+ *
+ * @param {Object} opts
+ *
+ * @return {Object}
+ *
+ * @private
+ */
+var getShowViewOpts = function(opts) {
+  var storeOpenid = opts.storeOpenid;
+  var productEntity = opts.productEntity;
+
+  var productId = productEntity.getWeixinProductId();
+  var productName = productEntity.getProductName();
+  var productImgUrl = productEntity.getProductImgUrl();
+
+  var promotionUrl = utils.getUrl([
+    'products', storeOpenid, weixinProductId, 'promotion'
+  ]);
+
+  return {
+    'productId': productId;
+    'productName': productName,
+    'productImgUrl': productImgUrl,
+    'promotionUrl': promotionUrl
+  };
+};
+
 
 /**
  * Product promotion handler
  *
  * @param {Object} req
  * @param {Object} res
+ *
+ * @public
  */
 exports.promotion = function(req, res) {
   var storeOpenid = req.params.store_openid;
