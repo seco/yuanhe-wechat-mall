@@ -58,8 +58,12 @@ var getlistViewOpts = function(opts) {
   for (var key in productEntities) {
     var productEntity = productEntities[key];
 
-    var productName = product.getProductName();
-    var promotionUrl = product.getPromotionUrl(storeOpenid);
+    var productName = productEntity.getProductName();
+    var weixinProductId = productEntity.getWeixinProductId();
+
+    var promotionUrl = utils.getUrl([
+      'products', storeOpenid, weixinProductId, 'promotion'
+    ]);
 
     result.products.push({
       'productName': productName,
@@ -114,6 +118,8 @@ exports.promotion = function(req, res) {
       res.status(500).end();
       return;
     }
-    res.redirect('');
+    res.redirect(utils.getUrl([
+      'products', storeOpenid, weixinProductId
+    ]));
   });
 };

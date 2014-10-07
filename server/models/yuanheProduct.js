@@ -151,19 +151,6 @@ pro.getProductName = function() {
 };
 
 /**
- * Get promotion url
- *
- * @param {String} storeOpenid
- *
- * @public
- */
-pro.getPromotionUrl = function(storeOpenid) {
-  return utils.getUrl([
-    'products', storeOpenid, this.getWeixinProductId(), 'promotion'
-  ]);
-};
-
-/**
  * Load product attributes by product id
  *
  * @param {String} productId
