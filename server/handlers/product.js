@@ -124,12 +124,15 @@ var getShowViewOpts = function(opts) {
   var promotionUrl = utils.getUrl([
     'products', storeOpenid, weixinProductId, 'promotion'
   ]);
+  var qrCodeImgUrl = utils.getUrl([
+    'qrcode', 'url', encodeURIComponent(promotionUrl)
+  ]);
 
   return {
-    'productId': productId;
+    'productId': productId,
     'productName': productName,
     'productImgUrl': productImgUrl,
-    'promotionUrl': promotionUrl
+    'qrCodeImgUrl': qrCodeImgUrl
   };
 };
 

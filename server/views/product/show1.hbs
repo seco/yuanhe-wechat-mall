@@ -15,6 +15,28 @@
       e.preventDefault();
       $(this).tab('show');
     });
+
+    // weixin js bridge
+    function openProductView(){
+      if (typeof WeixinJSBridge == "undefined")
+        return false;
+
+      var pid = "{{productId}}"; //只需要传递
+      WeixinJSBridge.invoke('openProductViewWithPid',{
+        "pid":pid
+      },function(res){
+        // 返回res.err_msg,取值
+        // open_product_view_with_id:ok 打开成功
+        alert(res.err_msg);
+        if (res.err_msg != "open_product_view_with_id:ok"){
+          WeixinJSBridge.invoke('openProductView',{
+            "productInfo":"{\"product_id\":\""+pid+"\",\"product_type\":0}"
+          },function(res){
+            alert(res.err_msg);
+          });
+        }
+      });
+    }
   </script>
 </head>
 
@@ -38,7 +60,7 @@
         <img src="{{productImgUrl}}" height="400" width="250">
         <div class="caption" style="text-align: center">
           <p>{{productName}}</p>
-          <p><a href="#" class="btn bg-light-blue" style="width:300px;" role="button">查看详情</a>
+          <p><a href="#" class="btn bg-light-blue" style="width:300px;" role="button" onclick="openProductView();">查看详情</a>
           </p>
         </div>
       </div>
@@ -46,9 +68,9 @@
 
     <div class="tab-pane" id="qrcode">
       <div class="thumbnail" style="border: 0px">
-        <img src="{{}}" height="400" width="250">
+        <img src="{{qrCodeImgUrl}}" height="400" width="250">
         <div class="caption" style="text-align: center">
-          <p><a href="#" class="btn bg-light-blue" style="width:300px;" role="button">查看详情</a>
+          <p><a href="#" class="btn bg-light-blue" style="width:300px;" role="button" onclick="openProductView();">查看详情</a>
           </p>
         </div>
       </div>

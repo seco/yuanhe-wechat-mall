@@ -51,7 +51,7 @@ module.exports = function(app) {
   app.get('/admin/signout', adminSign.signout);
 
   // routes below need auth
-  app.all('*', adminSign.checkAuth);
+  // app.all('*', adminSign.checkAuth);
 
   // manage page
   app.get('/admin', routes.index);

@@ -12,12 +12,17 @@ var utils = require('../lib/util/utils');
  *
  * @param {Object} req
  * @param {Object} res
+ *
+ * @public
  */
 exports.withSceneId = function(req, res) {
   var scene_id = req.params.scene_id;
 
   qrcode.genQRCodeWithSceneId(scene_id, res, function(err) {
-    console.log(err);
+    if (err) {
+      res.status(500).end();
+      return;
+    }
   });
 };
 
@@ -26,11 +31,16 @@ exports.withSceneId = function(req, res) {
  *
  * @param {Object} req
  * @param {Object} res
+ *
+ * @public
  */
 exports.withUrl = function(req, res) {
   var url = req.params.url;
 
   qrcode.genQRCodeWithUrl(url, res, function(err) {
-    console.log(err);
+    if (err) {
+      res.status(500).end();
+      return;
+    }
   });
 };
