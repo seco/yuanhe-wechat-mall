@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>元合服饰| 微信商城</title>
+  <meta content='width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no' name='viewport'>
+  <!-- bootstrap 3.2.0 -->
+  <link href="/bower_components/bootstrap/dist/css/bootstrap.css" rel="stylesheet" type="text/css" />
+</head>
+
+<body>
+  <div class="list-group">
+    {{#with products}}
+    <a href="{{promotionUrl}}" class="list-group-item">{{productName}}</a>
+    {{/with}}
+  </div>
+</body>
+</html>

@@ -28,7 +28,7 @@ module.exports = function(app) {
   app.post('/weixin/message/store', gateway.receive);
 
   // product list page
-  app.get('/products/:store_openid', product.index);
+  app.get('/products/:store_openid', product.list);
   // product show page
   app.get('/products/:store_openid/:product_id', product.show);
   // product promotion page

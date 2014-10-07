@@ -1,8 +1,10 @@
 /**
- * utils
+ * Utils
  *
  * @author Minix Li
  */
+
+var app = require('../../app');
 
 var utils = module.exports;
 
@@ -17,6 +19,31 @@ utils.invokeCallback = function(cb) {
   if (!!cb && typeof cb === 'function') {
     cb.apply(null, Array.prototype.slice.call(arguments, 1));
   }
+};
+
+/**
+ * Get site url
+ *
+ * @public
+ *
+ * @return {String}
+ */
+utils.getSiteUrl = function() {
+  return app.get('yuanhe_config').siteurl;
+};
+
+/**
+ * Get url by segments
+ *
+ * @param {Array} segments
+ *
+ * @public
+ *
+ * @return {String}
+ */
+utils.getUrl = function(segments) {
+  segments.unshift(utils.getSiteUrl());
+  return segments.join('/');
 };
 
 /**

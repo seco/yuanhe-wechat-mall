@@ -19,24 +19,55 @@ var YuanheStore = require(appPath + '/../models/yuanheStore');
  *
  * @param {Object} req
  * @param {Object} res
+ *
+ * @public
  */
-exports.index = function(req, res) {
+exports.list = function(req, res) {
   var storeOpenid = req.params.store_openid;
 
   async.waterfall([
     function(cb) {
       YuanheProduct.getAllProducts(cb);
     }
-  ], function(err, products) {
+  ], function(err, productEntities) {
     if (err) {
       res.status(500).end();
       return;
     }
-    for (var key in products) {
-      var product = products[key];
-      var productId = product.getWeixinProductId();
-    }
+    res.render('product/list', getListViewOpts({
+      'storeOpenid': storeOpenid,
+      'productEntities': productEntities
+    }));
   });
+};
+
+/**
+ * Get list view options
+ *
+ * @param {Object} opts
+ *
+ * @private
+ */
+var getlistViewOpts = function(opts) {
+  var storeOpenid = opts.storeOpenid;
+  var productEntities = opts.productEntities;
+
+  var result = {};
+  result.products = [];
+
+  for (var key in productEntities) {
+    var productEntity = productEntities[key];
+
+    var productName = product.getProductName();
+    var promotionUrl = product.getPromotionUrl(storeOpenid);
+
+    result.products.push({
+      'productName': productName,
+      'promotionUrl': promotionUrl
+    });
+  }
+
+  return result;
 };
 
 /**
