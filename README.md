@@ -4,6 +4,8 @@ A simple & exquisite wechat mall aims to promote its own brand product, powered 
 
 ``` bash
 $ npm install
+$ cd ./app/scripts && ./node_modules/requirejs/bin/r.js -o app.build.js
+$ ./node_modules/bower/bin/bower install --config.interactive=false
 $ node server/app.js
 ```
 
